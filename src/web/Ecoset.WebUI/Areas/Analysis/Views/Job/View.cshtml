@@ -1,0 +1,97 @@
+@model Ecoset.WebUI.Models.Job
+@inject IOptions<EcosetOptions> siteConfig
+@using Ecoset.WebUI.Enums
+@using Microsoft.AspNetCore.Identity
+@using Ecoset.WebUI.Models
+
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Analysis: " + Model.Name;
+
+
+    var appUser = UserManager.FindByIdAsync(UserManager.GetUserId(User)).Result;
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/static/geojson(%7B%0A%22type%22%3A%22Feature%22%2C%0A%22properties%22%3A%7B%7D%2C%0A%22geometry%22%3A%7B%0A%22type%22%3A%22Polygon%22%2C%0A%22coordinates%22%3A%5B%5B%5B @Model.LongitudeWest%2C @Model.LatitudeSouth%5D%2C%5B @Model.LongitudeWest%2C @Model.LatitudeNorth%5D%2C%5B @Model.LongitudeEast%2C @Model.LatitudeNorth%5D%2C%5B @Model.LongitudeEast%2C @Model.LatitudeSouth%5D%2C%5B @Model.LongitudeWest%2C @Model.LatitudeSouth%5D%5D%5D%0A%7D%0A%7D))/auto/700x350@2x?access_token=@siteConfig.Value.MapboxAccessToken&logo=false" style="width: 100%;"/>
+    </div>
+    <div class="col-md-4">
+        <p><label>Status:</label> <span class="label label-@Model.Status">@Model.Status</span></p>
+        <p><label>Description:</label> @Model.Description</p>
+        <p><label>Longitude:</label> @Model.LongitudeWest - @Model.LongitudeEast Decimal Degrees</p>
+        <p><label>Latitude:</label> @Model.LatitudeSouth - @Model.LatitudeNorth Decimal Degrees</p>
+    </div>
+</div>
+<br/>
+
+@if (Model.Status == JobStatus.Completed) {
+    <h4><span class="glyphicon glyphicon-folder-open"></span> Results</h4>
+    <hr/>
+
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Your free @siteConfig.Value.InstanceShortName report is ready.</strong><br/> It contains a series of maps and tables representing various aspects of the environment in the area of interest specified by the user.</p>
+            <a target="_blank" class="btn btn-primary" href="@Url.Action("Report", "Job", new { id = Model.Id})"><span class="glyphicon glyphicon-download"></span> Download free report</a>
+        </div>
+        <div class="col-md-6">
+            @if (Model.ProActivation == null)
+            {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-lock"></span> Data Download</h3>
+                </div>
+                <div class="panel-body">
+                    <p>@siteConfig.Value.InstanceShortName has created a zipped archive containing the raster data shown in the report. <a asp-action="Pricing" asp-controller="Home" target="_blank">More info...</a></p>
+                    <p>To download this data, <strong>activate this individual analysis using one @siteConfig.Value.InstanceName credit</strong>.</p>
+                    
+                    @if (appUser.Credits == 0)
+                    {
+                        <p>Please <a asp-action="Index" asp-controller="Credit">top up your credits</a> to activate premium features.</p>
+                    }else {
+                    <form asp-action="ActivateProData" asp-anti-forgery="true" asp-controller="Job" id="activation-form">
+                        @Html.Hidden("Id", Model.Id)
+                        <input id="submit" class="btn btn-default" onclick="return confirm('One credit will be deducted immediately from your account. This action is not reversable. Are you sure?')" type="submit" value="Activate this analysis"/>
+                    </form>
+                    }
+                </div>
+            </div>
+            } else {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-ok"></span> Data Download</h3>
+                </div>
+                <div class="panel-body">
+                    @if (Model.ProActivation.ProcessingStatus != JobStatus.Completed) {
+                        <p>Thank you for your purchase. We are collating your high-resolution datasets for download. This process may take some time.</p>
+                        <p><label>Status:</label> <span class="label label-@Model.ProActivation.ProcessingStatus">@Model.ProActivation.ProcessingStatus</span></p>
+                    } else {
+                        <p>@siteConfig.Value.InstanceShortName has created a zipped archive containing the raster data shown in the report. <a asp-action="Pricing" asp-controller="Home" target="_blank">More info...</a></p>
+                        <p><strong>Thank you for activating this analysis. Download your data below.</strong></p>
+                        <a target="_blank" class="btn btn-default" href="@Url.Action("ProData", "Job", new { id = Model.Id })"><span class="glyphicon glyphicon-download"></span> GeoSpatial Data</a>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    <br/>
+}
+
+<h4><span class="glyphicon glyphicon-list-alt"></span> Activity Log</h4>
+<hr/>
+
+                @if (Model.Notifications.Count > 0) {
+                        <dl class="dl-horizontal">
+                    @foreach (var notification in Model.Notifications.OrderByDescending(m => m.Time)) {
+                            <dt>@notification.Time</dt>
+                            <dd>@string.Format(notification.Text, notification.TextValues.Split('|'))</dd>
+                    }         
+                        </dl>           
+                } else {
+                <span>No recent activity</span>
+                }   
+<hr/>
+<a asp-action="Index" asp-controller="Job" class="btn btn-default">Back</a>

@@ -1,0 +1,532 @@
+@model Ecoset.WebUI.Models.JobViewModels.AddJobViewModel
+@inject IOptions<EcosetOptions> siteConfig
+
+@{
+    //Layout = "_DashboardLayout";
+    ViewData["Title"] = "New Analysis";
+}
+
+@section headInclude {
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.22.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.22.0/mapbox-gl.css' rel='stylesheet' />
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.3.0/mapbox-gl-geocoder.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.3.0/mapbox-gl-geocoder.css' type='text/css' />
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+
+<h2>@ViewData["Title"].</h2>
+<hr/>
+
+</p>
+
+<form asp-action="Submit" asp-anti-forgery="true" asp-controller="Job" onsubmit="" id="map-form">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row">
+        <div class=" col-md-12 form-group form-group-lg">
+            <input asp-for="Name" class="form-control" placeholder="Title for Analysis"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class=" col-md-12 form-group">
+            <textarea asp-for="Description" class="form-control" placeholder="Enter an optional description to help you find this analysis later..."></textarea>
+        </div>
+    </div>
+
+    <p>Select an area for analysis on the map, or input the coordinates:</p>
+    <div id='map'>
+    <div id='layer-menu' class="btn-group" role="group">
+          <button type="button" class="btn btn-default btn-sm active" value="outdoors">Feature</button>
+          <button type="button" class="btn btn-default btn-sm" value="satellite">Satellite</button>
+    </div>
+    <div class="coordinates-panel panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-globe"></span> Coordinates</h3>
+            </div>
+            <div class="panel-body">
+                <div style="text-align:center;">
+                    <div class="form-group form-group-sm">
+                        <input asp-for="LatitudeNorth" class="form-control" placeholder="North" style="text-align:center;width: 40%;margin-left:auto;margin-right:auto;"/>
+                        <span asp-validation-for="LatitudeNorth"/>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <input asp-for="LongitudeWest" class="form-control" placeholder="West" style="text-align:center;width: 40%; display:inline-block"/>
+                        <input asp-for="LongitudeEast" class="form-control" placeholder="East" style="text-align:center;width:40%;display:inline-block" />
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <input asp-for="LatitudeSouth" class="form-control" placeholder="South" style="text-align:center;width: 40%;margin-left:auto;margin-right:auto;"/>
+                    </div>
+                    <a class="btn btn-primary" type="button" id="draw-area-button"><span class="glyphicon glyphicon-modal-window"></span> Draw new area</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <input id="submit" class="btn btn-primary" type="submit" value="Start Analysis"/>
+            <a asp-action="Index" asp-controller="Job" class="btn btn-default">Cancel</a>
+        </div>
+    </div>
+</form>
+
+<style>
+.boxdraw {
+    background: rgba(56,135,190,0.1);
+    border: 2px solid #3887be;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+}
+
+.coordinates-panel {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    z-index: 999;
+    width: 20em;
+}
+
+.mapboxgl-canvas {
+    -webkit-transition: border 1s;
+    transition: border 1s;
+    border: 3px solid rgba(169, 62, 113, 0);
+}
+
+#map {
+    margin-bottom:2em;
+}
+
+#layer-menu {
+    position: absolute;
+    top: 1em;
+    left: 4em;
+    z-index: 999;
+}
+</style>
+
+
+<script type="text/javascript">
+// init mapbox
+mapboxgl.accessToken = '@siteConfig.Value.MapboxAccessToken';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/outdoors-v9',
+    center: [20, 50.50],
+    maxBounds: [[-180, -85], [180, 85]],
+    zoom: 2
+});
+map.interactive = false;
+
+map.addControl(new mapboxgl.Geocoder({position: 'bottom-left'}));
+map.addControl(new mapboxgl.Navigation({position: 'top-left'}));
+
+//Layer switching
+var layerList = document.getElementById('layer-menu');
+var inputs = layerList.getElementsByTagName('button');
+
+function switchLayer(layer) {
+    $('#layer-menu').children('button').removeClass('active');
+    var layerId = layer.target.value;
+    map.setStyle('mapbox://styles/mapbox/' + layerId + '-v9');
+    $(layer.target).addClass('active');
+}
+
+for (var i = 0; i < inputs.length; i++) {
+    inputs[i].onclick = switchLayer;
+}
+
+// init variables
+var overpoint = 0; // 0 = none, 1 = tl, 2 = tr, 3 = bl, 4 = br, 5 = t, 6 = l, 7 = r, 8 = b
+var lastlat = 0;
+var lastlon = 0;
+var startlat = null;
+var startlon = null;
+var targetlat = 0;
+var targetlon = 0;
+var currentlat = 0;
+var currentlon = 0;
+var drawing = false;
+var drawingMode = false;
+var boxvisible = false;
+var lockhorizontal = false;
+var lockvertical = false;
+
+// removes a geojson source and corresponding layer from mapbox
+function removeSourceAndLayer(name) {
+    if(map.getSource(name)) {
+        map.removeSource(name);
+    }
+    if(map.getLayer(name)) {
+        map.removeLayer(name);
+    }
+}
+
+// adds a geojson source representing a circular point and corresponding layer to mapbox
+function addSourcePointAndLayer(name) {
+    map.addSource(name, {
+        "type": "geojson",
+        "data": {
+            "type": "Point",
+            "coordinates": []
+        }
+    });
+    map.addLayer({
+        "id": name,
+        "source": name,
+        "type": "circle",
+        "paint": {
+            "circle-radius": 7,
+            "circle-color": "#A93E71"
+        }
+    });
+}
+
+// adds a geojson source representing a linestring and corresponding layer to mapbox
+function addSourceLineAndLayer(name) {
+    map.addSource(name, {
+        "type": "geojson",
+        "data": {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [[]]
+            }
+        }
+    });
+    map.addLayer({
+        "id": name,
+        "source": name,
+        "type": "line",
+        "layout": {
+            "line-join": "round",
+            "line-cap": "round"
+        },
+        "paint": {
+            "line-width": 3,
+            "line-color": "#A93E71"
+        }
+    });
+}
+
+// creates all layers required
+function createLayer() {
+    removeSourceAndLayer('line');
+
+    removeSourceAndLayer('tl_point');
+    removeSourceAndLayer('tr_point');
+    removeSourceAndLayer('bl_point');
+    removeSourceAndLayer('br_point');
+
+    removeSourceAndLayer('t_point');
+    removeSourceAndLayer('r_point');
+    removeSourceAndLayer('l_point');
+    removeSourceAndLayer('b_point');
+
+    addSourceLineAndLayer('line');
+
+    addSourcePointAndLayer('tl_point');
+    addSourcePointAndLayer('tr_point');
+    addSourcePointAndLayer('bl_point');
+    addSourcePointAndLayer('br_point');
+
+    addSourcePointAndLayer('t_point');
+    addSourcePointAndLayer('r_point');
+    addSourcePointAndLayer('l_point');
+    addSourcePointAndLayer('b_point');
+}
+
+// draws the area box
+function drawRect(lonmin, latmin, lonmax, latmax) {
+    boxvisible = true;
+    map.getSource('line').setData({
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [[lonmin, latmax], [lonmax, latmax], [lonmax, latmin], [lonmin, latmin], [lonmin, latmax]]
+        }
+    });
+    map.getSource('t_point').setData({
+        "type": "Point",
+        "coordinates": [(lonmin + lonmax) / 2, latmax]
+    });
+    map.getSource('b_point').setData({
+        "type": "Point",
+        "coordinates": [(lonmin + lonmax) / 2, latmin]
+    });
+    var halflat = (latmin + latmax) / 2.0;
+    map.getSource('l_point').setData({
+        "type": "Point",
+        "coordinates": [lonmin, halflat]
+    });
+     map.getSource('r_point').setData({
+        "type": "Point",
+        "coordinates": [lonmax, halflat]
+    });
+    map.getSource('tl_point').setData({
+        "type": "Point",
+        "coordinates": [lonmin, latmax]
+    });
+    map.getSource('bl_point').setData({
+        "type": "Point",
+        "coordinates": [lonmin, latmin]
+    });
+    map.getSource('tr_point').setData({
+        "type": "Point",
+        "coordinates": [lonmax, latmax]
+    });
+    map.getSource('br_point').setData({
+        "type": "Point",
+        "coordinates": [lonmax, latmin]
+    });
+}
+
+// called after the map finishes loading
+map.on('load', function () {
+    function update() {
+        if(drawing) {
+            currentlat += (targetlat - currentlat) * 0.2;
+            currentlon += (targetlon - currentlon) * 0.2;
+
+            var minlon = Math.min(startlon, currentlon);
+            var minlat = Math.min(startlat, currentlat);
+            var maxlon = Math.max(startlon, currentlon);
+            var maxlat = Math.max(startlat, currentlat);
+                        
+            drawRect(minlon, maxlat, maxlon, minlat);
+        }
+    }
+
+    $(".mapboxgl-canvas").mousedown(function(e) {
+        if(drawingMode && !drawing) {
+            e.stopPropagation();
+            startlat = lastlat;
+            startlon = lastlon;
+            targetlat = lastlat;
+            targetlon = lastlon;
+            currentlat = lastlat;
+            currentlon = lastlon;
+            createLayer();
+            drawing = true;
+            drawRect(startlon, startlat, startlon, startlat);
+        }
+        if(overpoint > 0) {
+            $(".mapboxgl-canvas").css("border", "3px solid rgba(169, 62, 113, 1)");
+            e.stopPropagation();
+            var n = Math.max(targetlat, startlat);
+            var e = Math.max(targetlon, startlon);
+            var s = Math.min(targetlat, startlat);
+            var w = Math.min(targetlon, startlon);
+
+            var tllat = n;
+            var tllon = w;
+
+            var trlat = n;
+            var trlon = e;
+
+            var bllat = s;
+            var bllon = w;
+
+            var brlat = s;
+            var brlon = e;
+
+            lockhorizontal = false;
+            lockvertical = false;
+
+            switch(overpoint) {
+                case 5:
+                    lockhorizontal = true;
+                case 1:
+                    // tl
+                    startlat = brlat;
+                    startlon = brlon;
+                    targetlat = currentlat = tllat;
+                    targetlon = currentlon = tllon;
+                break;
+                case 7:
+                    lockvertical = true;
+                case 2:
+                    // tr
+                    startlat = bllat;
+                    startlon = bllon;
+                    targetlat = currentlat = trlat;
+                    targetlon = currentlon = trlon;
+                break;
+                case 6:
+                    lockvertical = true;
+                case 3:
+                    // bl
+                    startlat = trlat;
+                    startlon = trlon;
+                    targetlat = currentlat = bllat;
+                    targetlon = currentlon = bllon;
+                break;
+                case 8:
+                    lockhorizontal = true;
+                case 4:
+                    // br
+                    startlat = tllat;
+                    startlon = tllon;
+                    targetlat = currentlat = brlat;
+                    targetlon = currentlon = brlon;
+                break;
+            }
+
+            createLayer();
+        	drawing = true;
+            drawRect(startlon, startlat, targetlon, targetlat);
+            
+        }
+    });
+
+    function checkFeatures(point) {
+        if(boxvisible && !drawingMode && !drawing) {
+            var features = map.queryRenderedFeatures(point);
+            for(var i = 0; i < features.length; i++) {
+                if(features[i].layer.id.slice(-5) == "point") {
+                    var dir = features[i].layer.id.substring(0,2); 
+                    if(dir == "tl" || dir == "br")
+                        $(".mapboxgl-canvas").css("cursor", "nwse-resize");
+                    if(dir == "tr" || dir == "bl")
+                        $(".mapboxgl-canvas").css("cursor", "nesw-resize");
+                    if(dir == "t_" || dir == "b_")
+                        $(".mapboxgl-canvas").css("cursor", "ns-resize");
+                    if(dir == "r_" || dir == "l_")
+                        $(".mapboxgl-canvas").css("cursor", "ew-resize");
+                    
+                    // 0 = none, 1 = tl, 2 = tr, 3 = bl, 4 = br, 5 = t, 6 = l, 7 = r, 8 = b
+                    if(dir == "tl") overpoint = 1;
+                    if(dir == "tr") overpoint = 2;
+                    if(dir == "bl") overpoint = 3;
+                    if(dir == "br") overpoint = 4;
+                    if(dir == "t_") overpoint = 5;
+                    if(dir == "l_") overpoint = 6;
+                    if(dir == "r_") overpoint = 7;
+                    if(dir == "b_") overpoint = 8;
+                }
+            }
+        }
+    }
+
+    map.on('mousemove', function (e) {
+        lastlat = e.lngLat.lat;
+        lastlon = e.lngLat.lng;
+        if(drawing) {
+            if(!lockvertical) targetlat = e.lngLat.lat;
+            if(!lockhorizontal) targetlon = e.lngLat.lng;
+        } 
+        if(!drawingMode && !drawing) {
+            overpoint = 0;
+            $(".mapboxgl-canvas").css("cursor", "grab");
+            $(".mapboxgl-canvas").css("cursor", "-moz-grab");
+            $(".mapboxgl-canvas").css("cursor", "-webkit-grab");
+        }
+        checkFeatures(e.point);
+    });
+
+    map.on('mouseup', function (e) {
+        if(drawing) {
+            drawing = false;
+            drawingMode = false;
+            var minlon = Math.min(startlon, targetlon);
+            var minlat = Math.min(startlat, targetlat);
+            var maxlon = Math.max(startlon, targetlon);
+            var maxlat = Math.max(startlat, targetlat);
+
+            createLayer();
+            drawRect(minlon, minlat, maxlon, maxlat);
+
+            var n = Math.max(targetlat, startlat);
+            var e = Math.max(targetlon, startlon);
+            var s = Math.min(targetlat, startlat);
+            var w = Math.min(targetlon, startlon);
+
+            // make sure longitude is in range -180 to +180
+            var nw = new mapboxgl.LngLat(w, n);
+            var se = new mapboxgl.LngLat(e, s);
+
+            nw = nw.wrap();
+            se = se.wrap();
+
+            $("#LatitudeNorth").val(nw.lat.toFixed(3));
+            $("#LongitudeEast").val(se.lng.toFixed(3));
+            $("#LatitudeSouth").val(se.lat.toFixed(3));
+            $("#LongitudeWest").val(nw.lng.toFixed(3));
+
+            $(".mapboxgl-canvas").css("border", "3px solid rgba(169, 62, 113, 0)");
+        }
+    });
+
+    setInterval(update, 1000 / 60);
+});
+
+function manualArea() {
+    var n = parseFloat($("#LatitudeNorth").val()).toFixed(3);
+    var s = parseFloat($("#LatitudeSouth").val()).toFixed(3);
+    var e = parseFloat($("#LongitudeEast").val()).toFixed(3);
+    var w = parseFloat($("#LongitudeWest").val()).toFixed(3);
+
+    if(!($.isNumeric(n) && $.isNumeric(s) && $.isNumeric(e) && $.isNumeric(w))) return;
+    if(parseFloat(n) <= parseFloat(s) || parseFloat(e) <= parseFloat(w)) return;
+
+    startlat = n;
+    startlon = w;
+    targetlat = s;
+    targetlon = e;
+    currentlat = s;
+    currentlon = e;
+
+    var minlon = Math.min(startlon, targetlon);
+    var minlat = Math.min(startlat, targetlat);
+    var maxlon = Math.max(startlon, targetlon);
+    var maxlat = Math.max(startlat, targetlat);
+
+    var n = Math.max(targetlat, startlat);
+    var e = Math.max(targetlon, startlon);
+    var s = Math.min(targetlat, startlat);
+    var w = Math.min(targetlon, startlon);
+
+    // make sure longitude is in range -180 to +180
+    var nw = new mapboxgl.LngLat(w, n);
+    var se = new mapboxgl.LngLat(e, s);
+
+    nw = nw.wrap();
+    se = se.wrap();
+
+    $("#LatitudeNorth").val(nw.lat.toFixed(3));
+    $("#LongitudeEast").val(se.lng.toFixed(3));
+    $("#LatitudeSouth").val(se.lat.toFixed(3));
+    $("#LongitudeWest").val(nw.lng.toFixed(3));
+
+    createLayer();
+    drawRect(minlon, minlat, maxlon, maxlat);
+}
+
+$("#LatitudeNorth").change(manualArea);
+$("#LatitudeSouth").change(manualArea);
+$("#LongitudeEast").change(manualArea);
+$("#LongitudeWest").change(manualArea);
+
+$("#draw-area-button").click(function() {
+    drawingMode = true;
+    lockhorizontal = false;
+    lockvertical = false;
+    $(".mapboxgl-canvas").css("border", "3px solid rgba(169, 62, 113, 1)");
+    $(".mapboxgl-canvas").css("cursor", "crosshair");
+});
+
+$(".mapboxgl-ctrl-icon").click(function (e) {
+    $(e.currentTarget).closest("form").validate().settings.ignore = "*";
+    e.preventDefault();
+});
+$("#submit").click(function (e) {
+    $(e.currentTarget).closest("form").validate().settings.ignore = ":hidden";
+});
+
+</script>

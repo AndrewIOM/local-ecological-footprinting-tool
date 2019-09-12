@@ -1,0 +1,184 @@
+@inject IOptions<EcosetOptions> siteConfig
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "My Analyses";
+}
+
+<!-- Commands -->
+<div class="row">
+    <div class="col-xs-6 functions-left">
+        <a asp-action="Submit" class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"></span> New Analysis</a>
+    </div>
+    <div class="col-xs-6 functions-right">
+        <!--<span>View:</span>-->
+        <!--<a data-bind="click: $data.setView('grid')"><span class="glyphicon glyphicon-th-large"></span> Grid</a>
+        <a data-bind="click: $data.setView('list')"><span class="glyphicon glyphicon-list"></span> Detail List</a>-->
+        <input type="text" class="form-control input-sm" placeholder="Search my Analyses" data-bind="textInput: currentSearch">
+    </div>
+</div>
+
+<style>
+    .functions-left {
+
+    }
+
+    .functions-right {
+        text-align:right;
+    }
+
+    .functions-right span {
+        display: inline;
+    }
+
+    .functions-right a {
+        cursor: pointer;
+    }
+
+    .card {
+        border: 1px solid #eee;
+        margin-bottom:2em;
+        transition: 2s;
+    }
+
+    .card img {
+        width:100%;
+    }
+
+    .card-title {
+        font-size: 1.2em;
+        display: block;
+        padding:0.4em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .statusbar {
+        color:white;
+        font-size: 0.8em;
+        width:100%;
+        text-align:center;
+    }
+</style>
+
+<br/>
+<div class="row analyses" data-bind="foreach: {data: filteredAnalyses, afterAdd: showAnalysis}">
+            <div class="col-md-3 col-xs-6">
+        <div class="card">
+            <span class="card-title"><a data-bind="text: name, attr:{href: '/Job/View/' + id}"></a></span>
+            <div data-bind="text: status, attr:{ 'class': 'statusbar statusbar-' + (status == 'Failed' ? 'Processing' : status)}"></div>
+            <img data-bind="attr: {src: 'https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/static/geojson(%7B%0A%22type%22%3A%22Feature%22%2C%0A%22properties%22%3A%7B%7D%2C%0A%22geometry%22%3A%7B%0A%22type%22%3A%22Polygon%22%2C%0A%22coordinates%22%3A%5B%5B%5B' + longitudeWest + '%2C' + latitudeSouth + '%5D%2C%5B' + longitudeWest + '%2C' + latitudeNorth + '%5D%2C%5B' + longitudeEast + '%2C' + latitudeNorth + '%5D%2C%5B' + longitudeEast + '%2C' + latitudeSouth + '%5D%2C%5B' + longitudeWest + '%2C' + latitudeSouth + '%5D%5D%5D%0A%7D%0A%7D))/auto/300x300@2x?access_token=@siteConfig.Value.MapboxAccessToken&logo=false'}"/>
+        </div>
+        </div>
+</div>
+
+<hr/>
+<h4>Sample Analyses</h4>
+@RenderSection("SampleAnalyses")
+
+@*<script type="text/html" id="grid-template">
+    <div class="row">
+    </div>
+</script>
+
+<script type="text/html" id="list-template">
+    <div class="row">
+        <h1>Hi</h1>
+    </div>
+</script>*@
+
+@*
+<div class="row">
+        @if (Model.Count == 0) {
+            <div class="col-md-12">
+                <span>You have not yet submitted any analyses to @siteConfig.Value.InstanceShortName. When you do, they'll appear here.</span>
+            </div>
+            } else {
+            @foreach (var job in Model) {
+                <div class="col-md-3">
+                    <div class="card">
+                        <span class="card-title"><a href="@Url.Action("View", "Job", new {id = @job.Id})">@job.Name</a></span>
+                        <img src="https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=road\&path=fillcolor:0xAA000033|@job.LatitudeSouth,@job.LongitudeWest|@job.LatitudeNorth,@job.LongitudeWest|@job.LatitudeNorth,@job.LongitudeEast|@job.LatitudeSouth,@job.LongitudeEast|@job.LatitudeSouth,@job.LongitudeWest&key=@siteConfig.Value.MapboxStaticKey"/>
+                        <span>@job.Description</span>
+                        <span class="statusbar">@job.Status</span>
+                    </div>
+                </div>
+                <!--<tr>
+                <td>@job.DateAdded</td>
+                <td>@job.Name</td>
+                <td>@job.Description</td>
+                <td>
+                    Latitude: @job.LatitudeSouth - @job.LatitudeNorth DD, Longitude: @job.LongitudeWest - @job.LongitudeEast DD
+                    <img src="https://maps.googleapis.com/maps/api/staticmap?size=512x512&maptype=road\&path=fillcolor:0xAA000033|@job.LongitudeWest,@job.LatitudeSouth|@job.LongitudeWest,@job.LatitudeNorth|@job.LongitudeEast,@job.LatitudeNorth|@job.LongitudeEast,@job.LatitudeSouth|@job.LongitudeWest,@job.LatitudeSouth&key=@siteConfig.Value.MapboxStaticKey"/>
+                </td>
+                <td>@job.Status</td>
+                </tr>-->
+                        }
+            }
+</div>
+*@
+
+<script type="text/javascript">
+
+function AnalysisViewModel() {
+    var self = this;
+    self.analyses = ko.observableArray([]);
+    self.selectedView = ko.observable("grid");
+
+    self.setView = function(view) {
+        console.log(view);
+        self.selectedView(view);
+    }
+
+    self.updateAnalyses = function() {
+      $.ajax({
+        url: "/Job/Get",
+        cache: false,
+        success: function(serverAnalyses)
+        {
+          self.analyses(serverAnalyses);
+          self.animate = false;
+        }
+      });
+    }
+
+    self.currentSearch = ko.observable('');
+    self.filteredAnalyses = ko.computed(function() {
+        if(!self.currentSearch()) {
+            return self.analyses(); 
+        } else {
+            return ko.utils.arrayFilter(self.analyses(), function(a) {
+                return a.name.toLowerCase().indexOf(self.currentSearch().toLowerCase()) > -1 ||
+                    a.description.toLowerCase().indexOf(self.currentSearch().toLowerCase()) > -1
+            });
+        }
+    });
+
+    self.animate = true;
+    self.animationDelay = 0;
+    self.showAnalysis = function(element) {
+        if (element.nodeType === 1 && self.animate) {
+            $(element).hide().delay(self.animationDelay).fadeIn();
+            self.animationDelay = self.animationDelay + 100;
+        }
+    };
+
+}
+
+$(document).ready(function() {
+  var vm = new AnalysisViewModel();
+  window.setInterval(vm.updateAnalyses,10000);
+  vm.updateAnalyses();
+  ko.applyBindings(vm);
+});
+
+</script>
+
+@section Scripts {
+    <environment names="Development">
+        <script src="~/lib/knockout/dist/knockout.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
+    </environment>
+}
