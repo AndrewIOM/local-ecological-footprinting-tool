@@ -1,0 +1,156 @@
+@import '../_palette';
+
+.navbar-brand {
+    img {
+        height: 2em;
+    }
+}
+
+.navbar {
+    height: 5em;
+    background-color: $navbar-background;
+    transition: 0.5s;
+    opacity: 0.95;
+}
+
+.navbar-header {
+    button {
+        border: none;
+        height: 4em;
+        margin-right: 1.5em;
+    }
+}
+
+.logo-white, .logo-black
+{
+    transition: 0.5s;
+}
+
+.navbar-default .navbar-nav > li > a {
+    line-height: 5em;
+    padding:0 1em;
+    vertical-align: top;
+    transition: 0.25s;
+
+    .btn-dashboard {
+        margin: 1em;
+        line-height: 3em !important;
+        background-color: lightgrey;
+        border: 1px solid purple;
+        color: purple;
+        border-radius: 0.2em;
+    }
+}
+
+.navbar-left, .navbar-right
+{
+    margin-left: auto;
+}
+
+.navbar-left, .navbar-right
+{
+    transition: none;
+}
+
+.navbar-default {
+    .navbar-collapse {
+    background: #fff;
+    }
+}
+
+.navbar-transparent {
+    background: none;
+    border-bottom: none;
+
+    .navbar-collapse {
+    background: #fff;
+    }
+
+    .navbar-nav > li > a {
+        color: #000;
+    }
+
+    .navbar-nav > li > a:hover {
+        color: rgba(194, 188, 192, 1);
+    }
+
+    .navbar-toggle .icon-bar {
+        background-color: #fff;
+    }
+
+    .logo-white {
+        position: absolute;
+        opacity: 1;
+        height: 6em;
+    }
+
+    .logo-black {
+        position: absolute;
+        opacity: 0;
+        height: 6em;
+    }
+}
+
+.logo-white {
+  position: absolute;
+  opacity: 0;
+}
+
+.logo-black {
+  position: absolute;
+  opacity: 1;
+}
+
+/* menu for condensed view when transparent */
+@media(min-width:768px) {
+    .navbar-transparent {
+        .navbar-collapse {
+            background-color: transparent;
+        }
+        .navbar-nav > li > a {
+        color: white;
+        }
+        .navbar-left
+        {
+            margin-top: 1.8em;
+            margin-left: 10em;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
+        .navbar-right
+        {
+            margin-top: 1.8em;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+    }
+    .navbar-left, {
+        margin-left: 3em;
+        font-size: 1em;
+    }
+    .navbar-right { margin-left: auto; }
+    .navbar-default {
+        .navbar-collapse {
+        background: none;
+        }
+    }
+}
+
+.navbar-toggle
+{
+    border-radius: 0;
+}
+
+@media(max-width:992px)
+{
+    .navbar-transparent {
+        .navbar-collapse {
+            .navbar-left, .navbar-right
+            {
+                margin-top: 2.5em;
+                font-size: 1em;
+            }
+        }
+    }
+}

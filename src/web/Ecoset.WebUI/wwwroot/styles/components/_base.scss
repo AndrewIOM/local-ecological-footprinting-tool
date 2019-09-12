@@ -1,0 +1,174 @@
+@import '../_palette';
+//File mainly deals with customisations over Bootstrap 3.3.6
+//Fixes for anchor tags with navbar top offset
+h2:before,
+h3:before {
+    display: block;
+    content: " ";
+    margin-top: -4em;
+    height: 4em;
+    visibility: hidden;
+}
+
+h4:before {
+    display: block;
+    content: " ";
+    margin-top: -5em;
+    height: 5em;
+    visibility: hidden;
+}
+
+a {
+    color: $primary-color;
+}
+
+a:hover {
+    color: $primary-color-accent;
+}
+
+input.form-control {
+    border-radius: 0;
+}
+
+.btn {
+    border: none;
+    border-radius: 0;
+}
+
+.btn-default {
+    border: 1px solid #e7e7e7;
+}
+
+.btn-primary {
+    background-color: $primary-color;
+    border-color: $primary-color-accent;
+}
+
+.btn-primary:hover {
+    background-color: $primary-color-accent;
+}
+
+.btn-primary.active,
+.btn-primary:active,
+.open>.dropdown-toggle.btn-primary {
+    background-color: $primary-color-accent;
+}
+
+.btn-primary:focus, .btn-primary.focus {
+    background-color: $primary-color-accent;
+}
+
+.btn-primary.disabled.focus, .btn-primary.disabled:focus, .btn-primary.disabled:hover, .btn-primary[disabled].focus, .btn-primary[disabled]:focus, .btn-primary[disabled]:hover, fieldset[disabled] .btn-primary.focus, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary:hover {
+    background-color: $primary-color-accent;
+}
+
+.btn-logo {
+    height: 2em;
+}
+
+.form-control:focus {
+    border-color: $primary-color-accent;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px $input-glow-colour;
+}
+
+.alert {
+    border-radius: 0;
+}
+
+//Panels
+.panel-default {
+    border-radius: 0;
+    .panel-heading {
+        border-radius: 0;
+        background-color: #ddd;
+    }
+}
+
+//Status labels
+.label-Processing,
+.statusbar-Processing {
+    background-color: darkorange;
+}
+
+.label-Submitted,
+.statusbar-Submitted {
+    background-color: grey;
+}
+
+.label-Completed,
+.statusbar-Completed {
+    background-color: green;
+}
+
+.label-Failed,
+.statusbar-Failed {
+    background-color: darkred;
+}
+
+.label-Queued,
+.statusbar-Queued {
+    background-color: lightblue;
+    color: #222222;
+}
+
+.label {
+    transition: 1s;
+}
+
+dd {
+    margin-bottom: 0.5em;
+}
+
+dt {
+    margin-bottom: 0.5em;
+}
+
+.spaced-list {
+    list-style: none;
+    padding-left: 0;
+    li {
+        padding: 0.5em 0;
+    }
+}
+
+// Pricing primary box
+.panel-primary.pricing-panel
+{
+    margin: 3em 0;
+    border-radius: 0;
+    border: 1px solid $primary-color;
+    border-color: $primary-color;
+    .panel-heading
+    {
+        border-radius: 0;
+        background-color: $primary-color;
+        border-color: $primary-color;
+        h3
+        {
+            margin-top: 0;
+        }
+    }
+
+    .panel-body
+    {
+        ul
+        {
+            list-style: none;
+            padding-left:0;
+            li {
+                margin:0.2em;
+                font-weight: bold;
+            }
+        }
+
+        .btn
+        {
+            margin: 2em 0 0.5em;
+        }
+    }
+}
+
+.cc_logo
+{
+    display: none !important;
+}

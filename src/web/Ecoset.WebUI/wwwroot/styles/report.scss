@@ -1,0 +1,149 @@
+html {
+    zoom: 0.50;
+}
+
+/* Layout */
+.section-scale {
+    text-align: center;
+}
+
+.section-map {
+    text-align: right;
+}
+
+@media (max-width: 991px) {
+    .section-map {
+    text-align: center;
+    }
+}
+
+@media print {
+    .report-section {
+    page-break-after: always;
+    }
+
+    .report-title-page {
+    page-break-after: always;
+    text-align: center;
+    }
+}
+
+
+@media print {
+  .container {
+    width:100%;
+  }
+}
+
+.report-section p {
+    font-size: 15px;
+}
+
+/* Maps */
+.graticule {
+    fill: none;
+    stroke: #222;
+    stroke-width: 0.5px;
+    stroke-opacity: 0.5;
+}
+
+.land {
+    fill: #999;
+}
+
+.boundary {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 0.5px;
+}
+
+.spatial-extent {
+    fill: #F0F0F0;
+    stroke: #222;
+}
+
+.map-border {
+    fill: none;
+}
+
+.graticule-tick {
+    stroke: #222;
+    stroke-width: 1px;
+}
+
+.label {
+    font: 300 12px "Droid Sans Mono", Courier, monospace;
+    text-anchor: end;
+}
+
+/* Legend */
+.legend {
+    margin-top: 1.5em;
+}
+
+ul.category-legend {
+  list-style: none;
+  padding-left: 0.4em;
+}
+
+li.key {
+  border-left-width: 40px;
+  border-left-style: solid;
+  font-size: .75em;
+  padding: 0.2em 0.8em;
+  margin: 0.2em 0;
+  text-align: left;
+}
+
+#pinpoint-map {
+    width:100%;
+}
+
+
+.median {
+  fill: darkred;
+}
+
+.center, .center-max, .center-min {
+  stroke: darkred;
+  stroke-width: 1.5px;
+}
+
+.dashed-line {
+  stroke: #222222;
+  stroke-width: 1px;
+}
+
+.reference-list {
+    list-style: none;
+    padding-left: 0;
+
+    li {
+        margin-bottom:0.75em
+    }
+}
+
+#data-source-list,#migratory-species-list {
+  padding-left:0;
+  list-style: none;
+}
+
+.focus-area-box {
+  stroke: red;
+  fill: none;
+}
+
+.appendix-list li {
+    border: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.appendix {
+    padding-top: 10px;
+}
+
+.wireframe {
+    fill: white;
+    stroke: black;
+}

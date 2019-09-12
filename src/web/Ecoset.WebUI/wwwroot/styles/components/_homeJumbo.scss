@@ -1,0 +1,73 @@
+  @import '../_palette';
+
+  #home-jumbo {
+    height: 550px !important;
+    background-color: transparent;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    position: relative;
+    width: 100%;
+    color:white;
+    background-color: grey;
+    background-size: cover;
+  }
+
+  .home-jumbo-left 
+  {
+    margin-top: 190px;
+    float: left;
+    width: 80%;
+
+    h1 
+    {
+      font-weight: 500;
+      font-size: 2.2em;
+    }
+  }
+
+  #home-jumbo .home-jumbo-buttons .btn-outline {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #484848;
+    background-color: rgba(243, 235, 241, 0.75);
+    margin-bottom:0.5em;
+  }
+  
+  #home-jumbo .home-jumbo-buttons .btn-primary {
+    margin-bottom:0.5em;
+  }
+
+    .left-feature {
+      text-align: center;
+      padding-left: 20px;
+      padding-right: 20px;
+      margin-bottom: 30px;
+      width: 100%;
+    }
+
+    .left-feature-icon {
+      width: 112px;
+      height: 112px;
+      display: table;
+      margin: 0 auto 30px auto;
+      background: #F3EBF1;
+      border-radius: 50%;
+    }
+
+    .left-feature-icon .glyphicon {
+      position: relative;
+      top: -1px;
+      display: table-cell;
+      vertical-align: middle;
+      font-size: 50px;
+      color: $primary-color;
+    }
+
+@media(min-width:768px) {
+  .home-jumbo-left {
+    width: 65%;
+    h1 {
+      font-size: 2.6em;
+    }
+  }
+}
