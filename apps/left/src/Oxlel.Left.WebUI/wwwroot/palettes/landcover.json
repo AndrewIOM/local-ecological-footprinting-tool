@@ -1,0 +1,79 @@
+[
+ {
+   "value": 10,
+   "R": 195,
+   "G": 20,
+   "B": 0,
+   "class": "Urban/artificial"
+ },
+ {
+   "value": 20,
+   "R": 255,
+   "G": 255,
+   "B": 100,
+   "class": "Cropland"
+ },
+ {
+   "value": 30,
+   "R": 255,
+   "G": 180,
+   "B": 50,
+   "class": "Grassland"
+ },
+ {
+   "value": 40,
+   "R": 150,
+   "G": 100,
+   "B": 0,
+   "class": "Shrubland"
+ },
+ {
+   "value": 50,
+   "R": 0,
+   "G": 128,
+   "B": 0,
+   "class": "Forest"
+ },
+ {
+   "value": 60,
+   "R": 0,
+   "G": 225,
+   "B": 192,
+   "class": "Wetland"
+ },
+ {
+   "value": 70,
+   "R": 100,
+   "G": 0,
+   "B": 128,
+   "class": "Tundra"
+ },
+ {
+   "value": 80,
+   "R": 255,
+   "G": 225,
+   "B": 192,
+   "class": "Bare ground"
+ },
+ {
+   "value": 90,
+   "R": 255,
+   "G": 255,
+   "B": 255,
+   "class": "Snow/ice"
+ },
+ {
+   "value": 100,
+   "R": 0,
+   "G": 70,
+   "B": 200,
+   "class": "Inland water"
+ },
+ {
+   "value": 110,
+   "R": 175,
+   "G": 240,
+   "B": 255,
+   "class": "Sea"
+ }
+]

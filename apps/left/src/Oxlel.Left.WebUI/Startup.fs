@@ -1,0 +1,71 @@
+namespace Oxlel.Left.WebUI
+
+open System
+open System.Collections.Generic
+open System.Linq
+open System.Threading.Tasks
+open Microsoft.AspNetCore.Builder
+open Microsoft.AspNetCore.Hosting
+open Microsoft.AspNetCore.HttpsPolicy;
+open Microsoft.AspNetCore.Mvc
+open Microsoft.Extensions.Configuration
+open Microsoft.Extensions.DependencyInjection
+open Microsoft.Extensions.Hosting
+open Microsoft.Extensions.Options
+open Ecoset.WebUI
+open Hangfire
+
+type Startup private () =
+    new (configuration: IConfiguration) as this =
+        Startup() then
+        this.Configuration <- configuration
+
+    member this.ConfigureServices(services: IServiceCollection) =
+        services.AddControllersWithViews().AddRazorRuntimeCompilation() |> ignore
+        services.AddRazorPages() |> ignore
+        services.AddEcosetUI this.Configuration |> ignore
+        services.AddEcosetDataPackageAPI this.Configuration |> ignore
+
+        let sp = services.BuildServiceProvider()
+        let staticFileOptions = sp.GetService<IOptions<StaticFileOptions>>()
+        services.AddWebOptimizer(fun pipeline ->
+            pipeline.AddScssBundle("/styles/main.css", "/styles/main.scss")
+                .UseFileProvider(staticFileOptions.Value.FileProvider) |> ignore
+            pipeline.AddScssBundle("/styles/report.css", "/styles/report.scss")
+                .UseFileProvider(staticFileOptions.Value.FileProvider) |> ignore
+        ) |> ignore
+
+    member this.Configure(app: IApplicationBuilder, env: IWebHostEnvironment) =
+
+        if (env.IsDevelopment()) then
+            app.UseDeveloperExceptionPage() |> ignore
+        else
+            app.UseExceptionHandler("/Home/Error") |> ignore
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts() |> ignore
+
+        app.UseHttpsRedirection() |> ignore
+        app.UseWebOptimizer() |> ignore
+        app.UseStaticFiles() |> ignore
+        app.UseRouting() |> ignore
+        app.UseAuthorization() |> ignore
+        app.UseEndpoints(fun endpoints ->
+            endpoints.MapAreaControllerRoute(
+                "Interpretation", "Interpretation", "{controller=Home}/{action=Index}/{id?}") |> ignore
+            endpoints.MapControllerRoute(
+                name = "areas",
+                pattern = "{area:exists}/{controller=Home}/{action=Index}/{id?}") |> ignore
+            endpoints.MapControllerRoute(
+                name = "default",
+                pattern = "{controller=Home}/{action=Index}/{id?}") |> ignore
+            endpoints.MapRazorPages() |> ignore) |> ignore
+
+        // Ecoset configuration
+        app.UseAuthentication() |> ignore
+        app.UseSwagger() |> ignore
+        app.UseSwaggerUI(fun c ->
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "LEFT API v1")) |> ignore
+        app.UseHangfireDashboard() |> ignore
+        app.UseHangfireServer() |> ignore
+
+    member val Configuration : IConfiguration = null with get, set
