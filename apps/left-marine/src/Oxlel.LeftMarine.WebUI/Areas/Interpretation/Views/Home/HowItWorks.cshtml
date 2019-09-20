@@ -1,0 +1,84 @@
+@{
+    ViewData["Title"] = "How It Works";
+    ViewData["Subtitle"] = "From the underpinning science to the output reports";
+}
+<h2 id="introduction">@ViewData["Title"].</h2>
+<p>@ViewData["Subtitle"].</p>
+
+<div class="row">
+    <nav class="col-xs-3 bs-docs-sidebar">
+        <ul id="sidebar" class="nav nav-stacked fixed">
+            <li>
+                <a href="#introduction">Introduction</a>
+            </li>
+            <li>
+                <a href="#science">Science Behind the Tool</a>
+            </li>
+            <li>
+                <a href="#interpret">The LEFT Report</a>
+                <ul class="nav nav-stacked">
+                    <li><a href="#interpret-sea_depth">Sea Depth</a></li>
+                    <li><a href="#interpret-marine_ecoregions">Marine Ecoregions</a></li>
+                    <li><a href="#interpret-economic_zones">Economic Zones</a></li>
+                    <li><a href="#interpret-marine_vulnerability">Marine Vulnerability</a></li>
+                    <li><a href="#interpret-marine_migratory">Marine Migratory</a></li>
+                    <li><a href="#interpret-protected_areas">Protected Areas</a></li>
+                    <li><a href="#interpret-streets">Streets</a></li>
+                    <li><a href="#interpret-landcover">Land Cover</a></li>
+                    <li><a href="#interpret-ecoregions">Ecoregions</a></li>
+                    <li><a href="#interpret-biodiversity">Species Observations</a></li>
+                    <li><a href="#interpret-betadiversity">Beta Diversity</a></li>
+                    <li><a href="#interpret-vulnerability">Vulnerability</a></li>
+                    <li><a href="#interpret-fragmentation">Fragmentation</a></li>
+                    <li><a href="#interpret-connectivity">Connectivity: Migratory Species</a></li>
+                    <li><a href="#interpret-connectivitywetlands">Connectivity: Wetlands</a></li>
+                    <li><a href="#interpret-resilience">Resilience</a></li>
+                    <li><a href="#interpret-summaryecologicalvalue">Summary Ecological Value</a></li>
+                    <li><a href="#interpret-management">Management Information</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div class="col-md-9">
+        <h3>Introduction</h3>
+        <p>
+            The Marine Local Ecological Footprinting Tool (Marine LEFT), is a web-based decision support tool which can help businesses minimise the environmental impacts of their activities when they make decisions about how the sea is used.
+            A user defines an area of interest anywhere in the world using a web-based map and Marine LEFT automatically processes a series of high-quality datasets using standard published algorithms to produce:
+            <ul>
+                <li>Exclusive economic zones</li>
+                <li>Marine protected areas</li>
+                <li>Marine ecoregions</li>
+                <li>habitat fragmentation</li>
+                <li>Depth</li>
+                <li>Biodiversity records of corals, marine fish, turtles, sea birds and marine mammals</li>
+                <li>Numbers of globally threatened marine species</li>
+                <li>Numbers of migratory marine species</li>
+            </ul>
+                
+                These results are aggregated to produce a single map of relative ecological value. The tool then generates a customised pdf report and a zip file of GIS data for the area requested. Results are delivered to users by email within a few minutes of job submission. This tool has been designed to be highly intuitive to use, and requires no specialized software or user expertise.
+            </p>
+            <p>
+                Novice users can submit an analysis within a few minutes and get results which can inform business decisions.
+            </p>
+
+            <br/>
+        <h3 id="science"><span class="glyphicon glyphicon-education"></span> Science Behind the Tool</h3>
+        <hr/>
+            <p>Each Marine LEFT report contains a detailed description of the analysis process, the specific datasets which have been used with permission in each individual analysis are acknowledged in each report, and the report document contains a reference section.</p>
+
+
+        <br/>
+        <h3 id="interpret"><span class="glyphicon glyphicon-duplicate"></span> The Marine LEFT Report</h3>
+        <hr/>
+        <p>A Marine LEFT report contains a series of maps and tables representing various aspects of the environment in the area of interest specified by the user.</p>
+        <p>The purpose of the maps is to make it possible to identify parts of the landscape which are relatively more important because of the ecological features found there. This will help decision-making about development in sensitive areas and point to areas where mitigation measures could be considered.</p>
+        <p>Here we explain how to interpret each component of the Marine LEFT report, with reference to an example analysis run in the UK.</p>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('body').scrollspy({
+        target: '.bs-docs-sidebar',
+        offset: 10
+    });
+});
+</script>

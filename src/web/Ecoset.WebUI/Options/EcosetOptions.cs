@@ -7,5 +7,18 @@ namespace Ecoset.WebUI.Options
         public string Organisation { get; set; }
         public string MapboxAccessToken { get; set; }
         public string MapboxStaticKey { get; set; }
+        public int VimeoPromotionVideoId { get; set; }
+        public bool SampleReportEnabled { get; set; }
+
+        public EcosetAppOptions() {
+            InstanceName = "Ecoset";
+            InstanceShortName = "Ecoset";
+            GoogleAnalyticsId = null;
+            Organisation = "Ecoset Provider";
+            MapboxAccessToken = null;
+            MapboxStaticKey = null;
+            VimeoPromotionVideoId = 0;
+            SampleReportEnabled = true;
+        }
     }
 }

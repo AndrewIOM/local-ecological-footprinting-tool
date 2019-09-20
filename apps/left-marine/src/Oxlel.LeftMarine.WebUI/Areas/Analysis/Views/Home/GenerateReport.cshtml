@@ -1,0 +1,412 @@
+@using System.Globalization
+@using System.Linq
+@model Ecoset.WebUI.Models.ReportData
+@using Ecoset.GeoTemporal.Remote
+@using Newtonsoft.Json
+
+@{
+  Layout = null;
+
+  var prettyTitles = new Dictionary<string,string>();
+  prettyTitles["sea_depth"] = "Depth";
+  prettyTitles["marine_ecoregions"] = "Marine Ecoregions";
+  prettyTitles["economic_zones"] = "Exclusive Economic Zones";
+  prettyTitles["marine_vulnerability"] = "Vulnerable Species";
+  prettyTitles["marine_migratory"] = "Migratory Species";
+  prettyTitles["protected_areas"] = "Marine Protected Areas";
+
+  var descriptions = new Dictionary<string,string>();
+  descriptions["sea_depth"] = "General Bathymetric Chart of the Oceans (GEBCO) https://gebco.net";
+  descriptions["marine_ecoregions"] = "The WWF Marine Ecoregions of the World (MEOW; Spalding et al 2007) identifies areas with similar ecological characteristics.";
+  descriptions["economic_zones"] = "Flanders Marine Institute (2018). Maritime Boundaries Geodatabase: Maritime Boundaries and Exclusive Economic Zones (200NM), version 10. Available online at http://www.marineregions.org/ https://doi.org/10.14284/312.";
+  descriptions["marine_vulnerability"] = "The IUCN Red List of Threatened Species (IUCN 2018) was used to find the names and threat categories of species in the specified area of interest.  All corals, fish, sea birds, marine mammals and turtles determined by the IUCN to be Critically Endangered (CR), Endangered (EN), Vulnerable (VU) or Near Threatened (NT) were extracted. A list of the globally threatened species which potentially occur in the area of interest can be found in appendix 1.";
+  descriptions["marine_migratory"] = "Migratory species drawn from the global register of migratory species (GROMS; Riede 2004).";
+  descriptions["protected_areas"] = "";
+
+  var mapLegend = new Dictionary<string,string>();
+  mapLegend["sea_depth"] = "Depth from the General Bathymetric Chart of the Oceans (GEBCO) in specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["marine_ecoregions"] = "Marine Ecoregions of the World (MEOW) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["economic_zones"] = "Exclusive Economic Zones (sea within 200 nautical miles from a nation’s coastline) in specified area of interest (red rectangle). High Seas is shown in white.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["marine_vulnerability"] = "Vulnerability map showing the number of globally threatened (Cr, EN, VU) and near-threatened (NT) species of corals, fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["marine_migratory"] = "Migratory species map showing the number of migratory fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["protected_areas"] = "Marine Protected Areas from the World Database of Protected Areas (WDPA) 2018 in specified area of interest (red rectangle). Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+
+  var noDataValue = new Dictionary<string,double>();
+  noDataValue["sea_depth"] = 0;
+  noDataValue["marine_ecoregions"] = -9999;
+  noDataValue["economic_zones"] = -9999;
+  noDataValue["marine_vulnerability"] = -9999;
+  noDataValue["marine_migratory"] = -9999;
+  noDataValue["protected_areas"] = -9999;
+
+  var units = new Dictionary<string,string>();
+  units["sea_depth"] = "Depth (Metres)";
+  units["marine_ecoregions"] = "Marine ecoregion";
+  units["economic_zones"] = "Exclusive economic zones";
+  units["marine_vulnerability"] = "Vulnerability";
+  units["marine_migratory"] = "Migratory species";
+  units["protected_areas"] = "";
+
+  var hasPalette = new Dictionary<string,bool>();
+  hasPalette["sea_depth"] = true;
+  hasPalette["marine_ecoregions"] = true;
+  hasPalette["economic_zones"] = true;
+  hasPalette["marine_vulnerability"] = true;
+  hasPalette["marine_migratory"] = true;
+  hasPalette["protected_areas"] = true;
+
+  var isCategorical = new Dictionary<string,string>();
+  isCategorical["sea_depth"] = "false";
+  isCategorical["marine_ecoregions"] = "true";
+  isCategorical["economic_zones"] = "true";
+  isCategorical["marine_vulnerability"] = "false";
+  isCategorical["marine_migratory"] = "false";
+  isCategorical["protected_areas"] = "true";
+  
+  var maskValues = new Dictionary<string,string>();
+  maskValues["sea_depth"] = "false";
+  maskValues["marine_ecoregions"] = "false";
+  maskValues["economic_zones"] = "false";
+  maskValues["marine_vulnerability"] = "false";
+  maskValues["marine_migratory"] = "false";
+  maskValues["protected_areas"] = "false";
+
+  <!-- TODO: build this into Ecoset instead -->
+  var scaleFactorsMean = new Dictionary<string, int>();
+  var scaleFactorsStdev = new Dictionary<string, int>();
+
+  var speciesCategories = new Dictionary<string, string>();
+  speciesCategories["coral"] = "Corals";
+  speciesCategories["fish"] = "Marine fish";
+  speciesCategories["marine mammal"] = "Marine mammals";
+  speciesCategories["seabird"] = "Seabirds";
+  speciesCategories["turtle"] = "Marine turtles";
+
+  // colours have to match report.js colourLookup
+  var occurrenceColours = new Dictionary<string, string>();
+  occurrenceColours["coral"] = "purple";
+  occurrenceColours["fish"] = "cyan";
+  occurrenceColours["marine mammal"] = "orange";
+  occurrenceColours["seabird"] = "blue";
+  occurrenceColours["turtle"] = "green";
+}
+
+    <!DOCTYPE html>
+
+    <html lang="en">
+
+    <head>
+      <meta charset="utf-8">
+
+      <title>LEFT Report</title>
+      <meta name="description" content="Ecoset Report">
+
+      <link href="https://fonts.googleapis.com/css?family=Droid+Sans+Mono" rel="stylesheet">
+      <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u">-->
+      <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
+      <link rel="stylesheet" href="/css/report.css">
+      <!--[if lt IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+  <![endif]-->
+
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.7.4/d3.js"></script>
+      <script src="http://d3js.org/topojson.v1.min.js"></script>
+      <script src="/scripts/report.js"></script>
+    </head>
+
+    <body>
+
+      <div class="container">
+        <div class="report-title-page">
+        <div class="row">
+          <div class="six columns">
+            <img src="/images/left-logo-new.png" style="width:25em;margin:10em auto 5em auto" />
+            <h1>Marine Local Ecological Footprinting Tool</h1>
+            <h1>@Model.Title</h1>
+            @if (!string.IsNullOrEmpty(@Model.Description)) {
+              <h2>@Model.Description</h2>
+            }
+            <p>
+              This report provides a series of maps and tables describing the pattern of ecological features in the seascape.
+            </p>
+            <p>@DateTime.Now</p>
+          </div>
+        </div>
+        </div>
+
+        <div id="report-sections">
+
+          <div id="intro-section" class="report-section">
+            <div class="row">
+              <div class="col-md-12">
+                <h2>Introduction</h2>
+                <hr/>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-7">
+                <div id="test-map" class="section-map"></div>
+                <p>Marine LEFT has been developed to provide a simple interface to spatial datasets to improve situational awareness among industries operating in the global marine environment, and to aid in minimising the environmental impact of operations.</p>
+                <p>The tool processes a series of high-quality open access environmental datasets using standardised algorithms to produce maps at 1km resolution.</p>
+                <p>This report briefly describes the methods and datasets used to generate the maps for the specified area of interest.</p>
+                <p>Please email support@left.ox.ac.uk if you have any questions about this report.</p>
+                <h2>Location</h2>
+                <p><strong>Specified Area of Interest</strong><br/> Latitude:@Model.South to @Model.North Decimal Degrees. <br/>Longitude: @Model.West to @Model.East Decimal Degrees.</p>
+                <svg id="pinpoint-map"></svg>
+                <script>
+                  $(function() {
+                    drawGlobalPinpointMap("pinpoint-map", @Model.North, @Model.South, @Model.East, @Model.West)
+                  });
+                </script>
+              </div>
+              <div class="col-md-5">
+                 <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/static/geojson(%7B%0A%22type%22%3A%22Feature%22%2C%0A%22properties%22%3A%7B%22stroke%22:%22%23FF0000%22%2C%22fill-opacity%22:0.2%7D%2C%0A%22geometry%22%3A%7B%0A%22type%22%3A%22Polygon%22%2C%0A%22coordinates%22%3A%5B%5B%5B @Model.West%2C @Model.South%5D%2C%5B @Model.West%2C @Model.North%5D%2C%5B @Model.East%2C @Model.North%5D%2C%5B @Model.East%2C @Model.South%5D%2C%5B @Model.West%2C @Model.South%5D%5D%5D%0A%7D%0A%7D))/auto/450x450@2x?access_token=@siteConfig.MapboxAccessToken&logo=false" style="width: 100%;"/>
+                 <p><br/><strong>Open Street Map</strong> in specified area of interest (red rectangle).<br/>Ramm &amp; Topf (2011) http://planet.openstreetmap.org</p>
+              </div>
+
+            </div>
+          </div>
+
+        <div class="report-section" id="species_occurrence-section">
+          <div class="row">
+            <div class="col-md-12">
+              <h2>Biodiversity records</h2>
+              <hr/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-5">
+            
+              <p>Georeferenced species occurrence records were retrieved from the Global Biodiversity Information Facility (GBIF; www.gbif.org).  The map shows the distribution of biodiversity records in the area of interest plus a 3-degree buffer.  Any duplicate records (of the same species more than once at the same location) have been removed.</p>
+              @{ 
+                var gbiflist = Model.TableListResults.FirstOrDefault(m => m.Name == "gbif_count");
+              }
+                  
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Class</th>
+                    <th>Species</th>
+                    <th>Occurrences</th>
+                  </tr>
+                </thead>
+                  
+                <tbody>
+                  @if(gbiflist != null) {
+                    @foreach (KeyValuePair<string, string> entry in occurrenceColours) {
+                      var gbifCount = gbiflist.Data.Rows.FirstOrDefault(m => m["taxon"] == entry.Key);
+                      var colour = occurrenceColours[entry.Key];
+                      var prettyTaxon = speciesCategories[entry.Key.ToLower()];
+                      @if(gbifCount != null) {
+                        <tr>
+                          <td><svg height="20" width="20"><circle r="4" cx="10" cy="10" stroke="@colour" fill="none"></circle></svg></td>
+                          <td>@prettyTaxon</td>
+                          <td>@gbifCount["species"]</td>
+                          <td>@gbifCount["count"]</td>
+                        </tr>
+                      } else {
+                        <tr>
+                          <td><svg height="20" width="20"><circle r="4" cx="10" cy="10" stroke="@colour" fill="none"></circle></svg></td>
+                          <td>@prettyTaxon</td>
+                          <td>0</td>
+                          <td>0</td>
+                        </tr>
+                      }
+                    }
+                  }
+                </tbody>
+              </table>
+
+            </div>
+            <div class="col-md-7">
+            <div id="gbif_list-map" class="section-map"></div>
+            <p><br/><strong>Biodiversity Records</strong> from the Global Biodiversity Information Facility (GBIF) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer.  Land is shown in grey. </p>
+            </div>
+          </div>
+          <div class="create-script">
+            @{
+                var occurrence = Model.TableListResults.FirstOrDefault(m => m.Name == "gbif_list");
+                if (occurrence != null) {
+                  <script>
+                    $(function() {
+                      var north = @Model.North;
+                      var south = @Model.South;
+                      var east = @Model.East;
+                      var west = @Model.West;
+
+                      north = Math.min(90, north + 3);
+                      south = Math.max(-90, south - 3);
+                      east = Math.min(180, east + 3);
+                      west = Math.max(-180, west - 3);
+
+                      var plot = new SpatialPlot("gbif_list", {north:north,south:south,east:east,west:west});
+                      plot.setup();
+                      plot.addGraticule();
+                      plot.addWireframe();
+                      plot.addPointLayer(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)));
+                      plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
+
+                      populateDataSources(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)));
+                    });
+                  </script>
+                }
+              }
+          </div>
+        </div>
+      </div>
+
+          @foreach (var executableResult in Model.RawResults) {
+            if(@executableResult.Name != "migratory") {
+            var paletteUrl = hasPalette[executableResult.Name] ? "/palettes/" + executableResult.Name + ".json" : null;
+
+          <div class="report-section" id="@(executableResult.Name)-section">
+            <div class="row">
+              <div class="col-md-12">
+                <h2>@prettyTitles[executableResult.Name]</h2>
+                <hr/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+
+                <p>
+                  @Html.Raw(descriptions[executableResult.Name])
+                </p>
+
+                <div class="panel panel-default legend">
+                  <div class="panel-heading">@units[executableResult.Name]</div>
+                  <div class="panel-body">
+                    <div id="@executableResult.Name-scale" class="section-scale"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-7">
+              <div id="@executableResult.Name-map" class="section-map"></div>
+              <p>@mapLegend[executableResult.Name]</p>
+              </div>
+            </div>
+            <div class="create-script">
+              <script>
+                $(function() {
+                  var north = @Model.North;
+                  var south = @Model.South;
+                  var east = @Model.East;
+                  var west = @Model.West;
+
+                  if("@executableResult.Name" == "ecoregions") {
+                    north = Math.min(90, north + 3);
+                    south = Math.max(-90, south - 3);
+                    east = Math.min(180, east + 3);
+                    west = Math.max(-180, west - 3);
+                  }
+
+                  var plot = new SpatialPlot("@executableResult.Name", {north:north, south:south, east:east, west:west});
+                  plot.setup();
+                  plot.addGraticule();
+                  plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), @noDataValue[executableResult.Name], "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name]);
+                  plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
+                });
+              </script>
+            </div>
+          </div>
+          }
+          }
+
+        <div class="report-section">
+          <div class="row">
+            <div class="col-md-12">
+              
+              <h3>References</h3>
+              <ul class="reference-list">
+                <li>Flanders Marine Institute (2018). Maritime Boundaries Geodatabase: Maritime Boundaries and Exclusive Economic Zones (200NM), version 10. Available online at http://www.marineregions.org/ https://doi.org/10.14284/312.</li>
+                <li>IUCN (2018) Red list of threatened species.  Version 2018-1</li>
+                <li>Ramm F, Topf J, Chilton S (2011) Open Street Map: using and enhancing the free map of the world.  UIT Cambridge.</li>
+                <li>Riede, K (2004). Global register of migratory species: from global to regional scales: final report of the R&amp;D-Projekt 808 05 081, Federal Agency for Nature Conservation.</li>
+                <li>Spalding MD, Fox HE, Allen GR, Davidson N, Ferdana ZA, Finlayson M, Halpern BS, Jorge MA, Lombana A, Martin KD, McManus E, Molnar J, Recchia CA, Robertson J (2007) Bioscience 57: 573-583</li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="row">
+            <div class="col-md-12">
+              
+              <div id="vulnerable-species" class="appendix">
+              <h2>Appendix 1 - Vulnerable species</h2>
+              <hr/>
+
+              <p>The IUCN Redlist of Threatened Species (IUCN 2018) includes the following species of corals, fish, turtles, sea birds and marine mammals that have been modelled to be potentially present in the specified area of interest (NT = Near Threatened, VU = Vulnerable, EN = Endangered, CR = Critically Endangered)</p>
+
+              <ul id="vulnerable-species-list" class="list-group row appendix-list">
+
+              @{
+                var vulnerable = Model.TableListResults.FirstOrDefault(m => m.Name == "vulnerable_species_list");
+                if (vulnerable != null) {
+                  @foreach (var r in vulnerable.Data.Rows) {
+                    var latinName = r["string"].Split('(')[0];
+                    var bracket = "(" + r["string"].Split('(')[1];
+                    <li class="list-group-item col-xs-4"><em>@latinName</em> @bracket</li>
+                  }
+                }
+              }
+
+              </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="row">
+            <div class="col-md-12">
+
+              <div id="migratory-species" class="appendix">
+              <h2>Appendix 2 - Migratory Species</h2>
+              <p>The following migratory species identified in the Global register of Migratory Species (GROMS; Riede et al 2004) have migration routes which intersect the specified area of interest.</p>
+              <ul id="migratory-species-list" class="list-group row appendix-list">
+
+              @{
+                var migratory = Model.TableListResults.FirstOrDefault(m => m.Name == "migratory_species_list");
+                if (migratory != null) {
+                  @foreach (var r in migratory.Data.Rows) {
+                    <li class="list-group-item col-xs-3"><em>@r["latin"]</em></li>
+                  }
+                }
+              }
+
+              </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="row">
+            <div class="col-md-12">
+              <div id="data-sources" class="appendix">
+              <h2>Appendix 3 - Data Sources</h2>
+              <p>Georeferenced species records obtained from the GBIF occurrence API (http://www.gbif.org/occurrence) are shared according to the GBIF Data Use Agreement, which includes the provision that users of any data accessed through or retrieved via the GBIF Portal will always give credit to the original data publishers. The following list identifies the data sources for all occurrence records which have been used in this analysis.</p>
+              <ul id="data-source-list" class="list-group row appendix-list"></ul>
+              <script>
+                $(function() { 
+                  populateDataSources();
+                });
+              </script>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+
+    </html>

@@ -8,8 +8,12 @@
       <div class="home-jumbo-left">
         <h1>Mapping tool for biodiversity risk assessments</h1>
         <div class="home-jumbo-buttons">
-          <a href="https://player.vimeo.com/video/162981267" class="btn btn-lg btn-outline popup-vimeo"><span class="glyphicon glyphicon-play"></span> Watch video</a>
-          <a href="/samples/puntarenas.pdf" target="_blank" class="btn btn-lg btn-outline" onclick="ga('send', 'event', 'Samples', 'view', 'Punterenas Sample Report');">Sample Report</a>
+          @if (siteConfig.Value.VimeoPromotionVideoId != 0) {
+            <a href="https://player.vimeo.com/video/@siteConfig.Value.VimeoPromotionVideoId" class="btn btn-lg btn-outline popup-vimeo"><span class="glyphicon glyphicon-play"></span> Watch video</a>
+          }
+          @if (siteConfig.Value.SampleReportEnabled) {
+            <a href="/samples/sample-report.pdf" target="_blank" class="btn btn-lg btn-outline" onclick="ga('send', 'event', 'Samples', 'view', 'Sample Report');">Sample Report</a>
+          }
           <a asp-action="Index" asp-controller="Dashboard" class="btn btn-lg btn-primary">Get Started</a>
       </div>
       <!--<div class="left-feature-followon">
