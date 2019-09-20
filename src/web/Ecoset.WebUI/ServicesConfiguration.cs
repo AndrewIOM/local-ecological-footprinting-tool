@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Ecoset.GeoTemporal.Remote;
 using Ecoset.WebUI.Data;
 using Ecoset.WebUI.Models;
@@ -55,6 +56,10 @@ namespace Ecoset.WebUI {
             services.Configure<PaymentOptions>(configuration);
             services.Configure<SeedOptions>(configuration.GetSection("Seed"));
             services.ConfigureOptions(typeof(UIConfigureOptions));
+            services.Configure<TextLookup>((settings) =>
+            {
+                configuration.GetSection("CustomText").Bind(settings);
+            });
 
             services.AddAuthorization(options =>
             {
@@ -158,6 +163,11 @@ namespace Ecoset.WebUI {
             var filesProvider = new ManifestEmbeddedFileProvider(GetType().Assembly, basePath);
             options.FileProvider = new CompositeFileProvider(options.FileProvider, filesProvider);
         }
+    }
+
+    public class TextLookup
+    {
+        public Dictionary<string, string> Values {get;set;}
     }
 
 }

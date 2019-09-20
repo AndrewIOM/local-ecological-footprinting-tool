@@ -1,0 +1,29 @@
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                @await Html.PartialAsync("_FooterLeft")
+            </div>
+            <div class="col-md-3">
+                <h4>Information</h4>
+                <ul>
+                    <li><a asp-action="Terms" asp-controller="Home" asp-area="Interpretation">Terms of Supply</a></li>
+                    <li><a asp-action="TermsWeb" asp-controller="Home" asp-area="Interpretation">Website Terms</a></li>
+                    <li><a asp-action="Privacy" asp-controller="Home" asp-area="Interpretation">Privacy Policy</a></li>
+                    <li><a asp-action="Contact" asp-controller="Home" asp-area="Interpretation">Enquiries and Support</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h4>About</h4>
+                <p>@customText.Value.Values["AboutShort"]</p>
+                <p><a asp-action="About" asp-controller="Home" asp-area="Interpretation">Learn More</a></p>
+            </div>
+        </div>
+        <div class="row">
+            <hr>
+            <div class="col-md-12">
+                <p style="text-align:center;">@siteConfig.Value.InstanceName (@siteConfig.Value.InstanceShortName) &copy; @DateTime.Now.Year - @siteConfig.Value.Organisation.</p>
+            </div>
+        </div>
+    </div>
+</footer>
