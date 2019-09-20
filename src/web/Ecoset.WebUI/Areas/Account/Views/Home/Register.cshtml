@@ -1,0 +1,109 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    ViewData["ReturnUrl"] = "/Dashboard";
+}
+
+<h2>@ViewData["Title"].</h2>
+<h4>Create a new account</h4>
+<hr/>
+
+<form asp-controller="Home" asp-action="Register" asp-area="Account" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="FirstName" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Surname" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="Surname" class="form-control" />
+            <span asp-validation-for="Surname" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="OrganisationName" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="OrganisationName" class="form-control" />
+            <span asp-validation-for="OrganisationName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="OrganisationType" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <select asp-for="OrganisationType" class="form-control">
+                <option value="1">Commercial</option>
+                <option value="2">Non-Commercial</option>
+            </select>
+            <span asp-validation-for="OrganisationType" class="text-danger"></span>
+        </div>
+    </div>
+    <br/>
+    <div class="form-group">
+        <label asp-for="Email" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+            <p>A strong password is required for your LEFT account. It must include at least one upper-case letter, one lower-case letter, a number, and a symbol.</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="ConfirmPassword" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="ConfirmPassword" class="form-control" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="TermsAndConditions" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="TermsAndConditions" class="form-control" />
+            <span asp-validation-for="TermsAndConditions" class="text-danger"></span>
+        </div>
+    </div>
+
+    <h4>Communication Preferences</h4>
+    <hr />
+    <div class="form-group">
+        <label asp-for="EmailOnJobCompletion" class="col-md-4 control-label"></label>
+        <div class="col-md-7">
+            <input asp-for="EmailOnJobCompletion" class="form-control" />
+            <span asp-validation-for="EmailOnJobCompletion" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="AgreedToCommunication" class="col-md-4 control-label"></label>
+        <div class="col-md-7">
+            <input asp-for="AgreedToCommunication" class="form-control" />
+            <span asp-validation-for="AgreedToCommunication" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-4 col-md-8">
+            <button type="submit" class="btn btn-default">Register</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+    // extend range validator method to treat checkboxes differently
+    var defaultRangeValidator = $.validator.methods.range;
+    $.validator.methods.range = function(value, element, param) {
+        if(element.type === 'checkbox') { return element.checked;
+        } else { return defaultRangeValidator.call(this, value, element, param); }
+    }
+    </script>
+}

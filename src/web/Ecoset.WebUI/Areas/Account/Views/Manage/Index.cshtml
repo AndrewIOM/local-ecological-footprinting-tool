@@ -1,0 +1,36 @@
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Manage your account";
+    Layout = "_DashboardLayout";
+}
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Personal Information:</dt>
+        <dd>
+            <a asp-area="Account" asp-action="UpdatePersonalDetails" asp-controller="Manage">Update your details</a>
+        </dd>
+        <dt>Password:</dt>
+        <dd>
+            @if (Model.HasPassword)
+            {
+                <a asp-area="Account" asp-controller="Manage" asp-action="ChangePassword" class="btn-bracketed">Change</a>
+            }
+            else
+            {
+                <a asp-area="Account" asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">Create</a>
+            }
+        </dd>
+        <dt>External Logins:</dt>
+        <dd>
+            <p>You can log in to LEFT using your account from other services, for example a Microsoft account connected to your business. You currently have @Model.Logins.Count external logins connected.</p>
+            <a asp-area="Account" asp-controller="Manage" asp-action="ManageLogins" class="btn-bracketed">Manage</a>
+        </dd>
+        <dt>Communications:</dt>
+        <dd>
+            <a asp-area="Account" asp-action="UpdateCommunicationDetails" asp-controller="Manage">Update your communication preferences</a>
+        </dd>
+
+    </dl>
+</div>

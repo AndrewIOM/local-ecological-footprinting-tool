@@ -1,0 +1,164 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+@section fullWidthTop {
+  <section id="home-jumbo" style="background-image: url(/images/banner.jpg); height: 290px;">
+    <div class="container">
+      <div class="home-jumbo-left">
+        <h1>Mapping tool for biodiversity risk assessments</h1>
+        <div class="home-jumbo-buttons">
+          <a href="https://player.vimeo.com/video/162981267" class="btn btn-lg btn-outline popup-vimeo"><span class="glyphicon glyphicon-play"></span> Watch video</a>
+          <a href="/samples/puntarenas.pdf" target="_blank" class="btn btn-lg btn-outline" onclick="ga('send', 'event', 'Samples', 'view', 'Punterenas Sample Report');">Sample Report</a>
+          <a asp-action="Index" asp-controller="Dashboard" class="btn btn-lg btn-primary">Get Started</a>
+      </div>
+      <!--<div class="left-feature-followon">
+        <span>Learn More</span>
+        <span class="glyphicon glyphicon-chevron-down"></span>
+      </div>-->
+      </div>
+    </div>
+  </section>
+
+  <section id="home-features" style="padding: 5em 0;text-align:center;">
+    <div class="container">
+      <div class="row" style="margin-bottom:3em;">
+        <div class="col-md-8 col-md-offset-2">
+          <h2>Supporting <a asp-action="Pricing">cost effective</a> decisions for environmental risk management</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <div class="left-feature">
+            <div class="left-feature-icon">
+              <span class="glyphicon glyphicon-scale"></span>
+            </div>
+            <h3>A Simple Index</h3>
+            <p>For a chosen area, the LEFT tool assembles relevant environmental data from global databases. Within minutes, it produces a map displaying a simple index of ecological risk.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <div class="left-feature">
+            <div class="left-feature-icon">
+              <span class="glyphicon glyphicon-education"></span>
+            </div>
+            <h3>World-Class Algorithms</h3>
+            <p>The LEFT tool uses algorithms formulated by researchers at the University of Oxford to assess the pattern of ecological features across a chosen area. These algorithms calculate the ecological risk index. <!--Ecological features determined are i) numbers of globally threatened plant and animal species ii) biodiversity iii) habitat fragmentation iv) wetland habitat connectivity v) numbers of migratory species and vi) vegetation resilience to climatic perturbations --></p>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <div class="left-feature">
+            <div class="left-feature-icon">
+              <span class="glyphicon glyphicon-globe"></span>
+            </div>
+            <h3>Local Assessments, Global Data</h3>
+            <p>Any landscape in the world can be assessed - up to approximately 100,000km<sup>2</sup> at a time. Output maps include information on: risk assessment; biodiversity; vulnerability; intactness; connectivity and resilience. <!--Scores for the ecological features within the chosen area are calculated for every 30m giving the finest resolution possible to enable local assessments.--></p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section id="home-science" style="background: #f9f9f9;padding: 5em 0;text-align:center;">
+    <div class="container">
+      <div class="col-md-8 col-md-offset-2" style="margin-bottom:0">
+          <h2>The LEFT Process</h2>
+          <p>LEFT assembles data, performs an analysis and generates a report.</p>
+    </div>
+    <div class="row">
+<div class="col-md-12">
+          <img src="/images/steps.png" class="img-responsive" alt=""/>
+  </div>
+      </div>
+  </section>
+
+    <section id="home-oxford" style="padding: 5em 0;text-align:center;">
+      <div class="container">
+        <div class="col-md-8 col-md-offset-2">
+          <h2>A decision support tool for planning</h2>
+          <p>The algorithms for LEFT have been developed by our team at the University of Oxford, UK.<p>
+            <br/>
+        </div>
+        <div class="row" style="text-align:left">
+          <div class="col-md-6">
+            <ul class="spaced-list">
+              <li>Algorithms developed from scientific literature</li>
+              <li>Globally consistent, up-to-date, high spatial resolution data</li>
+              <li>Provides geospatial data to download and use in a desktop Geographical Information System</li>
+              <li>Identifies potential operational and reputational risks</li>
+              <li>Helps inform land use planning</li>
+              <li>Supports corporate social responsibility reporting</li>
+            </ul>
+          </div>
+            <div class="col-md-6" style="text-align:center">
+              <img src="/images/lab-group.jpg" alt="Oxford Long-Term Ecology Lab" style="max-width:100%;height:200px;background-color:lightgrey;"/>
+            </div>
+        </div>
+      </div>
+  </section>
+
+  <section id="home-benefits" style="background: #f9f9f9;padding: 5em 0;text-align:center;">
+      <div class="container">
+        <div class="col-md-8 col-md-offset-2" style="margin-bottom:2em;">
+          <h2>Used by Industry, Public Sector and Non-Governmental Organisations (NGOs)</h2>
+        </div>
+        <div class="row" style="text-align:left">
+          <div class="col-md-6 pull-right">
+            <ul class="spaced-list">
+              <li><strong>Commercial: </strong>Infrastructure, Oil and Gas, Mining, Agribusiness, Tourism, Environmental Consultancy.</li>
+              <li><strong>Public Sector: </strong>Local and National Government, International Agencies, Scientific Research.</li>
+              <li><strong>NGOs: </strong>Environmental, International Development.
+            </ul>
+          </div>
+            <div class="col-md-6" style="text-align:center">
+              <img src="/images/report-user.jpg" alt="A LEFT user viewing the report" style="max-width:100%;height:200px;background-color:lightgrey;"/>
+            </div>
+        </div>
+      </div>
+  </section>
+
+  <section id="home-get-started" style="color:#fff;padding: 5em 0;text-align:center;">
+      <div class="container">
+        <div class="col-md-8 col-md-offset-2">
+          <a asp-action="Index" asp-controller="Dashboard" class="btn btn-lg btn-primary">Register for Free</a>
+          <a asp-action="Index" asp-controller="Dashboard" class="btn btn-lg btn-default">Read more</a>          
+        </div>
+      </div>
+  </section>
+}
+
+@section scripts {
+      <environment names="Development">
+        <script src="/lib/magnific-popup/jquery.magnific-popup.min.js"></script>
+        <link rel="stylesheet" href="~/lib/magnific-popup/magnific-popup.css" />
+      </environment>
+      <environment names="Staging,Production">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css" />
+      </environment>
+  <script src="/scripts/popup.js"></script>
+}
+
+<script type="text/javascript">
+$(document).ready(function(){     
+  $('.navbar-default').addClass('navbar-transparent');
+  $('body').css('padding-top', '0');  
+   var scroll_start = 0;
+   var startchange = $('#home-jumbo');
+   var offset = startchange.offset();
+    if (startchange.length){
+   $(document).scroll(function() { 
+      scroll_start = $(this).scrollTop();
+      if(scroll_start > offset.top) {
+          $('.navbar-default').removeClass('navbar-transparent');
+       } else {
+          $('.navbar-default').addClass('navbar-transparent');
+       }
+   });
+    }
+});
+</script>

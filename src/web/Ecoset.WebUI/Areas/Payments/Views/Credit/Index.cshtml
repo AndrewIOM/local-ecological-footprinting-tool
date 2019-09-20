@@ -1,0 +1,62 @@
+@model Ecoset.WebUI.Models.CreditViewModels.IndexViewModel
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Credits and Purchases";
+}
+
+<div class="row">
+    @* Credits Pane *@
+    <div class="col-md-8">
+<p>Credits are used to purchase premium analysis data on a pay-as-you-go basis. We use WorldPay as our card payment provider, with 256-bit, secure SSL encryption.
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default" id="credits-pane">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-piggy-bank"></span> Your Balance</h3>
+            </div>
+            <div class="panel-body" style="text-align:center;">
+                <span id="credit-count" style="font-size:3em;">@Model.CurrentCredits</span><br/><span>Credits</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3>Pay-As-You-Go</h3>
+<hr/>
+<p>Purchased credits will be added immediately to your account. LEFT credits can be purchased using a credit or debit card. Accepted payment methods are: <strong>Visa, Visa debit, Mastercard, and American Express</strong>.</p>
+<a class="btn btn-primary" asp-action="Purchase" asp-controller="Credit"><span class="glyphicon glyphicon-plus"></span> Add Pay As You Go Credits</a><br/>
+<br/>
+<img src="/images/worldpay-cards-logo.png" alt="Accepted Cards" style="max-width:100%;"/><br/>
+<p></p>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Purchase History</h3>
+        <hr/>
+        @if (Model.Purchases.Count == 0) {
+            <span>After you have purchased credits, your previous purchases will appear here.</span>
+            } else {
+                <p>The details of your previous orders are displayed below. Thank you for your custom.</p>
+                <table class="table">
+                    <thead>
+                        <th>Time</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Amount Paid (including VAT)</th>
+                        <th>Actions</th>
+                    </thead>
+                    <tbody class="table-hover">
+                        @foreach (var purchase in Model.Purchases) {
+                            <tr>
+                            <td>@purchase.Time</td>
+                            <td>Credit(s)</td>
+                            <td>@purchase.Quantity</td>
+                            <td>£@purchase.TotalSum</td>
+                            <td><a href="@Url.Action("Detail","Credit", new { id = @purchase.Id })" class="btn btn-default">View</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+    </div>
+</div>

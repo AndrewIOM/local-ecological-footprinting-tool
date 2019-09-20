@@ -1,0 +1,8 @@
+@model Ecoset.WebUI.Models.HomeViewModels.ContactFormViewModel
+@{
+    ViewData["Title"] = "Thank you for your message";
+}
+<h2>@ViewData["Title"].</h2>
+
+<p>Your enquiry has been sent to @siteConfig.Value.InstanceName support, who will respond as soon as possible. Thank you for your continued interest in @siteConfig.Value.InstanceName</p>
+<a asp-action="Index" asp-controller="Home" class="btn btn-default">Return to @siteConfig.Value.InstanceShortName home</a>

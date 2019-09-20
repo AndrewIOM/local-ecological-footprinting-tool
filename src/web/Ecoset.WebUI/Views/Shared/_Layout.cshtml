@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @siteConfig.Value.InstanceName</title>
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/styles/main.css" />
+        <script src="~/lib/jquery/jquery.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.4.1.min.js"
+                asp-fallback-src="~/lib/jquery/jquery.min.js"
+                asp-fallback-test="window.jQuery">
+        </script>
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/styles/main.css" asp-append-version="true" />
+    </environment>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+    @RenderSection("headInclude", required: false)
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand" asp-area="Interpretation">
+                    <img class="logo-black" src="/images/logo-black.png" alt="@siteConfig.Value.InstanceName logo"/>
+                    <img class="logo-white" src="/images/logo-white.png" alt="@siteConfig.Value.InstanceName logo"/>
+                </a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-left">
+                    <li><a asp-controller="Home" asp-action="HowItWorks" asp-area="Interpretation">How @siteConfig.Value.InstanceShortName Works</a></li>
+                    <li><a asp-controller="Home" asp-action="Pricing" asp-area="Interpretation">Pricing</a></li>
+                    <li><a asp-controller="Docs" asp-action="Index" asp-area="Interpretation">User Guide</a></li>
+                </ul>
+                @await Html.PartialAsync("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    @RenderSection("fullWidthTop", required: false)
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+    </div>
+
+    @await Html.PartialAsync("_Footer")
+    @await Html.PartialAsync("_Analytics")
+
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+    <script>
+    window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+        palette: {
+            popup: {
+                background: "#333"
+            },
+            button: {
+                background: "#A93E71"
+            }
+        },
+        position: "bottom-right",
+        content: {
+            message: "@siteConfig.Value.InstanceShortName uses cookies to give you the best experience",
+            href: '@Url.Action("TermsWeb", "Home")'
+        }
+    })});
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

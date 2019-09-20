@@ -1,0 +1,272 @@
+@model Ecoset.WebUI.Models.DashboardViewModels.IndexViewModel
+@inject IOptions<Ecoset.WebUI.Options.PaymentOptions> paymentOptions
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Dashboard";
+    ViewData["SubTitle"] = Model.UserName;
+}
+
+@section headInclude {
+    <link href="/lib/bootstrap-tour/css/bootstrap-tour.min.css" rel="stylesheet" />
+    <script src="/lib/bootstrap-tour/js/bootstrap-tour.min.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.css' rel='stylesheet' />
+}
+
+<div class="row">
+    <div class="col-md-12">
+    </div>
+</div>
+
+<div class="row">
+    @* Map Pane *@
+    <div class="col-md-12">
+        <div class="panel panel-default" id="analyses-map-pane">
+            <div class="panel-heading">
+                <h3 class="panel-title"><a asp-action="Index" asp-controller="Home" asp-area="Analysis">My @siteConfig.Value.InstanceShortName Analyses</a></h3>
+            </div>
+            <div class="panel-body" style="padding:0;">
+                <div id='map' style="height:20em;"></div>
+                <a asp-action="Submit" asp-controller="Home" asp-area="Analysis" class="btn btn-primary btn-sm" style="position: absolute;top: 0.5em;right: 1.8em;" type="button"><span class="glyphicon glyphicon-plus"></span> New Analysis</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    @* Credits / Subscriptions Pane *@
+    <div class="col-md-4">
+        <div class="panel panel-default" id="credits-pane">
+            @if (paymentOptions.Value.PaymentsEnabled) {
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-piggy-bank"></span> <a asp-action="Index" asp-controller="Credit" asp-area="Payments"> Balance</a></h3>
+                </div>
+                <div class="panel-body" style="text-align:center;">
+                    <span id="credit-count" style="font-size:3em;"></span><br/><span>Credits</span>
+                </div>
+            } else {
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-console"></span> <a asp-action="Index" asp-controller="Home" asp-area="Administration"> API Usage</a></h3>
+                </div>
+                <div class="panel-body" style="text-align:center;">
+                    <span id="subscription-count" style="font-size:3em;">0</span><br/><span>Subscriptions</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    @* Jobs Pane *@
+    <div class="col-md-8">
+        <div class="panel panel-default" id="activity-pane">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-flag"></span> <a asp-action="Index" asp-controller="Notification" asp-area="Analysis">Recent Activity</a></h3>
+            </div>
+            <div class="panel-body">
+                <!-- ko if: notifications().length > 0-->
+                <table class="table" >
+                    <thead>
+                        <th>Time</th>
+                        <th>Event</th>
+                    </thead>
+                    <tbody data-bind="foreach: notifications">
+                        <tr>
+                            <td data-bind="text: friendlyTime"></td>
+                            <td>
+                                <!-- ko if: linkUrl != null-->
+                                <a data-bind="text: message, attr: {href: linkUrl}"></a>
+                                <!-- /ko -->​
+                                <!-- ko if: linkUrl == null-->
+                                <span data-bind="text: message"></span>
+                                <!-- /ko -->​
+                                </td>
+                        </tr>
+                        <!--<tr>
+                            <td>10 hours ago</td>
+                            <td>You are running low on @siteConfig.Value.InstanceShortName credits. You only have enough for 3 more analyses.</td>
+                        </tr>
+                        <tr>
+                            <td>10 hours ago</td>
+                            <td>Your analysis 'Test analysis' was successfully submitted.</td>
+                        </tr>-->
+                    </tbody>
+                </table>
+                <!-- /ko -->​
+                <!-- ko if: notifications().length == 0-->
+                <span>No recent activity</span>
+                <!-- /ko -->​
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <environment names="Development">
+        <script src="~/lib/knockout/knockout-min.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
+    </environment>
+}
+
+<script type="text/javascript">
+function DashboardViewModel() {
+    var self = this;
+    self.notifications = ko.observableArray([]);
+
+    self.updateNotifications = function() {
+      $.ajax({
+        url: "/Notification/GetRecent?count=3",
+        cache: false,
+        success: function(nlist)
+        {
+          self.notifications(nlist);
+        }
+      });
+    }
+}
+
+$(document).ready(function() {
+  var vm = new DashboardViewModel();
+  window.setInterval(vm.updateNotifications,15000);
+  vm.updateNotifications();
+  ko.applyBindings(vm);
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    //Setup Job Map Panel
+    mapboxgl.accessToken = '@siteConfig.Value.MapboxAccessToken';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/outdoors-v11',
+        center: [20, 50.50],
+        zoom: 1
+    });
+
+    //Display Jobs on Map
+    $.ajax({
+    url: '@Url.Action("Index", "Home", new { area = "Analysis" })',
+    cache: false,
+    success: function(json){
+        //Add jobs to map
+        map.on('load', function () {
+
+            map.addSource('10m-bathymetry-81bsvj', {
+            type: 'vector',
+            url: 'mapbox://mapbox.9tm8dx88'
+            });
+            
+            map.addLayer({
+            "id": "10m-bathymetry-81bsvj",
+            "type": "fill",
+            "source": "10m-bathymetry-81bsvj",
+            "source-layer": "10m-bathymetry-81bsvj",
+            "layout": {},
+            "paint": {
+            "fill-outline-color": "hsla(337, 82%, 62%, 0)",
+            // cubic bezier is a four point curve for smooth and precise styling
+            // adjust the points to change the rate and intensity of interpolation
+            "fill-color": [ "interpolate",
+            [ "cubic-bezier",
+            0, 0.5,
+            1, 0.5 ],
+            ["get", "DEPTH"],
+            200,  "#78bced",
+            9000, "#15659f"
+            ]
+            }
+            }, 'land-structure-polygon');
+
+            //Create data source
+            var sourceObj = {
+            data: {
+                "type": "FeatureCollection",
+                "features": [{}]
+            }
+            };
+
+            //Convert jobs to features
+            var len = json.length,
+                features = [],
+                maxLat = -90, minLat = 90, maxLon = -180, minLon = 180,
+                i;
+
+            for ( i=0; i < len; i+=1 ) {
+                //Calculate bounds for map
+                if (json[i].latitudeNorth > maxLat) { maxLat = json[i].latitudeNorth };
+                if (json[i].latitudeSouth < minLat) { minLat = json[i].latitudeSouth };
+                if (json[i].longitudeWest < minLon) { minLon = json[i].longitudeWest };
+                if (json[i].longitudeEast > maxLon) { maxLon = json[i].longitudeEast };
+
+                features.push({
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[
+                            [json[i].longitudeWest, json[i].latitudeNorth],
+                            [json[i].longitudeWest, json[i].latitudeSouth],
+                            [json[i].longitudeEast, json[i].latitudeSouth],
+                            [json[i].longitudeEast, json[i].latitudeNorth]
+                        ]]
+                    }
+                });
+            }
+
+            sourceObj._data.features = features;
+            map.addSource('jobAreas', sourceObj); // add
+
+            //Display layer on map
+            map.addLayer({
+                'id': 'route',
+                'type': 'fill',
+                'source': 'jobAreas',
+                'layout': {},
+                'paint': {
+                    'fill-color': '#A93E71',
+                    'fill-opacity': 0.8
+                }
+            });
+
+            if (len > 0) {
+            map.fitBounds([
+                    [minLon - 0.1, maxLat + 0.1],
+                    [maxLon + 0.1, minLat - 0.1]
+                ]);
+            }
+        });
+    }
+    });
+});
+</script>
+
+<script type="text/javascript">
+// Instance the tour
+var tour = new Tour({
+  steps: [
+  {
+    element: "#analyses-map-pane",
+    title: "Welcome to @siteConfig.Value.InstanceShortName",
+    content: "This is your dashboard, where you can keep track of your analyses.",
+    placement: "left"
+  },
+  {
+    element: "#analyses-map-pane",
+    title: "Recent jobs",
+    content: "Once you have submitted some analyses, your most recent will appear on this map. We've already added a sample analysis for you to look at.",
+    placement: "bottom"
+  },
+  {
+    element: "#activity-pane",
+    title: "Check our recent activity",
+    content: "Any recent activity, such as completed jobs, will appear here.",
+    placement: "left"
+  }
+]});
+
+// Initialize the tour
+tour.init();
+
+// Start the tour
+tour.start();
+</script>

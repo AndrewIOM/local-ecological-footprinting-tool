@@ -1,0 +1,40 @@
+@inject IOptions<Ecoset.WebUI.Options.PaymentOptions> paymentOptions
+
+<nav class="sidenav" role="navigation">
+    <ul>
+    <li><a asp-action="Index" asp-controller="Dashboard" asp-area="Interpretation"><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a><span class="toggle"></li>
+    <li><a asp-action="Index" asp-controller="Notification" asp-area="Analysis"><span class="glyphicon glyphicon-flag"></span> Notifications</a></li>
+    <li id="job-sidenav-item"><a asp-action="Index" asp-controller="Home" asp-area="Analysis"><span class="glyphicon glyphicon-tasks"></span> My Analyses</a> <span class="label label-Processing" id="active-job-count" style="display:none">? in progress</span></li>
+    @if (paymentOptions.Value.PaymentsEnabled) {
+        <li><a asp-action="Index" asp-controller="Credit" asp-area="Payments"><span class="glyphicon glyphicon-piggy-bank"></span> Credits and Purchases</a></li>
+    } else {
+        <li><a asp-action="DataPackages" asp-controller="Dashboard" asp-area="Interpretation"><span class="glyphicon glyphicon-console"></span> API Access</a></li>
+    }
+    @if (User.IsInRole("Admin")) {
+        <li><a asp-action="Index" asp-controller="Home" asp-area="Administration"><span class="glyphicon glyphicon-cog"></span> Administration</a></li>
+    }
+    </ul>
+</nav>
+
+<script type="text/javascript">
+updateJobCount = function() {
+    $.ajax({
+    url: '@Url.Action("Count", "Home", new { Area = "Analysis" })?status=Processing',
+    cache: false,
+    success: function(jobCount) {
+        console.log('Jobs processing: ' + jobCount);
+        if (jobCount > 0) {
+            $('#active-job-count').text(jobCount + " in progress");
+            $('#active-job-count').show();
+        } else {
+            $('#active-job-count').hide();
+        }
+    }
+    })
+}
+
+$(document).ready(function() {
+    updateJobCount();
+    window.setInterval(updateJobCount, 30000);
+})
+</script>

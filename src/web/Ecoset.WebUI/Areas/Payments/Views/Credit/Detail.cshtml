@@ -1,0 +1,63 @@
+@model Ecoset.WebUI.Models.Purchase
+
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Purchase Confirmation: #ECOST" + Model.Id;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <p>Thank you for the order you made on @Model.Time.ToString("dd-MM-yyyy"). This is a confirmation that your order was successfully recieved, and the requested LEFT credits were added immediately to your LEFT account. Please print a copy of this page for your records. </p>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-shopping-cart"></span> Order Summary</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                <thead>
+                    <tr>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Per Unit Cost (excluding VAT)</th>
+                    <th>Total (including VAT)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td>Credit(s) for LEFT analyses</td>
+                    <td>@Model.NumberOfCredits</td>
+                    <td>£@Model.UnitPrice</td>
+                    <td>£@Model.Total</td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <dl class="dl-horizontal">
+            <dt>Reference #</dt>
+            <dd>ECOST @Model.Id</dd>
+            <dt>Date</dt>
+            <dd>@Model.Time.ToString("dd-MM-yyyy")</dd>
+        </dl>
+
+        <dl class="dl-horizontal">
+            <dt>Name</dt>
+            <dd>@Model.Name</dd>
+            <dt>Address</dt>
+            <dd>
+                <address>
+                    @Model.AddressLine1<br/>
+                    @Model.AddressLine2<br/>
+                    @Model.Country<br/>
+                    @Model.PostCode
+                </address>
+            </dd>
+            <dt>Settlement Currency</dt>
+            <dd>@Model.SettlementCurrency</dd>
+        </dl>
+
+    </div>
+</div>

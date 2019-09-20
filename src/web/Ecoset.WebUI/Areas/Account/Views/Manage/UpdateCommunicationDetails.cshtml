@@ -1,0 +1,34 @@
+@model UpdateCommunicationDetailsViewModel
+@{
+    ViewData["Title"] = "Update Communication Details";
+    Layout = "_DashboardLayout";
+}
+
+<p>We will communicate with you via your provided email address, for the following circumstances:</p>
+
+<form asp-area="Account" asp-controller="Manage" asp-action="UpdateCommunicationDetails" method="post" class="form-horizontal">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="AgreedToCommunication" class="col-md-8 control-label"></label>
+        <div class="col-md-4">
+            <input asp-for="AgreedToCommunication" class="form-control" />
+            <span asp-validation-for="AgreedToCommunication" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="EmailOnJobCompletion" class="col-md-8 control-label"></label>
+        <div class="col-md-4">
+            <input asp-for="EmailOnJobCompletion" class="form-control" />
+            <span asp-validation-for="EmailOnJobCompletion" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-8 col-md-4">
+            <button type="submit" class="btn btn-default">Update Details</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

@@ -1,0 +1,37 @@
+@{
+    Layout = "_Layout";
+    var breadcrumbs = new List<Tuple<string,string>>();
+}
+
+<br/>
+
+<div class="row">
+    <div class="col-md-9 col-md-push-3">
+        <h2>
+            @foreach (var crumb in breadcrumbs) {
+                <a href="@crumb.Item2">@crumb.Item1</a><span> > </span>
+            }
+
+            @ViewData["Title"] 
+            <small>@ViewData["SubTitle"]</small>
+        </h2>
+        <hr/>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        @await Html.PartialAsync("_DashboardSidebar")
+    </div>
+    <div class="col-md-9">
+        @RenderBody()
+    </div>
+</div>
+
+@section headInclude {
+    @RenderSection("headInclude", required: false)
+}
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}
