@@ -1,0 +1,35 @@
+{
+  "name": "ecoset-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --max_old_space_size=16384 index.js"
+  },
+  "author": "Philip Holland",
+  "devDependencies": {
+    "body-parser": "^1.15.2",
+    "concat": "^3.0.0",
+    "concat-files": "^0.1.1",
+    "config": "^1.21.0",
+    "del": "^2.2.2",
+    "escape-json-node": "^1.0.8",
+    "express": "^4.14.0",
+    "kue": "^0.11.1",
+    "kue-ui": "^0.1.0",
+    "line-by-line": "^0.1.5",
+    "moment": "^2.15.0",
+    "node-uuid": "^1.4.7",
+    "redis": "^2.7.1",
+    "rimraf": "^2.5.4",
+    "sphericalmercator": "^1.0.5",
+    "sync": "^0.2.5",
+    "validator": "^5.7.0",
+    "winston": "^2.2.0"
+  },
+  "dependencies": {
+    "detect-libc": "^1.0.3",
+    "file-exists": "^3.0.2"
+  }
+}

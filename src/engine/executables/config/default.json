@@ -1,0 +1,172 @@
+{
+    "sea_depth": {
+        "tileDir": "/data/depth/lefttiles"
+    },
+    "marine_ecoregions": {
+        "tileDir": "/data/marineecoregions/lefttiles"
+    },
+    "economic_zones": {
+        "tileDir": "/data/exclusiveeconomiczones/lefttiles"
+    },
+    "marine_vulnerability": {
+        "tileDir": "/data/vulnerability/lefttiles"
+    },
+    "marine_migratory": {
+        "tileDir": "/data/migratory/lefttiles"
+    },
+    "protected_areas": {
+        "tileDir": "/data/marineprotectedareas/lefttiles"
+    },
+    "pollination": {
+        "tileDir": "/data/pollination/lefttiles"
+    },
+    "recreation": {
+        "tileDir": "/data/recreation/lefttiles"
+    },
+    "carbon": {
+        "tileDir": "/data/carbon/lefttiles"
+    },
+    "water_flow_reg_total": {
+        "tileDir": "/data/waterflowregtotal/lefttiles"
+    },
+    "soil_erosion": {
+        "tileDir": "/data/soilerosion/lefttiles"
+    },
+    "vulnerability": {
+        "tileDir": "/data/vulnerability/lefttiles"
+    },
+    "beta_diversity": {
+        "tileDir": "/data/betadiversity/lefttiles"
+    },
+    "intactness": {
+        "tileDir": "/data/intactness/lefttiles"
+    },
+    "migratory": {
+        "tileDir": "/data/migratory/lefttiles"
+    },
+    "migratory_buffered": {
+        "tileDir": "/data/migratory/lefttiles"
+    },
+    "wetlands": {
+        "tileDir": "/data/wetland/lefttiles"
+    },
+    "resilience": {
+        "tileDir": "/data/resilience/lefttiles"
+    },
+    "landcover": {
+        "tileDir": "/data/landcover/lefttiles"
+    },
+    "ecoregions": {
+        "tileDir": "/data/ecoregions/lefttiles"
+    },
+    "sev": {
+        "executables": [
+            {
+                "name": "vulnerability",
+                "weight": 1
+            },
+            {
+                "name": "intactness",
+                "weight": 1
+            },
+            {
+                "name": "resilience",
+                "weight": 1
+            },
+            {
+                "name": "beta_diversity",
+                "weight": 1
+            },
+            {
+                "name": "migratory",
+                "weight": 0.5
+            },
+            {
+                "name": "wetlands",
+                "weight": 0.5
+            }
+        ]
+    },
+    "beta_diversity_zonalmean": {
+        "tileDir": "/data/betadiversity/zonalmean/lefttiles"
+    },
+    "beta_diversity_zonalstdev": {
+        "tileDir": "/data/betadiversity/zonalstdev/lefttiles"
+    },
+    "vulnerability_zonalmean": {
+        "tileDir": "/data/vulnerability/zonalmean/lefttiles"
+    },
+    "vulnerability_zonalstdev": {
+        "tileDir": "/data/vulnerability/zonalstdev/lefttiles"
+    },
+    "intactness_zonalmean": {
+        "tileDir": "/data/intactness/zonalmean/lefttiles"
+    },
+    "intactness_zonalstdev": {
+        "tileDir": "/data/intactness/zonalstdev/lefttiles"
+    },
+    "migratory_zonalmean": {
+        "tileDir": "/data/migratory/zonalmean/lefttiles"
+    },
+    "migratory_zonalstdev": {
+        "tileDir": "/data/migratory/zonalstdev/lefttiles"
+    },
+    "wetland_zonalmean": {
+        "tileDir": "/data/wetland/zonalmean/lefttiles"
+    },
+    "wetland_zonalstdev": {
+        "tileDir": "/data/wetland/zonalstdev/lefttiles"
+    },
+    "resilience_zonalmean": {
+        "tileDir": "/data/resilience/zonalmean/lefttiles"
+    },
+    "resilience_zonalstdev": {
+        "tileDir": "/data/resilience/zonalstdev/lefttiles"
+    },
+    "gbif_amphibia_local": {
+        "tileDir": "/data/speciesdensity/amphibia/local/lefttiles"
+    },
+    "gbif_amphibia_zonal": {
+        "tileDir": "/data/speciesdensity/amphibia/zonal/lefttiles"
+    },
+    "gbif_aves_local": {
+        "tileDir": "/data/speciesdensity/aves/local/lefttiles"
+    },
+    "gbif_aves_zonal": {
+        "tileDir": "/data/speciesdensity/aves/zonal/lefttiles"
+    },
+    "gbif_mammalia_local": {
+        "tileDir": "/data/speciesdensity/mammalia/local/lefttiles"
+    },
+    "gbif_mammalia_zonal": {
+        "tileDir": "/data/speciesdensity/mammalia/zonal/lefttiles"
+    },
+    "gbif_plantae_local": {
+        "tileDir": "/data/speciesdensity/plantae/local/lefttiles"
+    },
+    "gbif_plantae_zonal": {
+        "tileDir": "/data/speciesdensity/plantae/zonal/lefttiles"
+    },
+    "gbif_reptilia_local": {
+        "tileDir": "/data/speciesdensity/reptilia/local/lefttiles"
+    },
+    "gbif_reptilia_zonal": {
+        "tileDir": "/data/speciesdensity/reptilia/zonal/lefttiles"
+    },
+    "vulnerable_species_list": {
+        "shapefile": "/data/vulnerability/vulnmodelled.shp"
+    },
+    "migratory_species_list": {
+        "shapefile": "/data/migratory/groms.shp"
+    },
+    "gbif_list": {
+        "mysql_host": "gbifdb_db_1",
+        "mysql_port": 3306,
+        "mysql_user": "gbif_admin",
+        "mysql_password": "Pollen1@@",
+        "mysql_database": "gbif",
+        "gbif_table": "master",
+        "gbif_org_table": "gbif_org_lookup",
+        "gbif_coord_table": "gbif_coordinate"
+    }
+}
