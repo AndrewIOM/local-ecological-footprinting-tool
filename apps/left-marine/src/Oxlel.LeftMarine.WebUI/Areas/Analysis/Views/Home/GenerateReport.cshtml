@@ -3,6 +3,9 @@
 @model Ecoset.WebUI.Models.ReportData
 @using Ecoset.GeoTemporal.Remote
 @using Newtonsoft.Json
+@using Microsoft.Extensions.Options
+@using Ecoset.WebUI.Options
+@inject IOptions<EcosetAppOptions> siteConfig
 
 @{
   Layout = null;
@@ -102,9 +105,8 @@
       <meta name="description" content="Ecoset Report">
 
       <link href="https://fonts.googleapis.com/css?family=Droid+Sans+Mono" rel="stylesheet">
-      <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u">-->
       <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
-      <link rel="stylesheet" href="/css/report.css">
+      <link rel="stylesheet" href="/styles/report.css">
       <!--[if lt IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
   <![endif]-->
@@ -123,7 +125,7 @@
         <div class="report-title-page">
         <div class="row">
           <div class="six columns">
-            <img src="/images/left-logo-new.png" style="width:25em;margin:10em auto 5em auto" />
+            <img src="/images/logo-black.png" style="width:25em;margin:10em auto 5em auto" />
             <h1>Marine Local Ecological Footprinting Tool</h1>
             <h1>@Model.Title</h1>
             @if (!string.IsNullOrEmpty(@Model.Description)) {
@@ -164,7 +166,7 @@
                 </script>
               </div>
               <div class="col-md-5">
-                 <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/static/geojson(%7B%0A%22type%22%3A%22Feature%22%2C%0A%22properties%22%3A%7B%22stroke%22:%22%23FF0000%22%2C%22fill-opacity%22:0.2%7D%2C%0A%22geometry%22%3A%7B%0A%22type%22%3A%22Polygon%22%2C%0A%22coordinates%22%3A%5B%5B%5B @Model.West%2C @Model.South%5D%2C%5B @Model.West%2C @Model.North%5D%2C%5B @Model.East%2C @Model.North%5D%2C%5B @Model.East%2C @Model.South%5D%2C%5B @Model.West%2C @Model.South%5D%5D%5D%0A%7D%0A%7D))/auto/450x450@2x?access_token=@siteConfig.MapboxAccessToken&logo=false" style="width: 100%;"/>
+                 <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/static/geojson(%7B%0A%22type%22%3A%22Feature%22%2C%0A%22properties%22%3A%7B%22stroke%22:%22%23FF0000%22%2C%22fill-opacity%22:0.2%7D%2C%0A%22geometry%22%3A%7B%0A%22type%22%3A%22Polygon%22%2C%0A%22coordinates%22%3A%5B%5B%5B @Model.West%2C @Model.South%5D%2C%5B @Model.West%2C @Model.North%5D%2C%5B @Model.East%2C @Model.North%5D%2C%5B @Model.East%2C @Model.South%5D%2C%5B @Model.West%2C @Model.South%5D%5D%5D%0A%7D%0A%7D))/auto/450x450@2x?access_token=@siteConfig.Value.MapboxAccessToken&logo=false" style="width: 100%;"/>
                  <p><br/><strong>Open Street Map</strong> in specified area of interest (red rectangle).<br/>Ramm &amp; Topf (2011) http://planet.openstreetmap.org</p>
               </div>
 
@@ -298,7 +300,7 @@
                   var east = @Model.East;
                   var west = @Model.West;
 
-                  if("@executableResult.Name" == "ecoregions") {
+                  if("@executableResult.Name" == "marine_ecoregions") {
                     north = Math.min(90, north + 3);
                     south = Math.max(-90, south - 3);
                     east = Math.min(180, east + 3);
