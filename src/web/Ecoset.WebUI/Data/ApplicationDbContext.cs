@@ -17,6 +17,7 @@ namespace Ecoset.WebUI.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<ApplicationUser>().HasKey(l => l.Id);
             base.OnModelCreating(builder);
         }
     }

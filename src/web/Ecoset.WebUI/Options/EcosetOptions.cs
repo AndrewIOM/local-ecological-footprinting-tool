@@ -9,6 +9,7 @@ namespace Ecoset.WebUI.Options
         public string MapboxStaticKey { get; set; }
         public int VimeoPromotionVideoId { get; set; }
         public bool SampleReportEnabled { get; set; }
+        public bool PaymentsEnabled { get; set; }
 
         public EcosetAppOptions() {
             InstanceName = "Ecoset";
@@ -19,6 +20,7 @@ namespace Ecoset.WebUI.Options
             MapboxStaticKey = null;
             VimeoPromotionVideoId = 0;
             SampleReportEnabled = true;
+            PaymentsEnabled = false;
         }
     }
 }
