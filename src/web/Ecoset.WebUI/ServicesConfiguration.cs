@@ -46,6 +46,7 @@ namespace Ecoset.WebUI {
 
             services.AddAuthentication()
                 .AddCookie(cfg => cfg.SlidingExpiration = true);
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Home/Login");
 
             services.AddOptions();
             services.Configure<Options.EcosetAppOptions>(configuration.GetSection("EcosetApp"));
@@ -53,7 +54,6 @@ namespace Ecoset.WebUI {
             services.Configure<EmailOptions>(configuration);
             services.Configure<PhantomOptions>(configuration);
             services.Configure<FileSystemPersistenceOptions>(configuration);
-            services.Configure<PaymentOptions>(configuration);
             services.Configure<SeedOptions>(configuration.GetSection("Seed"));
             services.ConfigureOptions(typeof(UIConfigureOptions));
             services.Configure<TextLookup>((settings) =>
@@ -123,6 +123,65 @@ namespace Ecoset.WebUI {
 
                     }});
             });
+        }
+
+        public static void UseEcosetMigrations(this IApplicationBuilder app, IConfiguration configuration) {
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope()) {
+                using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
+                {
+                    context.Database.Migrate();
+                }
+            }
+        }
+
+        public static void UseEcosetRoles(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope()) {
+                using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
+                {
+                    {
+                        RoleManager<IdentityRole> roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+
+                        string[] roleNames = { "Admin" };
+                        foreach (string roleName in roleNames)
+                        {
+                            bool roleExists = roleManager.RoleExistsAsync(roleName).Result;
+                            if (!roleExists)
+                            {
+                                IdentityRole identityRole = new IdentityRole(roleName);
+                                IdentityResult identityResult = roleManager.CreateAsync(identityRole).Result;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void UseEcosetAdminUser(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope()) {
+                using (var context = scope.ServiceProvider.GetService<ApplicationDbContext>())
+                {
+                    var userManager = (UserManager<ApplicationUser>)scope.ServiceProvider.GetService(typeof(UserManager<ApplicationUser>));
+                    var user = userManager.FindByNameAsync(configuration["Account:Admin:DefaultAdminUserName"]).Result;
+                    if (user == null)
+                    {
+                        user = new ApplicationUser()
+                        {
+                            UserName = configuration["Account:Admin:DefaultAdminUserName"],
+                            FirstName = "Primary",
+                            Surname = "Administrator",
+                            OrganisationName = "Ecoset",
+                            OrganisationType = OrganisationType.NonCommercial,
+                            Credits = 9999,
+                            EmailConfirmed = true,
+                            Email = configuration["Account:Admin:DefaultAdminUserName"]
+                        };
+                        userManager.CreateAsync(user, configuration["Account:Admin:DefaultAdminPassword"]).Wait();
+                        userManager.AddToRoleAsync(user, "Admin").Wait();
+                    }
+                }
+            }
         }
 
     }

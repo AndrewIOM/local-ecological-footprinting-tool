@@ -30,7 +30,7 @@ namespace Ecoset.WebUI.Services.Concrete
                 var cache = _phantomOptions.Value.LocalCacheDirectory;
                 var cacheFile = cache + job.JobProcessorReference + ".pdf";
                 var port = _phantomOptions.Value.Port;
-                using (Process phantomProcess = Process.Start(_phantomOptions.Value.PhantomJsPath, "pdf/rasterise.js http://localhost:" + port + "/Job/GenerateReport?id=" + job.Id + " " + cacheFile + " 29.7cm*21cm"))
+                using (Process phantomProcess = Process.Start(_phantomOptions.Value.PhantomJsPath, "pdf/rasterise.js http://localhost:" + port + "/Analysis/Home/GenerateReport?id=" + job.Id + " " + cacheFile + " 29.7cm*21cm"))
                 {
                     phantomProcess.WaitForExit();
                 }

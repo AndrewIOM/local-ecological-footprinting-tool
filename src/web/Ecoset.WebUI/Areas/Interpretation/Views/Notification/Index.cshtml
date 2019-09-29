@@ -1,0 +1,64 @@
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Activity Log";
+}
+
+<p>Recent activity on your account, including the use of credits, and job submissions, will appear here. </p>
+<p>This page updates continuously - no need to refresh.</p>
+
+<table class="table">
+    <thead>
+        <tr>
+        <th>When</th>
+        <th>What</th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: notifications">
+        <tr>
+            <td><p data-bind="text: friendlyTime"></p></td>
+            <td>
+                <!-- ko if: linkUrl != null-->
+                <a data-bind="text: message, attr: {href: linkUrl}"></a>
+                <!-- /ko -->​
+                <!-- ko if: linkUrl == null-->
+                <span data-bind="text: message"></span>
+                <!-- /ko -->​
+            </td>
+        </tr>    
+    </tbody>
+</table>
+
+<script type="text/javascript">
+function NotificationViewModel() {
+    var self = this;
+    self.notifications = ko.observableArray([]);
+
+    self.updateNotifications = function() {
+      $.ajax({
+        url: "/Notification/GetRecent?count=100",
+        cache: false,
+        success: function(nlist)
+        {
+          self.notifications(nlist);
+          console.log(nlist);
+        }
+      });
+    }
+}
+
+$(document).ready(function() {
+  var vm = new NotificationViewModel();
+  window.setInterval(vm.updateNotifications,15000);
+  vm.updateNotifications();
+  ko.applyBindings(vm);
+});
+</script>
+
+@section Scripts {
+    <environment names="Development">
+        <script src="~/lib/knockout/dist/knockout.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
+    </environment>
+}

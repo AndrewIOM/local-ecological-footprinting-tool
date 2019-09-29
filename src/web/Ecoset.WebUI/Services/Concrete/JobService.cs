@@ -22,7 +22,7 @@ namespace Ecoset.WebUI.Services.Concrete
         private IEmailSender _emailSender;
         private IReportGenerator _reportGenerator;
         private IOutputPersistence _outputPersistence;
-        private readonly PaymentOptions _payOptions;
+        private readonly EcosetAppOptions _appOptions;
         private readonly UserManager<ApplicationUser> _userManager;
         public JobService(ApplicationDbContext context, 
             IJobProcessor processor, 
@@ -31,7 +31,7 @@ namespace Ecoset.WebUI.Services.Concrete
             IReportGenerator reportGenerator,
             IOutputPersistence outputPersistence,
             UserManager<ApplicationUser> userManager,
-            IOptions<PaymentOptions> payOptions) {
+            IOptions<EcosetAppOptions> appOptions) {
             _context = context;
             _processor = processor;
             _notifyService = notifyService;
@@ -39,7 +39,7 @@ namespace Ecoset.WebUI.Services.Concrete
             _outputPersistence = outputPersistence;
             _reportGenerator = reportGenerator;
             _userManager = userManager;
-            _payOptions = payOptions.Value;
+            _appOptions = appOptions.Value;
         }
 
         public IEnumerable<Job> GetAll()
@@ -220,7 +220,7 @@ namespace Ecoset.WebUI.Services.Concrete
             if (user == null) throw new ArgumentException("An invalid user id was passed to the app service");
 
             var isAdmin = _userManager.IsInRoleAsync(user, "Admin").Result;
-            if (!isAdmin && user.Credits == 0 && _payOptions.PaymentsEnabled) {
+            if (!isAdmin && user.Credits == 0 && _appOptions.PaymentsEnabled) {
                 return false; //"You must have at least one credit to complete a pro activation."
             }
 
@@ -240,7 +240,7 @@ namespace Ecoset.WebUI.Services.Concrete
             };
             var processorReference = _processor.StartProJob(request).Result; //TODO await-async
 
-            if (!isAdmin && _payOptions.PaymentsEnabled) {
+            if (!isAdmin && _appOptions.PaymentsEnabled) {
                 user.Credits = user.Credits - 1;
             }
 
@@ -259,7 +259,7 @@ namespace Ecoset.WebUI.Services.Concrete
             _context.SaveChanges();
             Hangfire.RecurringJob.AddOrUpdate("prostatus_" + job.Id, () => UpdateProStatus(job.Id), Cron.Minutely);
 
-            if (!isAdmin && _payOptions.PaymentsEnabled) {
+            if (!isAdmin && _appOptions.PaymentsEnabled) {
                 _notifyService.AddJobNotification(NotificationLevel.Success, job.Id, 
                     "You used 1 credit to upgrade '{0}' to premium.", new string[] { job.Name });
 
@@ -270,7 +270,7 @@ namespace Ecoset.WebUI.Services.Concrete
                     _notifyService.AddUserNotification(NotificationLevel.Information, user.Id, 
                         "You're out of credits, and will not be able to activate premium datasets unless you top up.", new string[] {});
                 }
-            } else if (!_payOptions.PaymentsEnabled) {
+            } else if (!_appOptions.PaymentsEnabled) {
                 _notifyService.AddJobNotification(NotificationLevel.Success, job.Id, 
                     "Your request for a high-resolution data package for '{0}' has entered the queue.", new string[] { job.Name });
             }

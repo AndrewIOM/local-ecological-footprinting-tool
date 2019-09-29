@@ -162,7 +162,7 @@ namespace Ecoset.WebUI.Areas.Account.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return RedirectToAction(nameof(Ecoset.WebUI.Areas.Interpretation.Controllers.HomeController), "Home");
+            return RedirectToAction("Index", "Home", new { area = "Interpretation" });
         }
 
         //

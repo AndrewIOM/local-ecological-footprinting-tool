@@ -1,11 +1,9 @@
-@inject IOptions<Ecoset.WebUI.Options.PaymentOptions> paymentOptions
-
 <nav class="sidenav" role="navigation">
     <ul>
     <li><a asp-action="Index" asp-controller="Dashboard" asp-area="Interpretation"><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a><span class="toggle"></li>
     <li><a asp-action="Index" asp-controller="Notification" asp-area="Analysis"><span class="glyphicon glyphicon-flag"></span> Notifications</a></li>
     <li id="job-sidenav-item"><a asp-action="Index" asp-controller="Home" asp-area="Analysis"><span class="glyphicon glyphicon-tasks"></span> My Analyses</a> <span class="label label-Processing" id="active-job-count" style="display:none">? in progress</span></li>
-    @if (paymentOptions.Value.PaymentsEnabled) {
+    @if (siteConfig.Value.PaymentsEnabled) {
         <li><a asp-action="Index" asp-controller="Credit" asp-area="Payments"><span class="glyphicon glyphicon-piggy-bank"></span> Credits and Purchases</a></li>
     } else {
         <li><a asp-action="DataPackages" asp-controller="Dashboard" asp-area="Interpretation"><span class="glyphicon glyphicon-console"></span> API Access</a></li>

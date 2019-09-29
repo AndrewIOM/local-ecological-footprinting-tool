@@ -94,7 +94,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
                 return BadRequest("The activiation was not successful. Do you have at least one credit?");
             }
 
-            return RedirectToAction("View", "Job", new { id = id });
+            return RedirectToAction("View", "Home", new { area = "Analysis", id = id });
         }
 
         [HttpGet]
