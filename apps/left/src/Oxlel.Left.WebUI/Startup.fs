@@ -24,7 +24,7 @@ type Startup private () =
         services.AddControllersWithViews().AddRazorRuntimeCompilation() |> ignore
         services.AddRazorPages() |> ignore
         services.AddEcosetUI this.Configuration |> ignore
-        // services.AddEcosetDataPackageAPI this.Configuration |> ignore
+        services.AddEcosetDataPackageAPI this.Configuration |> ignore
 
         let sp = services.BuildServiceProvider()
         let staticFileOptions = sp.GetService<IOptions<StaticFileOptions>>()
@@ -62,10 +62,13 @@ type Startup private () =
             endpoints.MapRazorPages() |> ignore) |> ignore
 
         // Ecoset configuration
-        // app.UseSwagger() |> ignore
-        // app.UseSwaggerUI(fun c ->
-        //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "LEFT API v1")) |> ignore
+        app.UseSwagger() |> ignore
+        app.UseSwaggerUI(fun c ->
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "LEFT API v1")) |> ignore
         app.UseHangfireDashboard() |> ignore
         app.UseHangfireServer() |> ignore
+        app.UseEcosetMigrations(this.Configuration) |> ignore
+        app.UseEcosetRoles(this.Configuration) |> ignore
+        app.UseEcosetAdminUser(this.Configuration) |> ignore
 
     member val Configuration : IConfiguration = null with get, set

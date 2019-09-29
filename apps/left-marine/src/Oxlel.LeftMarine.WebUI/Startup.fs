@@ -44,7 +44,7 @@ type Startup private () =
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts() |> ignore
 
-        app.UseHttpsRedirection() |> ignore
+        // app.UseHttpsRedirection() |> ignore
         app.UseWebOptimizer() |> ignore
         app.UseStaticFiles() |> ignore
         app.UseRouting() |> ignore
@@ -67,5 +67,8 @@ type Startup private () =
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "LEFT API v1")) |> ignore
         app.UseHangfireDashboard() |> ignore
         app.UseHangfireServer() |> ignore
+        app.UseEcosetMigrations(this.Configuration) |> ignore
+        app.UseEcosetRoles(this.Configuration) |> ignore
+        app.UseEcosetAdminUser(this.Configuration) |> ignore
 
     member val Configuration : IConfiguration = null with get, set

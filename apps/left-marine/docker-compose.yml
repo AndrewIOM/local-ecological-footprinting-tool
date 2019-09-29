@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+
+    # Ecoset engine for processing datasets
+    ecoset:
+        build:
+          context: ../../src/engine
+          dockerfile: Dockerfile
+        ports:
+        - "5001"
+        - "5002"
+        depends_on:
+        - redis
+
+    # Cache reqiured for ecoset
+    redis:
+      image: redis:latest
+      command: redis-server --appendonly yes
+
+    # Web application for UI and API
+    left:
+        build:
+          context: src/Oxlel.LeftMarine.WebUI
+          dockerfile: Dockerfile
+        volumes:
+        - "./LEFT/cache/:/cache/"
+        - "./LEFT/persistence/:/persistence/"
+        environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        depends_on:
+          - leftdb
+
+    # SQL Server for UI database (accounts, analyses etc.)
+    leftdb:
+        image: "microsoft/mssql-server-linux:2017-CU12"
+        ports:
+        - "1433:1433"
+        environment:
+            SA_PASSWORD: "${MSSQLPASSWORD}"
+            ACCEPT_EULA: "Y"
+            MSSQL_PID: "Express"
+
+    # nginx for SSL, ddos protection etc. of web app
+    reverse-proxy:
+        image: nginx:1.15.9
+        links:
+        - left
+        depends_on:
+        - left
+        ports:
+          - "5100:5100"
+        volumes:
+        - "./LEFT/src/Oxlel.Left.WebUI/nginx.conf:/etc/nginx/nginx.conf"

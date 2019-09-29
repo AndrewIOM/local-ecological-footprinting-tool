@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.248" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.0.0-preview8.19405.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.0.0" />
     <ProjectReference Include="../../../../src/web/Ecoset.WebUI/Ecoset.WebUI.csproj" />
     <ProjectReference Include="../../../../src/web/WebOptimizer.Sass/WebOptimizer.Sass.csproj" />
   </ItemGroup>

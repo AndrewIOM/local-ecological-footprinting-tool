@@ -9,7 +9,7 @@ RUN mkdir -p /persistence
 RUN apt-get update
 RUN apt-get install --yes curl
 RUN apt-get install --yes sudo
-RUN curl --silent --location https://deb.nodesource.com/setup_8.x | sudo bash -
+RUN curl --silent --location https://deb.nodesource.com/setup_11.x | sudo bash -
 RUN apt-get install --yes nodejs
 RUN apt-get install --yes build-essential
 
@@ -23,4 +23,4 @@ WORKDIR /app
 
 COPY . .
 
-ENTRYPOINT dotnet Oxlel.Left.WebUI.dll
+ENTRYPOINT dotnet Oxlel.LeftMarine.WebUI.dll
