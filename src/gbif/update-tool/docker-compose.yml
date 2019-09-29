@@ -1,0 +1,17 @@
+# MarineLEFT/gbif/python
+
+version: '3'
+
+services:
+    gbif-python:
+        build:
+            context: .
+            dockerfile: Dockerfile.gbif-python
+        volumes:
+        - "./vol_files:/vol_files"
+        networks:
+        - ecoset_default
+
+networks:
+  ecoset_default:
+    external: true

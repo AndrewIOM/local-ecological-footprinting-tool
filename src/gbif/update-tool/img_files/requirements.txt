@@ -1,0 +1,6 @@
+requests
+peewee
+colorama
+wget
+pymysql
+progress
