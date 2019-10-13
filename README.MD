@@ -5,7 +5,8 @@ A simple framework for serving geo-temporal datasets. The framework was built to
 
 ## Requirements
 
-* 
+* Docker
+* .NET Core SDK 3.0
 
 ## Project Structure
 
@@ -15,6 +16,17 @@ The EcoSet project comprises a 'geotemporal engine' that slices and analyses dat
 
 A .NET Core 3 razor class library that contains pre-defined functionality required when serving geotemporal data products. 
 
-## Examples
+## Applications
 
 The Oxford Long-Term Ecology Lab uses EcoSet to serve two different data products. The Local Ecological Footprint Tool (LEFT) and MarineLEFT both use EcoSet. 
+
+### MarineLEFT
+
+To run MarineLEFT:
+- cd apps/left-marine
+- docker-compose -f docker-compose.yml -f docker-compose.development.yml build
+- docker-compose -f docker-compose.yml -f docker-compose.development.yml up -d
+- cd ../../src/gbif/gbifdb
+- docker-compose up -d
+
+MarineLEFT will then be running on localhost:5001
