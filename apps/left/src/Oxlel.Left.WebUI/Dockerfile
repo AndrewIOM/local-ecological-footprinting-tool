@@ -1,26 +1,27 @@
-FROM microsoft/aspnetcore-build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 
 ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://+:80
 
 RUN mkdir -p /cache
 RUN mkdir -p /persistence
 
-# Install Node.js
-RUN apt-get update
-RUN apt-get install --yes curl
-RUN apt-get install --yes sudo
-RUN curl --silent --location https://deb.nodesource.com/setup_8.x | sudo bash -
-RUN apt-get install --yes nodejs
-RUN apt-get install --yes build-essential
+# Setup NodeJs + phantomjs
+RUN apt-get update && \
+    apt-get install -y wget && \
+    apt-get install -y gnupg2 && \
+    wget -qO- https://deb.nodesource.com/setup_10.x | bash - && \
+    apt-get install -y build-essential nodejs phantomjs
 
-# # Install PhantomJS
-RUN apt-get install --yes chrpath libssl-dev libxft-dev
-RUN apt-get install --yes libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev
-ADD https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 /usr/local/share/
-RUN ln -sf /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin
+# Prepare ecoset webui library
+WORKDIR /build/src/web
+COPY src/web /build/src/web
 
-WORKDIR /app
+# Copy source
+WORKDIR /build/apps/left-marine/src/Oxlel.Left.WebUI
+COPY apps/left-marine/src/Oxlel.Left.WebUI /build/apps/left-marine/src/Oxlel.Left.WebUI
 
-COPY . .
+RUN dotnet restore
+RUN dotnet publish -c Release
 
-ENTRYPOINT dotnet Oxlel.Left.WebUI.dll
+ENTRYPOINT dotnet bin/Release/netcoreapp3.0/publish/Oxlel.Left.WebUI.dll
