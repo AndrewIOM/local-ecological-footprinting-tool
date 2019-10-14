@@ -33,29 +33,43 @@
     <div class="row">
         <div class="col-md-6">
             <p><strong>Your free @siteConfig.Value.InstanceShortName report is ready.</strong><br/> It contains a series of maps and tables representing various aspects of the environment in the area of interest specified by the user.</p>
-            <a target="_blank" class="btn btn-primary" href="@Url.Action("Report", "Job", new { id = Model.Id})"><span class="glyphicon glyphicon-download"></span> Download free report</a>
+            <a target="_blank" class="btn btn-primary" href='@Url.Action("Report", "Home", new { area = "Analysis", id = Model.Id})'><span class="glyphicon glyphicon-download"></span> Download free report</a>
         </div>
         <div class="col-md-6">
             @if (Model.ProActivation == null)
             {
             <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><span class="glyphicon glyphicon-lock"></span> Data Download</h3>
-                </div>
-                <div class="panel-body">
-                    <p>@siteConfig.Value.InstanceShortName has created a zipped archive containing the raster data shown in the report. <a asp-action="Pricing" asp-controller="Home" target="_blank">More info...</a></p>
-                    <p>To download this data, <strong>activate this individual analysis using one @siteConfig.Value.InstanceName credit</strong>.</p>
-                    
-                    @if (appUser.Credits == 0)
-                    {
-                        <p>Please <a asp-action="Index" asp-controller="Credit" asp-area="Payments">top up your credits</a> to activate premium features.</p>
-                    }else {
-                    <form asp-action="ActivateProData" asp-anti-forgery="true" asp-controller="Home" asp-area="Analysis" id="activation-form">
-                        @Html.Hidden("Id", Model.Id)
-                        <input id="submit" class="btn btn-default" onclick="return confirm('One credit will be deducted immediately from your account. This action is not reversable. Are you sure?')" type="submit" value="Activate this analysis"/>
-                    </form>
-                    }
-                </div>
+                @if (siteConfig.Value.PaymentsEnabled) {
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-lock"></span> Data Download</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>@siteConfig.Value.InstanceShortName can generate a zipped archive containing the raster data shown in the report. <a asp-action="Pricing" asp-controller="Home" asp-area="Interpretation" target="_blank">More info...</a></p>
+                        <p>To download this data, <strong>activate this individual analysis using one @siteConfig.Value.InstanceName credit</strong>.</p>
+                        
+                        @if (appUser.Credits == 0)
+                        {
+                            <p>Please <a asp-action="Index" asp-controller="Credit" asp-area="Payments">top up your credits</a> to activate premium features.</p>
+                        }else {
+                        <form asp-action="ActivateProData" asp-anti-forgery="true" asp-controller="Home" asp-area="Analysis" id="activation-form">
+                            @Html.Hidden("Id", Model.Id)
+                            <input id="submit" class="btn btn-default" onclick="return confirm('One credit will be deducted immediately from your account. This action is not reversable. Are you sure?')" type="submit" value="Activate this analysis"/>
+                        </form>
+                        }
+                    </div>
+                } else {
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-ok"></span> Data Download</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>@siteConfig.Value.InstanceShortName can generate a zipped archive containing the raster data shown in the report.</p>
+                        <p>Generating your dataset may take up to an hour, and this will be longer depending on the number of analyses we are currently processing.</p>
+                        <form asp-action="ActivateProData" asp-anti-forgery="true" asp-controller="Home" asp-area="Analysis" id="activation-form">
+                            @Html.Hidden("Id", Model.Id)
+                            <input id="submit" class="btn btn-default" onclick="return confirm('This process may take up to an hour. Go ahead?')" type="submit" value="Activate data download"/>
+                        </form>
+                    </div>
+                }
             </div>
             } else {
             <div class="panel panel-default">
@@ -64,11 +78,11 @@
                 </div>
                 <div class="panel-body">
                     @if (Model.ProActivation.ProcessingStatus != JobStatus.Completed) {
-                        <p>Thank you for your purchase. We are collating your high-resolution datasets for download. This process may take some time.</p>
+                        <p>We are collating your high-resolution datasets for download. This process may take some time.</p>
                         <p><label>Status:</label> <span class="label label-@Model.ProActivation.ProcessingStatus">@Model.ProActivation.ProcessingStatus</span></p>
                     } else {
                         <p>@siteConfig.Value.InstanceShortName has created a zipped archive containing the raster data shown in the report. <a asp-action="Pricing" asp-controller="Home" asp-area="Interpretation" target="_blank">More info...</a></p>
-                        <p><strong>Thank you for activating this analysis. Download your data below.</strong></p>
+                        <p><strong>Download your data below.</strong></p>
                         <a target="_blank" class="btn btn-default" href="@Url.Action("ProData", "Home", new { id = Model.Id, area = "Analysis" })"><span class="glyphicon glyphicon-download"></span> GeoSpatial Data</a>
                     }
                 </div>

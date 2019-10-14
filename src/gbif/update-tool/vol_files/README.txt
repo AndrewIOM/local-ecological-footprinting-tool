@@ -1,0 +1,8 @@
+Download key for Oxford area: 0003340-190320150433242
+
+Download keys for sea sample
+0) coral:         0008243-190320150433242
+1) fish:          0008247-190320150433242
+2) turtle:        0008255-190320150433242
+3) marine mammal: 0008261-190320150433242
+4) seabird:       0008265-190320150433242

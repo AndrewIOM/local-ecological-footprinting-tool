@@ -1,5 +1,4 @@
 @model Ecoset.WebUI.Models.DashboardViewModels.IndexViewModel
-@inject IOptions<Ecoset.WebUI.Options.PaymentOptions> paymentOptions
 @{
     Layout = "_DashboardLayout";
     ViewData["Title"] = "Dashboard";
@@ -37,7 +36,7 @@
     @* Credits / Subscriptions Pane *@
     <div class="col-md-4">
         <div class="panel panel-default" id="credits-pane">
-            @if (paymentOptions.Value.PaymentsEnabled) {
+            @if (siteConfig.Value.PaymentsEnabled) {
                 <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-piggy-bank"></span> <a asp-action="Index" asp-controller="Credit" asp-area="Payments"> Balance</a></h3>
                 </div>

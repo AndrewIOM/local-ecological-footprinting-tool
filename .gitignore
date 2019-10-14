@@ -339,3 +339,5 @@ lib/
 # AppSettings
 appsettings.Production.json
 appsettings.Staging.json
+.env
+appendonly.aof
