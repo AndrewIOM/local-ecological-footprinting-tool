@@ -1,0 +1,9 @@
+[ 
+    {"value": 1,"R": 255,"G": 255,"B": 255,"class": "Open Sea"}, 
+    {"value": 2,"R": 255,"G": 128,"B": 64,"class": "Kelp"}, 
+    {"value": 3,"R": 0,"G": 255,"B": 0,"class": "Mangrove"},
+    {"value": 4,"R": 128,"G": 128,"B": 255,"class": "Saltmarsh"},
+    {"value": 5,"R": 0,"G": 0,"B": 255,"class": "Seagrass"},
+    {"value": 6,"R": 128,"G": 128,"B": 64,"class": "Tidal flat"},
+    {"value": 255,"R": 192,"G": 192,"B": 192,"class": "Land"}
+] 

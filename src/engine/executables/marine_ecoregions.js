@@ -9,4 +9,6 @@ mergeAndWindow.run(
   -9999,
   config.get('marine_ecoregions.tileDir'),
   'marineecoregions_',
-  'marine_ecoregions');
+  'marine_ecoregions',
+  3	// BUFFERED
+);

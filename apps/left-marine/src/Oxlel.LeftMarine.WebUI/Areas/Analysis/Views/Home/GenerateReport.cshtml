@@ -17,22 +17,43 @@
   prettyTitles["marine_vulnerability"] = "Vulnerable Species";
   prettyTitles["marine_migratory"] = "Migratory Species";
   prettyTitles["protected_areas"] = "Marine Protected Areas";
+  prettyTitles["coastal_ecosystems"] = "Coastal Ecosystems";
+  prettyTitles["critical_habitat"] = "Critical Habitat";
+  prettyTitles["shipping_density"] = "Shipping Density";
+  prettyTitles["fish_catches"] = "Fish Catches";
+  prettyTitles["aquaculture_potential"] = "Aquaculture Potential";
+  prettyTitles["windpower_potential"] = "Wind Power Potential";
+  prettyTitles["wavepower_potential"] = "Wave Power Potential";
 
   var descriptions = new Dictionary<string,string>();
-  descriptions["sea_depth"] = "General Bathymetric Chart of the Oceans (GEBCO) https://gebco.net";
+  descriptions["sea_depth"] = "General Bathymetric Chart of the Oceans (GEBCO) (Weatherall et al. 2015) https://gebco.net";
   descriptions["marine_ecoregions"] = "The WWF Marine Ecoregions of the World (MEOW; Spalding et al 2007) identifies areas with similar ecological characteristics.";
   descriptions["economic_zones"] = "Flanders Marine Institute (2018). Maritime Boundaries Geodatabase: Maritime Boundaries and Exclusive Economic Zones (200NM), version 10. Available online at http://www.marineregions.org/ https://doi.org/10.14284/312.";
-  descriptions["marine_vulnerability"] = "The IUCN Red List of Threatened Species (IUCN 2018) was used to find the names and threat categories of species in the specified area of interest.  All corals, fish, sea birds, marine mammals and turtles determined by the IUCN to be Critically Endangered (CR), Endangered (EN), Vulnerable (VU) or Near Threatened (NT) were extracted. A list of the globally threatened species which potentially occur in the area of interest can be found in appendix 1.";
-  descriptions["marine_migratory"] = "Migratory species drawn from the global register of migratory species (GROMS; Riede 2004).";
-  descriptions["protected_areas"] = "";
+  descriptions["marine_vulnerability"] = "The IUCN Red List of Threatened Species (IUCN 2018) was used to find the names and threat categories of species in the specified area of interest.  All corals, fish, sea birds, marine mammals and turtles determined by the IUCN to be Critically Endangered (CR), Endangered (EN), Vulnerable (VU) or Near Threatened (NT) were extracted. A list of the globally threatened species which potentially occur in the area of interest can be found in Appendix 2.";
+  descriptions["marine_migratory"] = "Migratory species drawn from the global register of migratory species (GROMS; Riede 2004) and distribution data (GBIF 2019).\nA list of the migratory fish, seabirds, marine mammals, and turtle species that primarily occur in the area of interest can be found in Appendix 3.";
+  descriptions["protected_areas"] = "A list of the marine protected areas in the area of interest is provided in Appendix 1.";
+  descriptions["coastal_ecosystems"] = "Coastal ecosystems including kelp (Byrnes et al 2016); mangroves (Bunting et al 2018); saltmarsh (McOwen et al 2017); seagrass (UNEP-WCMC et al 2018); tidal flats (Murray et al 2019).";
+  descriptions["critical_habitat"] = "International Finance Corporation (IFC) Performance Standard 6 (PS6) critical habitat map (2012a; 2012b)."
+  descriptions["shipping_density"] = "Shipping density was calculated from transponder data from the World Meteorological Organisation (WMO) Voluntary Observing Ship (VMO) network. https://www.ncdc.noaa.gov/data-access/marineocean-data/vosclim \nThe algorithm described by Halpern et al (2015) was used to connect 6-hourly ship positions into ship tracks and calculate ship density quantiles.";
+  descriptions["fish_catches"] = "Annual total species combined) annual fish catches by major areas from Food and Agriculture Organisation (FAO) fishbase.\nhttp://www.fao.org/fishery/statistics/software/fishstat/j/en/";
+  descriptions["aquaculture_potential"] = "The potential for marine aquaculture was calculated using the INVEST algorithms developed by the Natural Capital Project (Sharp et al 2018).  The algorithm takes account of monthly climatology of sea surface temperature, distance from shore, water depth and shipping density.";
+  descriptions["windpower_potential"] = "The potential for offshore wind power generation was calculated using the INVEST algorithms developed by the Natural Capital Project (Sharp et al 2018).  The algorithm takes account of satellite time-series data on wind speeds 1987-present (Zhang et al 2006); water depth, distance form shore and shipping density.";
+  descriptions["wavepower_potential"] = "The potential for wave power generation was calculated using the INVEST algorithms developed by the Natural Capital Project (Sharp et al 2018).  The algorithm takes account of global significant wave height time-series data; water depth; distance from shore and shipping density.";
 
   var mapLegend = new Dictionary<string,string>();
-  mapLegend["sea_depth"] = "Depth from the General Bathymetric Chart of the Oceans (GEBCO) in specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["marine_ecoregions"] = "Marine Ecoregions of the World (MEOW) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["economic_zones"] = "Exclusive Economic Zones (sea within 200 nautical miles from a nation’s coastline) in specified area of interest (red rectangle). High Seas is shown in white.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["marine_vulnerability"] = "Vulnerability map showing the number of globally threatened (Cr, EN, VU) and near-threatened (NT) species of corals, fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["marine_migratory"] = "Migratory species map showing the number of migratory fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["sea_depth"] = "Depth from the General Bathymetric Chart of the Oceans (GEBCO) in specified area of interest (red rectangle) in 2015.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["marine_ecoregions"] = "Marine Ecoregions of the World (MEOW) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer in 2007.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["economic_zones"] = "Exclusive Economic Zones (sea within 200 nautical miles from a nation’s coastline) in specified area of interest (red rectangle) in 2018. High Seas is shown in white.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["marine_vulnerability"] = "Vulnerability map showing the number of globally threatened (Cr, EN, VU) and near-threatened (NT) species of corals, fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["marine_migratory"] = "Migratory species map showing the number of migratory fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["protected_areas"] = "Marine Protected Areas from the World Database of Protected Areas (WDPA) 2018 in specified area of interest (red rectangle). Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["coastal_ecosystems"] = "Map showing kelp, mangroves, saltmarsh; seagrass and tidal flats in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["critical_habitat"] = "Critical habitat map showing areas which potentially meet the IFC PS6 definition of critical habitat because of the occurrence of Critically Endangered (CR) and Endangered (EN) marine species in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["shipping_density"] = "Shipping density map showing global quantiles of shipping density from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["fish_catches"] = "Fish catches map showing total fish catches (all species) tons\year in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["aquaculture_potential"] = "Aquaculture potential map showing global quantiles of aquaculture potential from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["windpower_potential"] = "Wind power potential map showing global quantiles of offshore wind power potential from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["wavepower_potential"] = "Wave power potential map showing global quantiles of wave power potential from 1 (lowest) – 100 (highest) in 2018 in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
 
   var noDataValue = new Dictionary<string,double>();
   noDataValue["sea_depth"] = 0;
@@ -41,6 +62,13 @@
   noDataValue["marine_vulnerability"] = -9999;
   noDataValue["marine_migratory"] = -9999;
   noDataValue["protected_areas"] = -9999;
+  noDataValue["coastal_ecosystems"] = -9999;
+  noDataValue["critical_habitat"] = -9999;
+  noDataValue["shipping_density"] = -9999;
+  noDataValue["fish_catches"] = -9999;
+  noDataValue["aquaculture_potential"] = -9999;
+  noDataValue["windpower_potential"] = -9999;
+  noDataValue["wavepower_potential"] = -9999;
 
   var units = new Dictionary<string,string>();
   units["sea_depth"] = "Depth (Metres)";
@@ -48,7 +76,14 @@
   units["economic_zones"] = "Exclusive economic zones";
   units["marine_vulnerability"] = "Vulnerability";
   units["marine_migratory"] = "Migratory species";
-  units["protected_areas"] = "";
+  units["protected_areas"] = "World Database of Protected Areas (WDPA) 2019";
+  units["coastal_ecosystems"] = "Ecosystem";
+  units["critical_habitat"] = "Critical Habitat Designation";
+  units["shipping_density"] = "Quantile";
+  units["fish_catches"] = "tons per year";
+  units["aquaculture_potential"] = "Quantile";
+  units["windpower_potential"] = "Quantile";
+  units["wavepower_potential"] = "Quantile";
 
   var hasPalette = new Dictionary<string,bool>();
   hasPalette["sea_depth"] = true;
@@ -57,6 +92,13 @@
   hasPalette["marine_vulnerability"] = true;
   hasPalette["marine_migratory"] = true;
   hasPalette["protected_areas"] = true;
+  hasPalette["coastal_ecosystems"] = true;
+  hasPalette["critical_habitat"] = true;
+  hasPalette["shipping_density"] = false;
+  hasPalette["fish_catches"] = false;
+  hasPalette["aquaculture_potential"] = false;
+  hasPalette["windpower_potential"] = false;
+  hasPalette["wavepower_potential"] = false;
 
   var isCategorical = new Dictionary<string,string>();
   isCategorical["sea_depth"] = "false";
@@ -65,6 +107,13 @@
   isCategorical["marine_vulnerability"] = "false";
   isCategorical["marine_migratory"] = "false";
   isCategorical["protected_areas"] = "true";
+  isCategorical["coastal_ecosystems"] = "true";
+  isCategorical["critical_habitat"] = "true";
+  isCategorical["shipping_density"] = "false";
+  isCategorical["fish_catches"] = "false";
+  isCategorical["aquaculture_potential"] = "false";
+  isCategorical["windpower_potential"] = "false";
+  isCategorical["wavepower_potential"] = "false";
   
   var maskValues = new Dictionary<string,string>();
   maskValues["sea_depth"] = "false";
@@ -73,6 +122,13 @@
   maskValues["marine_vulnerability"] = "false";
   maskValues["marine_migratory"] = "false";
   maskValues["protected_areas"] = "false";
+  maskValues["coastal_ecosystems"] = "false";
+  maskValues["critical_habitat"] = "false";
+  maskValues["shipping_density"] = "false";
+  maskValues["fish_catches"] = "false";
+  maskValues["aquaculture_potential"] = "false";
+  maskValues["windpower_potential"] = "false";
+  maskValues["wavepower_potential"] = "false";
 
   <!-- TODO: build this into Ecoset instead -->
   var scaleFactorsMean = new Dictionary<string, int>();
@@ -101,7 +157,7 @@
     <head>
       <meta charset="utf-8">
 
-      <title>LEFT Report</title>
+      <title>@siteConfig.Value.InstanceShortName Report</title>
       <meta name="description" content="Ecoset Report">
 
       <link href="https://fonts.googleapis.com/css?family=Droid+Sans+Mono" rel="stylesheet">
@@ -134,7 +190,7 @@
             <p>
               This report provides a series of maps and tables describing the pattern of ecological features in the seascape.
             </p>
-            <p>@DateTime.Now</p>
+            <p>@DateTime.Now.ToLongDateString()</p>
           </div>
         </div>
         </div>
@@ -167,7 +223,7 @@
               </div>
               <div class="col-md-5">
                  <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/static/geojson(%7B%0A%22type%22%3A%22Feature%22%2C%0A%22properties%22%3A%7B%22stroke%22:%22%23FF0000%22%2C%22fill-opacity%22:0.2%7D%2C%0A%22geometry%22%3A%7B%0A%22type%22%3A%22Polygon%22%2C%0A%22coordinates%22%3A%5B%5B%5B @Model.West%2C @Model.South%5D%2C%5B @Model.West%2C @Model.North%5D%2C%5B @Model.East%2C @Model.North%5D%2C%5B @Model.East%2C @Model.South%5D%2C%5B @Model.West%2C @Model.South%5D%5D%5D%0A%7D%0A%7D))/auto/450x450@2x?access_token=@siteConfig.Value.MapboxAccessToken&logo=false" style="width: 100%;"/>
-                 <p><br/><strong>Open Street Map</strong> in specified area of interest (red rectangle).<br/>Ramm &amp; Topf (2011) http://planet.openstreetmap.org</p>
+                 <p><br/><strong>Open Street Map</strong> in specified area of interest (red rectangle) in @DateTime.Now.Year.<br/>Ramm &amp; Topf (2011) http://planet.openstreetmap.org</p>
               </div>
 
             </div>
@@ -183,7 +239,7 @@
           <div class="row">
             <div class="col-md-5">
             
-              <p>Georeferenced species occurrence records were retrieved from the Global Biodiversity Information Facility (GBIF; www.gbif.org).  The map shows the distribution of biodiversity records in the area of interest plus a 3-degree buffer.  Any duplicate records (of the same species more than once at the same location) have been removed.</p>
+              <p>Georeferenced species occurrence records were retrieved from the Global Biodiversity Information Facility (GBIF; www.gbif.org).  The map shows the distribution of biodiversity records in the area of interest plus a 3-degree buffer.  Any duplicate records (of the same species more than once at the same location) have been removed. The sources of the records are acknowledged in Appendix 4.</p>
               @{ 
                 var gbiflist = Model.TableListResults.FirstOrDefault(m => m.Name == "gbif_count");
               }
@@ -227,7 +283,7 @@
             </div>
             <div class="col-md-7">
             <div id="gbif_list-map" class="section-map"></div>
-            <p><br/><strong>Biodiversity Records</strong> from the Global Biodiversity Information Facility (GBIF) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer.  Land is shown in grey. </p>
+            <p><br/><strong>Biodiversity Records</strong> from the Global Biodiversity Information Facility (GBIF) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer in 2019.  Land is shown in grey. </p>
             </div>
           </div>
           <div class="create-script">
@@ -300,7 +356,7 @@
                   var east = @Model.East;
                   var west = @Model.West;
 
-                  if("@executableResult.Name" == "marine_ecoregions") {
+                  if("@executableResult.Name" == "marine_ecoregions" || "@executableResult.Name" == "economic_zones") {
                     north = Math.min(90, north + 3);
                     south = Math.max(-90, south - 3);
                     east = Math.min(180, east + 3);
@@ -325,12 +381,89 @@
               
               <h3>References</h3>
               <ul class="reference-list">
-                <li>Flanders Marine Institute (2018). Maritime Boundaries Geodatabase: Maritime Boundaries and Exclusive Economic Zones (200NM), version 10. Available online at http://www.marineregions.org/ https://doi.org/10.14284/312.</li>
-                <li>IUCN (2018) Red list of threatened species.  Version 2018-1</li>
-                <li>Ramm F, Topf J, Chilton S (2011) Open Street Map: using and enhancing the free map of the world.  UIT Cambridge.</li>
-                <li>Riede, K (2004). Global register of migratory species: from global to regional scales: final report of the R&amp;D-Projekt 808 05 081, Federal Agency for Nature Conservation.</li>
-                <li>Spalding MD, Fox HE, Allen GR, Davidson N, Ferdana ZA, Finlayson M, Halpern BS, Jorge MA, Lombana A, Martin KD, McManus E, Molnar J, Recchia CA, Robertson J (2007) Bioscience 57: 573-583</li>
+                <li>
+                  Bunting P, Rosenquist A, Lucas R, Rebelo LM, Hilarides L, Thomas N, Hardy A, Itoh T, Shimada M, Finlayson CM (2018) The global mangrove watch – a new 2010 global baseline of mangrove extent.  Remote Sensing 10: 1669
+                  <a href="http://www.eorc.jaxa.jp/ALOS/en/kyoto/mangrovewatch.htm">http://www.eorc.jaxa.jp/ALOS/en/kyoto/mangrovewatch.htm</a>
+                </li>
+                <li>
+                  Byrnes et al (2016) Global Kelp Timeseries from NCEAS\KEEN working group.
+                  <a href="http://www.kelpecosystems.org">http://www.kelpecosystems.org</a>
+                </li>
+                <li>
+                  Flanders Marine Institute (2018). Maritime Boundaries Geodatabase: Maritime Boundaries and Exclusive Economic Zones (200NM), version 10. 
+                  <a href="http://www.marineregions.org/ https://doi.org/10.14284/312">http://www.marineregions.org/ https://doi.org/10.14284/312</a>.
+                </li>
+                <li>Halpern BS, Frazier M, Potapenko J, Casey KS, Koenig J, Longo C, Lowndes JS, Cotton Rockwood R, Selig ER, Selkoe KA, Walbridge S (2015) Spatial and temporal changes in cumulative human impacts on the world's oceans.  Nature Communicaitons 6: 7615</li>
+                <li>IFC (International Finance Corporation). (2012a). Performance Standard 6: Biodiversity Conservation and Sustainable Management of Living Natural Resources. World Bank Group, Washington, DC. 7pp.</li>
+                <li>
+                  IFC (International Finance Corporation). (2012b). Guidance Note 6: Biodiversity Conservation and Sustainable Management of Living Natural Resources. World Bank Group, Washington, DC. 69pp.
+                  <a href="https://www.ifc.org/wps/wcm/connect/topics_ext_content/ifc_external_corporate_site/sustainability-at-ifc/policies-standards/performance-standards/ps6">https://www.ifc.org/wps/wcm/connect/topics_ext_content/ifc_external_corporate_site/sustainability-at-ifc/policies-standards/performance-standards/ps6</a>.
+                </li>
+                <li>
+                  IUCN (2019) Red list of threatened species.  Version 2019-1
+                  <a href="https://www.iucnredlist.org/">https://www.iucnredlist.org/</a>.
+                </li>
+                <li>
+                  McOwen C, Weatherdon LV, Bochove J, Sullivan E, Blyth S, Zockler C, Stanwell-Smith D, Kingston N, Martin CS, Spalding M, Fletcher S (2017). A global map of saltmarshes. Biodiversity Data Journal 5: e11764.
+                  <a href="http://data.unepwcmc.org/datasets/43">http://data.unepwcmc.org/datasets/43</a>.
+                </li>
+                <li>
+                  Murray N. J., Phinn S. R., DeWitt M., Ferrari R., Johnston R., Lyons M. B., Clinton N.,Thau D. & Fuller R. A. (2019) The global distribution and trajectory of tidal flats. Nature. 565:222-225. http://dx.doi.org/10.1038/s41586-018-0805-8
+                  <a href="http://data.unepwcmc.org/datasets/47">http://data.unepwcmc.org/datasets/47</a>.
+                </li>
+                <li>
+                  Ramm F, Topf J, Chilton S (2011) Open Street Map: using and enhancing the free map of the world.  UIT Cambridge.
+                  <a href="http://planet.openstreetmap.org">http://planet.openstreetmap.org</a>.
+                </li>
+                <li>
+                  Riede, K (2004). Global register of migratory species: from global to regional scales: final report of the R&D-Projekt 808 05 081, Federal Agency for Nature Conservation.
+                  <a href="http://www.groms.de/ ">http://www.groms.de/ </a>.
+                </li>
+                <li>
+                  Sharp R, Tallis HT, Ricketts T, Guerry AD, Wood SA, Chaplin-Kramer R, Nelson E, Ennaanay D, Wolny S, Olwero N, Vigerstol K, Pennington D, Mendoza G, Aukema J, Foster J, Forrest J, Cameron D,  Arkema K,  Lonsdorf  E,  Kennedy C,  Verutes G,  Kim CK,  Guannel G,  Papenfus  M,  Toft J,  Marsik M, Bernhardt J, Griffin R, Glowinski K, Chaumont N, Perelman A, Lacayo M, Mandle L, Hamel P, Vogl AL, Rogers L, Bierbower W, Denu D, Douglass J (2018)  InVEST 3.6.0 Users' Guide.   The Natural Capital Project
+                  <a href="http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/  ">http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/  </a>.
+                </li>
+                <li>
+                  Spalding MD, Fox HE, Allen GR, Davidson N, Ferdana ZA, Finlayson M, Halpern BS, Jorge MA, Lombana A, Martin KD, McManus E, Molnar J, Recchia CA, Robertson J (2007) Marine Ecoregions of the World.  Bioscience 57: 573-583
+                  <a href="https://www.worldwildlife.org/publications/marine-ecoregions-of-the-world-a-bioregionalization-of-coastal-and-shelf-areas">https://www.worldwildlife.org/publications/marine-ecoregions-of-the-world-a-bioregionalization-of-coastal-and-shelf-areas</a>.
+                </li>
+                <li>
+                  UNEP-WCMC, Short FT (2018). Global Distribution of Seagrasses (version 6). Sixth update to the data layer used in Green and Short (2003), superseding version 5. Cambridge (UK): UN Environment World Conservation Monitoring Centre.
+                  <a href="http://data.unep-wcmc.org/datasets/7">http://data.unep-wcmc.org/datasets/7</a>.
+                </li>
+                <li>
+                  Weatherall P., Marks KM, Jakobsson M, Schmitt T, Tani S, Arndt JE, Rovere M, Chayes D, Ferrini V, Wigley R(2015), A new digital bathymetric model of the world’s oceans, Earth and Space Science, 2: 331–345, doi: 10.1002/2015EA000107
+                  <a href="https://gebco.net">https://gebco.net</a>.
+                </li>
+                <li>
+                  Zhang, HM, Bates JJ, Reynolds RW (2006_ Assessment of composite global sampling: Sea surface wind speed, Geophysical Research Letters, 33, L17714
+                  <a href="https://www.ncdc.noaa.gov/data-access/marineocean-data/blended-global/blended-sea-winds">https://www.ncdc.noaa.gov/data-access/marineocean-data/blended-global/blended-sea-winds</a>.
+                </li>
               </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="row">
+            <div class="col-md-12">
+
+              <div id="marine-protected-areas" class="appendix">
+              <h2>Appendix 1 - Marine Protected Areas</h2>
+              <p>The World Database of Protected Areas (WDPA 2019) include the following marine protected area in the specified area of interest.</p>
+              <ul id="marine-protected-areas-list" class="list-group row appendix-list">
+
+              @{
+                var mpa = Model.TableListResults.FirstOrDefault(m => m.Name == "marine_protected_areas_list");
+                if (mpa != null) {
+                  @foreach (var r in mpa.Data.Rows) {
+                    <li class="list-group-item col-xs-3"><em>@r["string"]</em></li>
+                  }
+                }
+              }
+
+              </ul>
+              </div>
 
             </div>
           </div>
@@ -341,7 +474,7 @@
             <div class="col-md-12">
               
               <div id="vulnerable-species" class="appendix">
-              <h2>Appendix 1 - Vulnerable species</h2>
+              <h2>Appendix 2 - Vulnerable species</h2>
               <hr/>
 
               <p>The IUCN Redlist of Threatened Species (IUCN 2018) includes the following species of corals, fish, turtles, sea birds and marine mammals that have been modelled to be potentially present in the specified area of interest (NT = Near Threatened, VU = Vulnerable, EN = Endangered, CR = Critically Endangered)</p>
@@ -371,7 +504,7 @@
             <div class="col-md-12">
 
               <div id="migratory-species" class="appendix">
-              <h2>Appendix 2 - Migratory Species</h2>
+              <h2>Appendix 3 - Migratory Species</h2>
               <p>The following migratory species identified in the Global register of Migratory Species (GROMS; Riede et al 2004) have migration routes which intersect the specified area of interest.</p>
               <ul id="migratory-species-list" class="list-group row appendix-list">
 
@@ -379,7 +512,7 @@
                 var migratory = Model.TableListResults.FirstOrDefault(m => m.Name == "migratory_species_list");
                 if (migratory != null) {
                   @foreach (var r in migratory.Data.Rows) {
-                    <li class="list-group-item col-xs-3"><em>@r["latin"]</em></li>
+                    <li class="list-group-item col-xs-3"><em>@r["string"]</em></li>
                   }
                 }
               }
@@ -395,7 +528,7 @@
           <div class="row">
             <div class="col-md-12">
               <div id="data-sources" class="appendix">
-              <h2>Appendix 3 - Data Sources</h2>
+              <h2>Appendix 4 - Data Sources</h2>
               <p>Georeferenced species records obtained from the GBIF occurrence API (http://www.gbif.org/occurrence) are shared according to the GBIF Data Use Agreement, which includes the provision that users of any data accessed through or retrieved via the GBIF Portal will always give credit to the original data publishers. The following list identifies the data sources for all occurrence records which have been used in this analysis.</p>
               <ul id="data-source-list" class="list-group row appendix-list"></ul>
               <script>

@@ -1,4 +1,25 @@
 {
+    "critical_habitat": {
+        "tileDir": "/data/criticalhabitat/lefttiles"
+    },
+    "coastal_ecosystems": {
+        "tileDir": "/data/coastalecosystems/lefttiles"
+    },
+    "fish_catches": {
+        "tileDir": "/data/fishcatches/lefttiles"
+    },
+    "shipping_density": {
+        "tileDir": "/data/shippingdensity/lefttiles"
+    },
+    "aquaculture_potential": {
+        "tileDir": "/data/aquaculturepotential/lefttiles"
+    },
+    "windpower_potential": {
+        "tileDir": "/data/windpowerpotential/lefttiles"
+    },
+    "wavepower_potential": {
+        "tileDir": "/data/wavepowerpotential/lefttiles"
+    },
     "sea_depth": {
         "tileDir": "/data/depth/lefttiles"
     },
@@ -154,10 +175,13 @@
         "tileDir": "/data/speciesdensity/reptilia/zonal/lefttiles"
     },
     "vulnerable_species_list": {
-        "shapefile": "/data/vulnerability/vulnmodelled.shp"
+        "shapefile": "/data/vulnerability/vulnerability.shp"
     },
     "migratory_species_list": {
-        "shapefile": "/data/migratory/groms.shp"
+        "shapefile": "/data/migratory/migratory.shp"
+    },
+    "marine_protected_areas_list": {
+        "shapefile": "/data/marineprotectedareas/marineprotectedareas.shp"
     },
     "gbif_list": {
         "mysql_host": "gbifdb_db_1",
