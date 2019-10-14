@@ -34,6 +34,9 @@ services:
         - "/persistence/:/persistence/"
         environment:
         - ASPNETCORE_ENVIRONMENT=Development
+        - Port=80
+        - EcosetEndpoint=http://ecoset:5002
+        - QT_QPA_PLATFORM=offscreen
         depends_on:
         - leftdb
         links:
