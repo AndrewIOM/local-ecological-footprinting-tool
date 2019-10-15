@@ -20,7 +20,7 @@
             var that = this;
 
             var error = null;
-            var exec = spawn(this.command, [this.filepath, JSON.stringify(inputData)], {
+            var exec = spawn(this.command, ["--max_old_space_size=16384", this.filepath, JSON.stringify(inputData)], {
                 cwd: config.process.executablesDir
             }); // start the process
 

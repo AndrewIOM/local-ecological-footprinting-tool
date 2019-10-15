@@ -180,6 +180,9 @@
     "migratory_species_list": {
         "shapefile": "/data/migratory/migratory.shp"
     },
+    "marine_migratory_species_list": {
+        "shapefile": "/data/migratory/migratory.shp"
+    },
     "marine_protected_areas_list": {
         "shapefile": "/data/marineprotectedareas/marineprotectedareas.shp"
     },
@@ -187,7 +190,7 @@
         "mysql_host": "gbifdb_db_1",
         "mysql_port": 3306,
         "mysql_user": "gbif_admin",
-        "mysql_password": "Pollen1@@",
+        "mysql_password": "SomeMySQLPassword",
         "mysql_database": "gbif",
         "gbif_table": "master",
         "gbif_org_table": "gbif_org_lookup",

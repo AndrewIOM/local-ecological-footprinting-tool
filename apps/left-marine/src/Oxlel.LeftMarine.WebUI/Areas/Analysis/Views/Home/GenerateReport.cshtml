@@ -33,7 +33,7 @@
   descriptions["marine_migratory"] = "Migratory species drawn from the global register of migratory species (GROMS; Riede 2004) and distribution data (GBIF 2019).\nA list of the migratory fish, seabirds, marine mammals, and turtle species that primarily occur in the area of interest can be found in Appendix 3.";
   descriptions["protected_areas"] = "A list of the marine protected areas in the area of interest is provided in Appendix 1.";
   descriptions["coastal_ecosystems"] = "Coastal ecosystems including kelp (Byrnes et al 2016); mangroves (Bunting et al 2018); saltmarsh (McOwen et al 2017); seagrass (UNEP-WCMC et al 2018); tidal flats (Murray et al 2019).";
-  descriptions["critical_habitat"] = "International Finance Corporation (IFC) Performance Standard 6 (PS6) critical habitat map (2012a; 2012b)."
+  descriptions["critical_habitat"] = "International Finance Corporation (IFC) Performance Standard 6 (PS6) critical habitat map (2012a; 2012b).";
   descriptions["shipping_density"] = "Shipping density was calculated from transponder data from the World Meteorological Organisation (WMO) Voluntary Observing Ship (VMO) network. https://www.ncdc.noaa.gov/data-access/marineocean-data/vosclim \nThe algorithm described by Halpern et al (2015) was used to connect 6-hourly ship positions into ship tracks and calculate ship density quantiles.";
   descriptions["fish_catches"] = "Annual total species combined) annual fish catches by major areas from Food and Agriculture Organisation (FAO) fishbase.\nhttp://www.fao.org/fishery/statistics/software/fishstat/j/en/";
   descriptions["aquaculture_potential"] = "The potential for marine aquaculture was calculated using the INVEST algorithms developed by the Natural Capital Project (Sharp et al 2018).  The algorithm takes account of monthly climatology of sea surface temperature, distance from shore, water depth and shipping density.";
@@ -50,7 +50,7 @@
   mapLegend["coastal_ecosystems"] = "Map showing kelp, mangroves, saltmarsh; seagrass and tidal flats in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["critical_habitat"] = "Critical habitat map showing areas which potentially meet the IFC PS6 definition of critical habitat because of the occurrence of Critically Endangered (CR) and Endangered (EN) marine species in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["shipping_density"] = "Shipping density map showing global quantiles of shipping density from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["fish_catches"] = "Fish catches map showing total fish catches (all species) tons\year in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["fish_catches"] = "Fish catches map showing total fish catches (all species) tons per year in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["aquaculture_potential"] = "Aquaculture potential map showing global quantiles of aquaculture potential from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["windpower_potential"] = "Wind power potential map showing global quantiles of offshore wind power potential from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["wavepower_potential"] = "Wave power potential map showing global quantiles of wave power potential from 1 (lowest) – 100 (highest) in 2018 in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
@@ -59,16 +59,16 @@
   noDataValue["sea_depth"] = 0;
   noDataValue["marine_ecoregions"] = -9999;
   noDataValue["economic_zones"] = -9999;
-  noDataValue["marine_vulnerability"] = -9999;
-  noDataValue["marine_migratory"] = -9999;
+  noDataValue["marine_vulnerability"] = -999;
+  noDataValue["marine_migratory"] = -999;
   noDataValue["protected_areas"] = -9999;
   noDataValue["coastal_ecosystems"] = -9999;
   noDataValue["critical_habitat"] = -9999;
-  noDataValue["shipping_density"] = -9999;
-  noDataValue["fish_catches"] = -9999;
-  noDataValue["aquaculture_potential"] = -9999;
-  noDataValue["windpower_potential"] = -9999;
-  noDataValue["wavepower_potential"] = -9999;
+  noDataValue["shipping_density"] = 255;
+  noDataValue["fish_catches"] = -999;
+  noDataValue["aquaculture_potential"] = 255;
+  noDataValue["windpower_potential"] = 255;
+  noDataValue["wavepower_potential"] = 255;
 
   var units = new Dictionary<string,string>();
   units["sea_depth"] = "Depth (Metres)";
@@ -89,8 +89,8 @@
   hasPalette["sea_depth"] = true;
   hasPalette["marine_ecoregions"] = true;
   hasPalette["economic_zones"] = true;
-  hasPalette["marine_vulnerability"] = true;
-  hasPalette["marine_migratory"] = true;
+  hasPalette["marine_vulnerability"] = false;
+  hasPalette["marine_migratory"] = false;
   hasPalette["protected_areas"] = true;
   hasPalette["coastal_ecosystems"] = true;
   hasPalette["critical_habitat"] = true;
@@ -356,7 +356,7 @@
                   var east = @Model.East;
                   var west = @Model.West;
 
-                  if("@executableResult.Name" == "marine_ecoregions" || "@executableResult.Name" == "economic_zones") {
+                  if("@executableResult.Name" == "marine_ecoregions") {
                     north = Math.min(90, north + 3);
                     south = Math.max(-90, south - 3);
                     east = Math.min(180, east + 3);
@@ -509,7 +509,7 @@
               <ul id="migratory-species-list" class="list-group row appendix-list">
 
               @{
-                var migratory = Model.TableListResults.FirstOrDefault(m => m.Name == "migratory_species_list");
+                var migratory = Model.TableListResults.FirstOrDefault(m => m.Name == "marine_migratory_species_list");
                 if (migratory != null) {
                   @foreach (var r in migratory.Data.Rows) {
                     <li class="list-group-item col-xs-3"><em>@r["string"]</em></li>

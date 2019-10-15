@@ -12,9 +12,16 @@ RUN apt-get update && \
     wget -qO- https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get install -y build-essential nodejs phantomjs
 
+# LibMan installs front-end dependencies e.g. jquery, bootstrap.
+RUN dotnet tool install -g Microsoft.Web.LibraryManager.CLI
+ENV PATH="$PATH:/root/.dotnet/tools"
+
 # Prepare ecoset webui library
 WORKDIR /build/src/web
 COPY src/web /build/src/web
+
+WORKDIR /build/src/web/Ecoset.WebUI/
+RUN libman restore
 
 # Copy LEFT source
 WORKDIR /build/apps/left-marine/src/Oxlel.LeftMarine.WebUI

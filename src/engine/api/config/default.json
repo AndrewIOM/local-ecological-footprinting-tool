@@ -32,6 +32,86 @@
 				]
 			},
 			{
+				"name": "marine_migratory_species_list",
+				"implementations": [
+					{
+						"name": "1",
+						"command": "node",
+						"filename": "marine_migratory_species_list.js"
+					}
+				]
+			},
+			{
+				"name": "coastal_ecosystems",
+				"implementations": [
+					{
+						"name": "1",
+						"command": "node",
+						"filename": "coastal_ecosystems.js"
+					}
+				]
+			},
+			{
+				"name": "aquaculture_potential",
+				"implementations": [
+					{
+						"name": "1",
+						"command": "node",
+						"filename": "aquaculture_potential.js"
+					}
+				]
+			},
+			{
+				"name": "critical_habitat",
+				"implementations": [
+					{
+						"name": "1",
+						"command": "node",
+						"filename": "critical_habitat.js"
+					}
+				]
+			},
+			{
+				"name": "fish_catches",
+				"implementations": [
+					{
+						"name": "1",
+						"command": "node",
+						"filename": "fish_catches.js"
+					}
+				]
+			},
+			{
+				"name": "shipping_density",
+				"implementations": [
+					{
+						"name": "1",
+						"command": "node",
+						"filename": "shipping_density.js"
+					}
+				]
+			},
+			{
+				"name": "wavepower_potential",
+				"implementations": [
+					{
+						"name": "1",
+						"command": "node",
+						"filename": "wavepower_potential.js"
+					}
+				]
+			},
+			{
+				"name": "windpower_potential",
+				"implementations": [
+					{
+						"name": "1",
+						"command": "node",
+						"filename": "windpower_potential.js"
+					}
+				]
+			},
+			{
 				"name": "economic_zones",
 				"implementations": [
 					{
@@ -448,6 +528,16 @@
 						"name": "1",
 						"command": "node",
 						"filename": "vulnerable_species_list.js"
+					}
+				]
+			},
+			{
+				"name": "marine_protected_areas_list",
+				"implementations": [
+					{
+						"name": "1",
+						"command": "node",
+						"filename": "marine_protected_areas_list.js"
 					}
 				]
 			},

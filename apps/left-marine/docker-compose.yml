@@ -12,9 +12,6 @@ services:
         - "5002"
         depends_on:
         - redis
-        volumes:
-        - /sample-data:/data
-        - /persistence:/output
         networks:
           - default
           - ecoset_default
@@ -29,14 +26,12 @@ services:
         build:
           context: ../../
           dockerfile: apps/left-marine/src/Oxlel.LeftMarine.WebUI/Dockerfile
-        volumes:
-        - "/cache/:/cache/"
-        - "/persistence/:/persistence/"
         environment:
         - ASPNETCORE_ENVIRONMENT=Development
         - Port=80
         - EcosetEndpoint=http://ecoset:5002
         - QT_QPA_PLATFORM=offscreen
+        - ConnectionStrings:DefaultConnection="Server=leftdb;Database=marineleft;User=sa;Password=${MSSQLPASSWORD};"
         depends_on:
         - leftdb
         links:
