@@ -8,6 +8,7 @@ using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Ecoset.WebUI.Options;
+using MailKit.Security;
 
 namespace Ecoset.WebUI.Services.Concrete
 {
@@ -41,7 +42,7 @@ namespace Ecoset.WebUI.Services.Concrete
             try {
                 using (var client = new SmtpClient())
                 {
-                    client.Connect(_options.Host, 587, false);
+                    client.Connect(_options.Host, _options.Port, _options.UseSSL);
                     client.AuthenticationMechanisms.Remove("XOAUTH2");
                     await client.SendAsync(mimeMessage);
                     await client.DisconnectAsync(true);

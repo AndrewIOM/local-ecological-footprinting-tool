@@ -51,7 +51,7 @@ namespace Ecoset.WebUI {
             services.AddOptions();
             services.Configure<Options.EcosetAppOptions>(configuration.GetSection("EcosetApp"));
             services.Configure<ReportContentOptions>(configuration);
-            services.Configure<EmailOptions>(configuration);
+            services.Configure<EmailOptions>(configuration.GetSection("Email"));
             services.Configure<PhantomOptions>(configuration);
             services.Configure<FileSystemPersistenceOptions>(configuration);
             services.Configure<SeedOptions>(configuration.GetSection("Seed"));
