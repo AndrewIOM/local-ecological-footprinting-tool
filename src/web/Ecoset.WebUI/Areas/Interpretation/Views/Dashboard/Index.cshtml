@@ -145,7 +145,7 @@ $(document).ready(function() {
 
     //Display Jobs on Map
     $.ajax({
-    url: '@Url.Action("Index", "Home", new { area = "Analysis" })',
+    url: '@Url.Action("MyJobs", "Home", new { area = "Analysis" })',
     cache: false,
     success: function(json){
         //Add jobs to map
@@ -177,14 +177,6 @@ $(document).ready(function() {
             }
             }, 'land-structure-polygon');
 
-            //Create data source
-            var sourceObj = {
-            data: {
-                "type": "FeatureCollection",
-                "features": [{}]
-            }
-            };
-
             //Convert jobs to features
             var len = json.length,
                 features = [],
@@ -202,6 +194,8 @@ $(document).ready(function() {
                     "type": "Feature",
                     "geometry": {
                         "type": "Polygon",
+                        "name": json[i].name,
+                        "jobid": json[i].id,
                         "coordinates": [[
                             [json[i].longitudeWest, json[i].latitudeNorth],
                             [json[i].longitudeWest, json[i].latitudeSouth],
@@ -212,20 +206,43 @@ $(document).ready(function() {
                 });
             }
 
-            sourceObj._data.features = features;
-            map.addSource('jobAreas', sourceObj); // add
-
-            //Display layer on map
+            //Create data source
+            var sourceObj = {
+                data: {
+                    "type": "FeatureCollection",
+                    "features": features
+                }
+            };
             map.addLayer({
-                'id': 'route',
+                'id': 'analyses-layer',
                 'type': 'fill',
-                'source': 'jobAreas',
-                'layout': {},
+                'source': {
+                    'type': 'geojson',
+                    'data': {
+                        'type': 'FeatureCollection',
+                        'features': features
+                    }
+                },
                 'paint': {
                     'fill-color': '#A93E71',
                     'fill-opacity': 0.8
                 }
             });
+
+            map.on('click', 'analyses-layer', function(e) {
+                new mapboxgl.Popup()
+                    .setLngLat(e.lngLat)
+                    .setHTML("<a href='/Analysis/Home/View/'" + e.features[0].properties.jobid + ">" + e.features[0].properties.name + "</a>")
+                    .addTo(map);
+            }
+
+            map.on('mouseenter', 'analyses-layer', function(e) {
+                map.getCanvas().style.cursor = 'pointer';
+            })
+
+            map.on('mouseleave', 'analyses-layer', function(e) {
+                map.getCanvas().style.cursor = '';
+            })
 
             if (len > 0) {
             map.fitBounds([
