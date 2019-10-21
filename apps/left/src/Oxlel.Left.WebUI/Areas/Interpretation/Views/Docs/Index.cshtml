@@ -1,0 +1,132 @@
+@{
+    ViewData["Title"] = "Documentation";
+}
+<h2 id="getting-started">@ViewData["Title"].</h2>
+<p>Within minutes, your first LEFT analysis can be processing.</p>
+
+<div class="row">
+    <nav class="col-xs-3 bs-docs-sidebar">
+        <ul id="sidebar" class="nav nav-stacked fixed">
+            <li>
+                <a href="#getting-started">Getting Started</a>
+            </li>
+            <li>
+                <a href="#dashboard">The LEFT Dashboard</a>
+                <ul class="nav nav-stacked">
+                    <li><a href="#dashboard">Home</a></li>
+                    <li><a href="#dashboard-log">Activity Log</a></li>
+                    <li><a href="#dashboard-analyses">Analyses</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#sample-analysis">View the Sample Analysis</a>
+            </li>
+            <li>
+                <a href="#submit-analysis">Submitting an Analysis</a>
+            </li>
+            <li>
+                <a href="#interpret-analysis">Viewing and Downloading Results</a>
+            </li>
+            <li>
+                <a href="#api">Programmatic Access</a>
+            </li>
+            <li>
+                <a href="#account">Your Account</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="col-md-9">
+
+        <h3 id="getting-started">Getting Started</h3>
+        <p>Welcome to LEFT. After creating a free account, you will be able to view a sample analysis. </p>
+        <br/>
+
+        <h3 id="dashboard">The LEFT Dashboard</h3>
+        <hr/>
+        <p>The LEFT dashboard is your hub for keeping tabs of your LEFT analyses. </p>
+        <img src="/images/docs/dashboard.png" class="img-responsive" alt="Map of local streets in left report"/>
+        <p>The dashboard gives you continuously up-to-date information about recent activity (completion of jobs etc.), and your credit balance. You can also browse all of your LEFT analyses using the analysis map. </p>
+        <br/>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4 id="dashboard-log">Activity Log</h4>
+                <p>The activity log displays actively updating information about changes to your account. </p>
+                <p>These include: job submissions, job status updates, and API access.</p>
+            </div>
+            <div class="col-md-6">
+                <img src="/images/docs/activity-log.png" class="img-responsive" alt="Map of local streets in left report"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4 id="dashboard-analyses">Your Analyses</h4>
+                <p>From this section, you can access detailed information about your analysis, including search and sort capability.</p>
+                <p>
+                    Live updates are provided as to the current status of your analyses.  An analysis proceeds through the following stages:
+                    <ol>
+                        <li><strong>Submitted.</strong> The analysis has been accepted by the Oxford University servers for processing, and is in the queue.</li>
+                        <li><strong>Processing.</strong> The analysis is currently running, with data being computed. The report is also compiled during this process. </li>
+                        <li><strong>Complete.</strong> Your analysis results are ready.</li>
+                    </ol>
+                </p>
+                <p>These include: job submissions, job status updates, credit purchases, and the spending of credits. </p>
+            </div>
+            <div class="col-md-6">
+                <img src="/images/docs/analyses.png" class="img-responsive" alt="Map of local streets in left report"/>
+            </div>
+        </div>
+
+        <h4 id="dashboard-api">API Access</h4>
+        <p>This section contains settings for accessing LEFT data programatically. </p>
+
+        <h3 id="sample-analysis"> Viewing the Sample Analysis</h3>
+        <hr/>
+        <p>We have provided a typical LEFT analysis result for free, which can be viewed on the <a asp-action="Index" asp-controller="Job">analyses section</a> of the LEFT dashboard.</p>
+        <br/>
+
+        <h3 id="submit-analysis">Submitting an Analysis</h3>
+        <hr/>
+        <div class="row">
+            <div class="col-md-6">
+                <p>To submit an analysis, all that is required is a name for the analysis, description and location. Using the drawing tool, you can select a rectangle on the map for analysis.</p>
+                <p>Please note that the maximum spatial extent for one analysis is 4 decimal degrees squared. </p>
+            </div>
+            <div class="col-md-6">
+                <img src="/images/docs/submit-analysis.png" class="img-responsive" alt="Map of local streets in left report"/>
+            </div>
+        </div>
+        <br/>
+
+        <h3 id="interpret-analysis">Viewing and Downloading Results</h3>
+        <hr/>
+        <p>Information about interpreting an analysis to go here.</p>
+        <br/>
+
+        <h3 id="api"><span class="glyphicon glyphicon-console"></span> Programmatic Access</h3>
+        <hr/>
+        <p><em>Note: full API functionality is coming soon and not currently available.</em></p>
+        <p>You can access LEFT datasets using our application programming interface (API). The currently available functionality may be explored in the <a href="/swagger" target="_blank">LEFT API interface</a>. </p>
+        <br/>
+
+        <h3 id="account"> Your Account</h3>
+        <hr/>
+        <p>Your account </p>
+
+        <br/>
+        <h4 id="account-email">Email Preferences</h4>
+        <p>LEFT will notify your when an analysis completes via email by default. Any notification that shows in the activity log, however can have email notifications enabled or disabled.</p>
+        <br/>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('body').scrollspy({
+        target: '.bs-docs-sidebar',
+        offset: 10
+    });
+});
+</script>

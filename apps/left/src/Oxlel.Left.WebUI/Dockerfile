@@ -1,7 +1,6 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 
 ENV ASPNETCORE_ENVIRONMENT=Development
-ENV ASPNETCORE_URLS=http://+:80
 
 RUN mkdir -p /cache
 RUN mkdir -p /persistence
@@ -13,15 +12,27 @@ RUN apt-get update && \
     wget -qO- https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get install -y build-essential nodejs phantomjs
 
+# LibMan installs front-end dependencies e.g. jquery, bootstrap.
+RUN dotnet tool install -g Microsoft.Web.LibraryManager.CLI
+ENV PATH="$PATH:/root/.dotnet/tools"
+
 # Prepare ecoset webui library
 WORKDIR /build/src/web
 COPY src/web /build/src/web
 
-# Copy source
-WORKDIR /build/apps/left-marine/src/Oxlel.Left.WebUI
-COPY apps/left-marine/src/Oxlel.Left.WebUI /build/apps/left-marine/src/Oxlel.Left.WebUI
+WORKDIR /build/src/web/Ecoset.WebUI/
+RUN libman restore
 
-RUN dotnet restore
+# Copy LEFT source
+WORKDIR /build/apps/left/src/Oxlel.Left.WebUI
+COPY apps/left/src/Oxlel.Left.WebUI /build/apps/left/src/Oxlel.Left.WebUI
+
+ENV ASPNETCORE_URLS=http://+:80
+
+RUN dotnet restore --disable-parallel
 RUN dotnet publish -c Release
+
+VOLUME /cache
+VOLUME /persistence
 
 ENTRYPOINT dotnet bin/Release/netcoreapp3.0/publish/Oxlel.Left.WebUI.dll
