@@ -234,15 +234,15 @@ $(document).ready(function() {
                     .setLngLat(e.lngLat)
                     .setHTML("<a href='/Analysis/Home/View/'" + e.features[0].properties.jobid + ">" + e.features[0].properties.name + "</a>")
                     .addTo(map);
-            }
+            });
 
             map.on('mouseenter', 'analyses-layer', function(e) {
                 map.getCanvas().style.cursor = 'pointer';
-            })
+            });
 
             map.on('mouseleave', 'analyses-layer', function(e) {
                 map.getCanvas().style.cursor = '';
-            })
+            });
 
             if (len > 0) {
             map.fitBounds([

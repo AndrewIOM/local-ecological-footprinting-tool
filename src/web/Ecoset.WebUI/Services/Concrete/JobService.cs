@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Ecoset.WebUI.Data;
 using System.Linq;
 using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Ecoset.WebUI.Models.JobProcessor;
 using Ecoset.WebUI.Enums;
@@ -207,7 +208,7 @@ namespace Ecoset.WebUI.Services.Concrete
             }
         }
 
-        public bool ActivateProFeatures(int jobId, string userId)
+        public async Task<bool> ActivateProFeatures(int jobId, string userId)
         {
             var job = _context.Jobs
                 .Include(m => m.CreatedBy)
@@ -219,9 +220,9 @@ namespace Ecoset.WebUI.Services.Concrete
             var user = _context.Users.FirstOrDefault(u => u.Id == userId);
             if (user == null) throw new ArgumentException("An invalid user id was passed to the app service");
 
-            var isAdmin = _userManager.IsInRoleAsync(user, "Admin").Result;
+            var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
             if (!isAdmin && user.Credits == 0 && _appOptions.PaymentsEnabled) {
-                return false; //"You must have at least one credit to complete a pro activation."
+                return false;
             }
 
             // Allow reactivation by admin
@@ -238,7 +239,7 @@ namespace Ecoset.WebUI.Services.Concrete
                 South = job.LatitudeSouth,
                 Priority = 2
             };
-            var processorReference = _processor.StartProJob(request).Result; //TODO await-async
+            var processorReference = await _processor.StartProJob(request);
 
             if (!isAdmin && _appOptions.PaymentsEnabled) {
                 user.Credits = user.Credits - 1;
@@ -254,6 +255,8 @@ namespace Ecoset.WebUI.Services.Concrete
                 JobProcessorReference = processorReference
             };
             job.ProActivation = activation;
+            _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.Entry(job).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             _context.Update(job);
             _context.Update(user);
             _context.SaveChanges();

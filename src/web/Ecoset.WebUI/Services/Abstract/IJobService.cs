@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Ecoset.WebUI.Models;
 
 namespace Ecoset.WebUI.Services.Abstract
@@ -11,7 +12,7 @@ namespace Ecoset.WebUI.Services.Abstract
         Job GetById(int jobId);
         bool StopJob(int jobId);
         void RefreshJobStatus(int jobId);
-        bool ActivateProFeatures(int jobId, string userId);
+        Task<bool> ActivateProFeatures(int jobId, string userId);
         ReportData GetReportData(int jobId);
     }
 }

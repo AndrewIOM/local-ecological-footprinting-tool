@@ -4,10 +4,15 @@ using System.ComponentModel.DataAnnotations;
 namespace Ecoset.WebUI.Models.JobViewModels {
     public class AddJobViewModel : IValidatableObject
     {
-        private const double _maximumLatitudinalExtent = 4.00;
-        private const double _maximumLongitudinalExtent = 4.00;
+        private double _maximumLatitudinalExtent = 10.00;
+        private double _maximumLongitudinalExtent = 10.00;
         private const double _minimumLatitudinalExtent = 0.1;
         private const double _minimumLongitudinalExtent = 0.1;
+
+        public AddJobViewModel(double maxHeight, double maxWidth) {
+            _maximumLatitudinalExtent = maxHeight;
+            _maximumLongitudinalExtent = maxWidth;
+        }
 
         [Required]
         public string Name {get;set;}

@@ -10,6 +10,8 @@ namespace Ecoset.WebUI.Options
         public int VimeoPromotionVideoId { get; set; }
         public bool SampleReportEnabled { get; set; }
         public bool PaymentsEnabled { get; set; }
+        public double MaximumAnalysisHeight { get; set; }
+        public double MaximumAnalysisWidth { get; set; }
 
         public EcosetAppOptions() {
             InstanceName = "Ecoset";
@@ -21,6 +23,8 @@ namespace Ecoset.WebUI.Options
             VimeoPromotionVideoId = 0;
             SampleReportEnabled = true;
             PaymentsEnabled = false;
+            MaximumAnalysisHeight = 4.00;
+            MaximumAnalysisWidth = 4.00;
         }
     }
 }

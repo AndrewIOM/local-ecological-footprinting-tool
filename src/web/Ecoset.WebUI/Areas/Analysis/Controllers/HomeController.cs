@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Ecoset.WebUI.Models;
 using Ecoset.WebUI.Services.Abstract;
-using System.Threading.Tasks;
 using Ecoset.WebUI.Models.JobViewModels;
+using Ecoset.WebUI.Options;
+using Microsoft.Extensions.Options;
 
 namespace Ecoset.WebUI.Areas.Analysis.Controllers
 {
@@ -20,17 +22,20 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
         private INotificationService _notifyService;
         private IOutputPersistence _persistence;
         private IReportGenerator _reportGenerator;
+        private EcosetAppOptions _options;
         public HomeController(
             IJobService jobService, 
             UserManager<ApplicationUser> userManager, 
             IReportGenerator reportGenerator,
             IOutputPersistence persistence,
+            IOptions<EcosetAppOptions> options,
             INotificationService notifyService) {
             _jobService = jobService;
             _userManager = userManager;
             _notifyService = notifyService;
             _persistence = persistence;
             _reportGenerator = reportGenerator;
+            _options = options.Value;
         }
 
         public IActionResult Index()
@@ -75,7 +80,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
         }
 
         [HttpPost]
-        public IActionResult ActivateProData(int id)
+        public async Task<IActionResult> ActivateProData(int id)
         {
             var job = _jobService.GetById(id);
             if (job == null) return BadRequest();
@@ -88,7 +93,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
             var user = GetCurrentUserAsync();
             if (job.CreatedBy.Id != user.Id) return BadRequest();
 
-            var success = _jobService.ActivateProFeatures(id, user.Id);
+            var success = await _jobService.ActivateProFeatures(id, user.Id);
             if (!success)
             {
                 return BadRequest("The activiation was not successful. Do you have at least one credit?");
@@ -99,7 +104,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
 
         [HttpGet]
         public IActionResult Submit() {
-            var model = new AddJobViewModel();
+            var model = new AddJobViewModel(_options.MaximumAnalysisHeight, _options.MaximumAnalysisWidth);
             return View(model);
         }
 

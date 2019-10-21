@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -109,12 +110,12 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
             return BadRequest();
         }
 
-        public IActionResult RestartPro(int jobId) {
+        public async Task<IActionResult> RestartPro(int jobId) {
             var job = _jobService.GetById(jobId);
             if (job == null) return BadRequest();
             var user = GetCurrentUserAsync();
 
-            var submitSuccess = _jobService.ActivateProFeatures(job.Id, user.Id);
+            var submitSuccess = await _jobService.ActivateProFeatures(job.Id, user.Id);
             if (submitSuccess) return Json(new JobListItemViewModel() {
                     Id = job.Id,
                     Name = job.Name,
