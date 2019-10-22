@@ -71,44 +71,6 @@
     </div>
 </form>
 
-<style>
-.boxdraw {
-    background: rgba(56,135,190,0.1);
-    border: 2px solid #3887be;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-}
-
-.coordinates-panel {
-    position: absolute;
-    top: 1em;
-    right: 1em;
-    z-index: 999;
-    width: 20em;
-}
-
-.mapboxgl-canvas {
-    -webkit-transition: border 1s;
-    transition: border 1s;
-    border: 3px solid rgba(169, 62, 113, 0);
-}
-
-#map {
-    margin-bottom:2em;
-}
-
-#layer-menu {
-    position: absolute;
-    top: 1em;
-    left: 4em;
-    z-index: 999;
-}
-</style>
-
-
 <script type="text/javascript">
 // init mapbox
 mapboxgl.accessToken = '@siteConfig.Value.MapboxAccessToken';

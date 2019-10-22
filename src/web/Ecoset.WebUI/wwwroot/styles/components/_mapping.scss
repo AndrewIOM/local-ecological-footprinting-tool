@@ -1,0 +1,39 @@
+/* Mapping Styles */
+@import '../_palette';
+
+#map {
+    width: 100%; 
+    height: 600px;
+    margin-bottom:2em;
+}
+
+.boxdraw {
+    background: $primary-color;
+    border: 2px solid $primary-color-accent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+}
+
+.coordinates-panel {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    z-index: 999;
+    width: 20em;
+}
+
+.mapboxgl-canvas {
+    -webkit-transition: border 1s;
+    transition: border 1s;
+    border: 3px solid $primary-color-accent;
+}
+
+#layer-menu {
+    position: absolute;
+    top: 1em;
+    left: 4em;
+    z-index: 999;
+}
