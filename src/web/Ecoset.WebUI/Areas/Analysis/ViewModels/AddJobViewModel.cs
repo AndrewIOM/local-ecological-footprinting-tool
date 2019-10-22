@@ -1,18 +1,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Ecoset.WebUI.Options;
+using Microsoft.Extensions.Options;
 
 namespace Ecoset.WebUI.Models.JobViewModels {
     public class AddJobViewModel : IValidatableObject
     {
-        private double _maximumLatitudinalExtent = 10.00;
-        private double _maximumLongitudinalExtent = 10.00;
+        private double _maximumLatitudinalExtent = 4.00;
+        private double _maximumLongitudinalExtent = 4.00;
         private const double _minimumLatitudinalExtent = 0.1;
         private const double _minimumLongitudinalExtent = 0.1;
-
-        public AddJobViewModel(double maxHeight, double maxWidth) {
-            _maximumLatitudinalExtent = maxHeight;
-            _maximumLongitudinalExtent = maxWidth;
-        }
 
         [Required]
         public string Name {get;set;}
@@ -32,6 +29,10 @@ namespace Ecoset.WebUI.Models.JobViewModels {
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            var options = (IOptions<EcosetAppOptions>)validationContext.GetService(typeof(IOptions<EcosetAppOptions>));
+            _maximumLatitudinalExtent = options.Value.MaximumAnalysisHeight;
+            _maximumLongitudinalExtent = options.Value.MaximumAnalysisWidth;
+
             if (LatitudeSouth.HasValue && LatitudeNorth.HasValue) {
                 if (LatitudeNorth < LatitudeSouth) {
                     yield return new ValidationResult("Northern latitude cannot be less than southern latitude.", new[] {"LatitudeNorth", "LatitudeSouth"});

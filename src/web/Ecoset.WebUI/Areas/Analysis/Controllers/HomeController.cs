@@ -104,7 +104,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
 
         [HttpGet]
         public IActionResult Submit() {
-            var model = new AddJobViewModel(_options.MaximumAnalysisHeight, _options.MaximumAnalysisWidth);
+            var model = new AddJobViewModel();
             return View(model);
         }
 

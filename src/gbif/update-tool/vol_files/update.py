@@ -278,26 +278,26 @@ if ask_stage("Strip any corrupt/non-species/land-based rows from the csv?"):
                                         row = next(rows)
                                 except Exception:
                                         continue
-                                if(len(row) != 45):
+                                if(len(row) != 50):
                                         print str(row) + " is corrupt"
                                         continue
 
                                 lat = 0.0
                                 lon = 0.0
 
-                                if(row[16] == "" or row[17] == ""):
+                                if(row[21] == "" or row[22] == ""):
                                         print str(row) + " is corrupt - lat/long empty"
                                         continue
 
                                 try:
-                                        lat = float(row[16])
-                                        lon = float(row[17])
+                                        lat = float(row[21])
+                                        lon = float(row[22])
                                 except ValueError:
                                         print str(row) + " is corrupt - lat/long corrupt"
                                         continue
 
                                 if get_value(lat, lon) != 0:
-                                        # land record
+                                        # ocean record
                                         continue
 
                                 taxonRank = row[11]
