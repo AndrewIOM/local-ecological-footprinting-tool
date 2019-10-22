@@ -352,7 +352,7 @@
                   var plot = new SpatialPlot("@executableResult.Name", {north:north, south:south, east:east, west:west});
                   plot.setup();
                   plot.addGraticule();
-                  plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), @noDataValue[executableResult.Name], "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name]);
+                  plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), @noDataValue[executableResult.Name], "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name].ToString().ToLower());
                   plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
                 });
               </script>
