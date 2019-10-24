@@ -9,7 +9,4 @@ mergeAndWindow.run(
   -999,
   config.get('marine_migratory.tileDir'),
   'migratory_',
-  'marine_migratory',
-  0,
-  true,
-  256);
+  'marine_migratory');

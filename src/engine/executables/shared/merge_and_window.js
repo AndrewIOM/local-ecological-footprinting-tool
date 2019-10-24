@@ -82,8 +82,17 @@
 		var tileFileList = [];
 		for (var t in tileList) {
 			var tileName = tileList[t];
-			tileFileList.push(tileDir + '/' + tileName.substring(0, 3) + '/' + tilePrefix + tileName + '.tif');
-		}
+			var tileFileName = tileDir + '/' + tileName.substring(0, 3) + '/' + tilePrefix + tileName + '.tif';
+			if (fs.existsSync(tileFileName)) {
+				tileFileList.push(tileDir + '/' + tileName.substring(0, 3) + '/' + tilePrefix + tileName + '.tif');
+			} else {
+				console.info("The following tile was missing: " + tileFileName);
+			};
+		};
+		if (tileFileList.length == 0) {
+			console.error("There were no data tiles for the requested area");
+			process.exit(1);
+		};
 
 		// spawn the merge process
 		var commandOpts = [__dirname + '/gdal_merge.py', '-init', noDataValue, '-a_nodata', noDataValue, '-o', outfile + '_merged.tif']

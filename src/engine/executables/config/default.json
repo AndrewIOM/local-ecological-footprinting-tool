@@ -175,10 +175,10 @@
         "tileDir": "/data/speciesdensity/reptilia/zonal/lefttiles"
     },
     "vulnerable_species_list": {
-        "shapefile": "/data/vulnerability/vulnerability.shp"
+        "shapefile": "/data/vulnerability/vulnmodelled_simplified.shp"
     },
     "migratory_species_list": {
-        "shapefile": "/data/migratory/migratory.shp"
+        "shapefile": "/data/migratory/groms_simplified.shp"
     },
     "marine_migratory_species_list": {
         "shapefile": "/data/migratory/migratory.shp"
