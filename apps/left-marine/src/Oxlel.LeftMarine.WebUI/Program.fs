@@ -18,6 +18,7 @@ module Program =
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(fun webBuilder ->
                 webBuilder.UseStartup<Startup>() |> ignore
+                webBuilder.UseKestrel(fun o -> o.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(10.) |> ignore) |> ignore
             )
 
     [<EntryPoint>]

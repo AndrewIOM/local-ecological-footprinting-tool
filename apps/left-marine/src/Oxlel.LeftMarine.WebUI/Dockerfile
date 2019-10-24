@@ -32,4 +32,7 @@ ENV ASPNETCORE_URLS=http://+:80
 RUN dotnet restore --disable-parallel
 RUN dotnet publish -c Release
 
+VOLUME /cache
+VOLUME /persistence
+
 ENTRYPOINT dotnet bin/Release/netcoreapp3.0/publish/Oxlel.LeftMarine.WebUI.dll
