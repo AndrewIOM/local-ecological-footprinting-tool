@@ -120,11 +120,11 @@
   speciesCategories["plantae"] = "Plants";
 
   var occurrenceColours = new Dictionary<string, string>();
-  occurrenceColours["Amphibia"] = "purple";
-  occurrenceColours["Aves"] = "blue";
-  occurrenceColours["Mammalia"] = "orange";
-  occurrenceColours["Reptilia"] = "cyan";
-  occurrenceColours["Plantae"] = "green";
+  occurrenceColours["amphibia"] = "purple";
+  occurrenceColours["aves"] = "blue";
+  occurrenceColours["mammalia"] = "orange";
+  occurrenceColours["reptilia"] = "cyan";
+  occurrenceColours["plantae"] = "green";
 }
 
     <!DOCTYPE html>
@@ -292,7 +292,7 @@
                       plot.setup();
                       plot.addGraticule();
                       plot.addWireframe();
-                      plot.addPointLayer(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)));
+                      plot.addPointLayer(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)), @Html.Raw(JsonConvert.SerializeObject(occurrenceColours)));
                       plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
 
                       populateDataSources(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)));
