@@ -302,7 +302,7 @@
                       plot.setup();
                       plot.addGraticule();
                       plot.addWireframe();
-                      plot.addPointLayer(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)));
+                      plot.addPointLayer(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)), @Html.Raw(JsonConvert.SerializeObject(occurrenceColours)));
                       plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
 
                       populateDataSources(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)));

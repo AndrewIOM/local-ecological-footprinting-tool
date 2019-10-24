@@ -392,25 +392,13 @@ var SpatialPlot = function (id, extent) {
         });
     }
 
-    self.addPointLayer = function (occurrenceData) {
-        // colours have to match GenerateReport.cshtml occurrenceColours
-        // TODO make this configurable by a map input.
-        var colourLookup = function (taxon) {
-            if (taxon == "turtle") return 'green';
-            if (taxon == "seabird") return 'blue';
-            if (taxon == "coral") return 'purple';
-            if (taxon == "fish") return 'cyan';
-            if (taxon == "marine mammal") return 'orange';
-            return 'black';
+    self.addPointLayer = function (occurrenceData, colourDictionary) {
+        console.log(colourDictionary);
+        function colourLookup(name) {
+            var found = colourDictionary[name];
+            if (found == null) return 'black';
+            return found;
         }
-//         var colourLookup = function (kingdom, cat) {
-//             if (kingdom == "Plantae") return 'green';
-//             if (cat == "Aves") return 'blue';
-//             if (cat == "Amphibia") return 'purple';
-//             if (cat == "Reptilia") return 'cyan';
-//             if (cat == "Mammalia") return 'orange';
-//             return 'black';
-//         }
 
         var canvas = d3.select("#" + id + "-map")
             .append("canvas")

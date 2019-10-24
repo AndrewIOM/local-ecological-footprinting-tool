@@ -68,7 +68,7 @@ if (system.args.length < 3 || system.args.length > 5) {
                         mm='0'+mm
                     }
                     today = dd+'/'+mm+'/'+yyyy;
-                    return replaceCssWithComputedStyle("<div><span style='float:right; font-size: 0.5em;'><img src='/images/left-logo.png' style='height: 1em' /> Generated on " + today + "</span></div>");
+                    return replaceCssWithComputedStyle("<div><span style='float:right; font-size: 0.5em;'><img src='/images/logo-black.png' style='height: 1em' /> Generated on " + today + "</span></div>");
                 })
             },
             footer: {
