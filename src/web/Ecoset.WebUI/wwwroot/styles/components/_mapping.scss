@@ -7,6 +7,10 @@
     margin-bottom:2em;
 }
 
+#map-panel {
+    margin-bottom:0;
+}
+
 .boxdraw {
     background: $primary-color;
     border: 2px solid $primary-color-accent;
@@ -25,10 +29,12 @@
     width: 20em;
 }
 
-.mapboxgl-canvas {
-    -webkit-transition: border 1s;
-    transition: border 1s;
-    border: 3px solid $primary-color-accent;
+#map {
+    .mapboxgl-canvas {
+        -webkit-transition: border 1s;
+        transition: border 1s;
+        border: 3px solid $primary-color-accent;
+    }    
 }
 
 #layer-menu {

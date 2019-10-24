@@ -25,7 +25,7 @@
                 <h3 class="panel-title"><a asp-action="Index" asp-controller="Home" asp-area="Analysis">My @siteConfig.Value.InstanceShortName Analyses</a></h3>
             </div>
             <div class="panel-body" style="padding:0;">
-                <div id='map' style="height:20em;"></div>
+                <div id='map-panel' style="height:20em;"></div>
                 <a asp-action="Submit" asp-controller="Home" asp-area="Analysis" class="btn btn-primary btn-sm" style="position: absolute;top: 0.5em;right: 1.8em;" type="button"><span class="glyphicon glyphicon-plus"></span> New Analysis</a>
             </div>
         </div>
@@ -137,7 +137,7 @@ $(document).ready(function() {
     //Setup Job Map Panel
     mapboxgl.accessToken = '@siteConfig.Value.MapboxAccessToken';
     var map = new mapboxgl.Map({
-        container: 'map',
+        container: 'map-panel',
         style: 'mapbox://styles/mapbox/outdoors-v11',
         center: [20, 50.50],
         zoom: 1
@@ -192,10 +192,13 @@ $(document).ready(function() {
 
                 features.push({
                     "type": "Feature",
-                    "geometry": {
-                        "type": "Polygon",
+                    "properties": {
                         "name": json[i].name,
                         "jobid": json[i].id,
+                        "status": json[i].status
+                    },
+                    "geometry": {
+                        "type": "Polygon",
                         "coordinates": [[
                             [json[i].longitudeWest, json[i].latitudeNorth],
                             [json[i].longitudeWest, json[i].latitudeSouth],
@@ -224,15 +227,21 @@ $(document).ready(function() {
                     }
                 },
                 'paint': {
-                    'fill-color': '#A93E71',
-                    'fill-opacity': 0.8
+                    'fill-color': [
+                        'match', 
+                        ['get', 'status'],
+                        'Completed', '#1e7145',
+                        'Processing', '#ffc40d',
+                        '#ccc'
+                    ],
+                    'fill-opacity': 0.75
                 }
             });
 
             map.on('click', 'analyses-layer', function(e) {
                 new mapboxgl.Popup()
                     .setLngLat(e.lngLat)
-                    .setHTML("<a href='/Analysis/Home/View/'" + e.features[0].properties.jobid + ">" + e.features[0].properties.name + "</a>")
+                    .setHTML("<a href='/Analysis/Home/View/" + e.features[0].properties.jobid + "'>" + e.features[0].properties.name + "</a>")
                     .addTo(map);
             });
 

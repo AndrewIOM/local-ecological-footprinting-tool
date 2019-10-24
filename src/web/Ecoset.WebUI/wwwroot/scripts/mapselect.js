@@ -16,11 +16,10 @@ function initMapboxWithDraw(mapboxAccessToken, maxLat, maxLon) {
     map.addControl(new MapboxGeocoder({
         accessToken: mapboxAccessToken,
         mapboxgl: mapboxgl
-    }));
+    }), 'bottom-left');
 
-    map.addControl(new mapboxgl.NavigationControl({
-        position: 'top-left'
-    }));
+    var nav = new mapboxgl.NavigationControl();
+    map.addControl(nav, 'top-left');
 
     //Layer switching
     var layerList = document.getElementById('layer-menu');
