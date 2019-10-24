@@ -289,5 +289,78 @@ namespace Ecoset.WebUI.Services.Concrete
             data.Description = job.Description;
             return data;
         }
+
+        public async Task<Guid> SubmitDataPackage(DataPackage package, List<string> variables)
+        {
+            var request = new JobSubmission() {
+                Title = package.Name,
+            	Description = "",
+            	UserName = package.CreatedBy.UserName,
+                East = package.LongitudeEast,
+                West = package.LongitudeWest,
+                North = package.LatitudeNorth,
+                South = package.LatitudeSouth,
+                Priority = 2
+            };
+            var processorReference = await _processor.StartDataPackage(request, variables);
+            package.JobProcessorReference = processorReference;
+
+            _context.DataPackages.Add(package);
+            _context.SaveChanges();
+
+            var savedPackage = _context.DataPackages.First(j => j.JobProcessorReference == package.JobProcessorReference);
+            // _notifyService.AddUserNotification(NotificationLevel.Success, package, "Requested a data package using the API: {0}.", new[] { package.Name });
+            return savedPackage.Id;
+        }
+
+        public IEnumerable<DataPackage> GetAllDataPackagesForUser(string userId)
+        {
+            return _context.DataPackages.Include(m => m.CreatedBy).Where(m => m.CreatedBy.Id == userId);
+        }
+
+        public async Task<DataPackage> GetDataPackage(Guid dataPackageId)
+        {
+            var package = _context.DataPackages.Include(m => m.CreatedBy).FirstOrDefault(m => m.Id == dataPackageId);
+            var oldStatus = package.Status;
+            var newStatus = await _processor.GetStatus(package.JobProcessorReference, oldStatus);
+            if (newStatus == oldStatus) return package;
+
+            package.Status = newStatus;
+            if (newStatus == JobStatus.Completed)
+            {
+                package.TimeCompleted = DateTime.UtcNow;
+            }
+
+            _context.Update(package);
+            await _context.SaveChangesAsync();
+            return package;
+        }
+
+        public async Task<ReportData> GetDataPackageData(Guid dataPackageId)
+        {
+            var package = _context.DataPackages.Include(m => m.CreatedBy).FirstOrDefault(m => m.Id == dataPackageId);
+            if (package == null) throw new Exception("Data package does not exist");
+            var data = await _processor.GetReportData(package.JobProcessorReference);
+            data.Title = package.Name;
+            return data;
+        }
+
+        public async Task<JobStatus> PollDataPackage(Guid dataPackageId)
+        {
+            var package = _context.DataPackages.FirstOrDefault(m => m.Id == dataPackageId);
+            var oldStatus = package.Status;
+            var newStatus = await _processor.GetStatus(package.JobProcessorReference, oldStatus);
+            if (newStatus == oldStatus) return oldStatus;
+
+            package.Status = newStatus;
+            if (newStatus == JobStatus.Completed)
+            {
+                package.TimeCompleted = DateTime.UtcNow;
+            }
+
+            _context.Update(package);
+            await _context.SaveChangesAsync();
+            return newStatus;
+        }
     }
 }

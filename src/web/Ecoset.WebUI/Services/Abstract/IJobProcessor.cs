@@ -12,6 +12,7 @@ namespace Ecoset.WebUI.Services.Abstract
         Task<JobStatus> GetStatus(string processorJobId, JobStatus localStatus);
         Task<string> StartJob(JobSubmission job);
         Task<string> StartProJob(JobSubmission job);
+        Task<string> StartDataPackage(JobSubmission job, List<string> customVariables);
         void StopJob(string processorJobId);
         Task<ReportData> GetReportData(string processorJobId);
         Task<List<Tuple<string,string,string>>> GetReportFiles(string processorJobId);

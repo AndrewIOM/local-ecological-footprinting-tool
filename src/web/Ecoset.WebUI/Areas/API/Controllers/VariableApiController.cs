@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Ecoset.WebUI.Models;
+using Microsoft.Extensions.Options;
+using Ecoset.WebUI.Options;
 
 namespace Ecoset.WebUI.Areas.API.Controllers {
 
@@ -14,8 +16,10 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
     public class VariableApiController : Controller {
 
         private readonly UserManager<ApplicationUser> _userManager;
-        public VariableApiController (UserManager<ApplicationUser> userManager) {
+        private ReportContentOptions _reportOptions;
+        public VariableApiController (UserManager<ApplicationUser> userManager, IOptions<ReportContentOptions> reportOptions) {
             _userManager = userManager;
+            _reportOptions = reportOptions.Value;
         }
 
         /// <summary>

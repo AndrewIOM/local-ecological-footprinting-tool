@@ -137,6 +137,20 @@ namespace Ecoset.WebUI.Services.Concrete
             return ToLeftStatus(status);
         }
 
+        public async Task<string> StartDataPackage(JobSubmission job, List<string> variables)
+        {
+            var command = new JobSubmissionRequest()
+            {
+                East = job.East,
+                West = job.West,
+                North = job.North,
+                South = job.South,
+                Executables = GetCustomRequest(variables)
+            };
+            var result = await _connection.SubmitJobAsync(command);
+            return result.Id.ToString();
+        }
+
         public async Task<string> StartJob(JobSubmission job)
         {
             var command = new JobSubmissionRequest()
@@ -201,6 +215,20 @@ namespace Ecoset.WebUI.Services.Concrete
             ).ToList();
         }
 
+        private List<Executable> GetCustomRequest(List<string> customVariables) 
+        {
+            var exesList = _options.Value.FreeReportSections;
+            var toProcess = exesList.Select(m => 
+                new Executable() {
+                    Name = m.Name,
+                    Implementation = m.Implementation,
+                    OutputFormat = m.OutputFormat,
+                    Stat = m.Stat
+                }
+            ).Where(n => customVariables.Contains(n.Name)).ToList();
+            return toProcess;
+        }
+
         private Models.JobStatus ToLeftStatus(GeoTemporal.Remote.JobStatus status) {
             if (status == GeoTemporal.Remote.JobStatus.Failed) { return Models.JobStatus.Failed; }
             else if (status == GeoTemporal.Remote.JobStatus.Queued) { return Models.JobStatus.Queued; }
@@ -209,5 +237,6 @@ namespace Ecoset.WebUI.Services.Concrete
             else if (status == GeoTemporal.Remote.JobStatus.Ready) { return Models.JobStatus.Completed; }
             else return Models.JobStatus.Submitted;
         }
+
     }
 }

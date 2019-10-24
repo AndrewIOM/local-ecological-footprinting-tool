@@ -1,3 +1,4 @@
+@model System.Collections.Generic.List<DataPackage>
 @{
     Layout = "_DashboardLayout";
     ViewData["Title"] = "Data Packages API";
@@ -5,7 +6,27 @@
 
 <div class="row">
     <div class="col-md-8">
-        <p>Use the Data Packages API to integrate @siteConfig.Value.InstanceShortName datasets into your workflow or line-of-business application.
+        <p>Use the Data Packages API to integrate @siteConfig.Value.InstanceShortName datasets into your workflow or line-of-business application. A log of your API activity is shown below:
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Requested</th>
+                    <th>Completed</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var package in Model) {
+                <tr>
+                    <td>@package.Name</td>
+                    <td>@package.Status</td>
+                    <td>@package.TimeRequested</td>
+                    <td>@package.TimeCompleted</td>
+                </tr>
+            }
+            </tbody>
+        </table>
     </div>
     <div class="col-md-4">
         <div class="panel panel-default" id="credits-pane">
@@ -13,7 +34,7 @@
                 <h3 class="panel-title"><span class="glyphicon glyphicon-cloud-download"></span> Your Rate Limit</h3>
             </div>
             <div class="panel-body" style="text-align:center;">
-                <span id="credit-count" style="font-size:3em;">Off</span><br /><span>Credits</span>
+                <span id="credit-count" style="font-size:3em;">1</span><br /><span>simultaneous data packages</span>
             </div>
         </div>
     </div>

@@ -11,6 +11,7 @@ namespace Ecoset.WebUI.Data
         public DbSet<Purchase> Purchases { get; set; }
         public DbSet<ShoppingBasket> ShoppingBaskets { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<DataPackage> DataPackages { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
