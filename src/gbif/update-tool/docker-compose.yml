@@ -6,12 +6,9 @@ services:
     gbif-python:
         build:
             context: .
-            dockerfile: Dockerfile.gbif-python
+            dockerfile: Dockerfile
         volumes:
-        - "./vol_files:/vol_files"
-        networks:
-        - ecoset_default
-
-networks:
-  ecoset_default:
-    external: true
+        - "/terrgbif/vol_files:/vol_files/"
+        stdin_open: true
+        tty: true
+        command: python "/vol_files/update.py" -p 1980-01-01 2019-10-20
