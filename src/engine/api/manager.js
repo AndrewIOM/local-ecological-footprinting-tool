@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 (function () {
 	var kue = require("kue");
 	var ui = require("kue-ui");
@@ -35,7 +37,14 @@
 		PROCESSING: "PROCESSING",
 		READY: "READY",
 		FAILED: "FAILED"
-	}
+	};
+
+	//An enum of temporal models for a job
+	const TimeMode = {
+		LATEST: "LATEST",
+		EXACT: "EXACT",
+		BEFORE: "BEFORE"
+	};
 
 	var app = express(); // express app for ui
 
@@ -103,7 +112,7 @@
 			winston.info("Job id: " + job.id + " failed ecoset processing");
 			client.set(job.id, JobStates.FAILED);
 		});
-	}
+	};
 
 	/**
 	 * Polls the redis store for job state by job id.
@@ -121,7 +130,7 @@
 				callback(null, JobStates.NONEXISTENT);
 			}
 		});
-	}
+	};
 
 	/**
 	 * Returns the location of the output.json file for the specified job
@@ -148,7 +157,7 @@
 				callback(new Error("Job \"" + jobId + "\" does not exist on the server"));
 			}
 		});
-	}
+	};
 
 	/**
 	 * Called when a brand new job has been submitted - creates the initial raw data output.
@@ -182,9 +191,13 @@
 			south: job.south,
 			east: job.east,
 			west: job.west,
+			timemode: job.timemode,
+			year: job.year,
+			month: job.month,
+			day: job.day,
 			executables: job.executables,
 			outputDir: outputDir
-		}
+		};
 
 		var completed = 0;
 		var total = job.executables.length;

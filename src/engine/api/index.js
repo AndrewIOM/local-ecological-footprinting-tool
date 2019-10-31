@@ -37,6 +37,17 @@ app.post("/submit", function (request, response) {
 });
 
 /**
+ * The API endpoint "/list"
+ * Returns the executables available in this ecoset instance
+ */
+app.get("/list", function(request, response) {
+	var listRequest = request.body;
+	winston.info("List request recieved: " + JSON.stringify(listRequest));
+	var result = executables.getExecutableDefinitions();
+	response.status(200).send({ success: true, variables: result});
+});
+
+/**
  * The API endpoint "/poll"
  * Takes user input in the form of JSON - contains the job id to poll
  */
