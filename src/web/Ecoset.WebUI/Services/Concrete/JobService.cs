@@ -247,7 +247,7 @@ namespace Ecoset.WebUI.Services.Concrete
 
             var activation = new ProActivation()
             {
-                Id = Guid.NewGuid(),
+                //Id = Guid.NewGuid(),
                 UserIdOfPurchaser = user.Id,
                 TimeOfPurchase = DateTime.Now,
                 CreditsSpent = 1,
@@ -255,8 +255,8 @@ namespace Ecoset.WebUI.Services.Concrete
                 JobProcessorReference = processorReference
             };
             job.ProActivation = activation;
-            _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _context.Entry(job).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            // _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            // _context.Entry(job).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             _context.Update(job);
             _context.Update(user);
             _context.SaveChanges();

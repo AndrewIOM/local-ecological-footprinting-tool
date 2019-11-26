@@ -48,7 +48,7 @@ namespace Ecoset.WebUI.Controllers
 
         private string GetLinkUrl(Notification n) {
             if (n.Job != null) {
-                string url = Url.Action("View", "Job", new { id = n.Job.Id });
+                string url = Url.Action("View", "Home", new { area = "Analysis", id = n.Job.Id });
                 return url;
             }
             return null;
