@@ -1,6 +1,7 @@
 import sys, os.path, json, time, argparse, ConfigParser, getpass, peewee
 import requests, progress, wget, zipfile
 import gdal, csv
+import glob
 from gdalconst import *
 from osgeo import osr
 from progress.spinner import Spinner
@@ -311,6 +312,46 @@ if ask_stage("Strip any corrupt/non-species/land-based rows from the csv?"):
 # ==============================================================================
 # process the data
 
+# https://stackoverflow.com/questions/36445193/splitting-one-csv-into-multiple-files-in-python
+def split(filehandler, delimiter=',', row_limit=50000,
+          output_name_template='chunked_%s.csv', output_path='.', keep_headers=True):
+    import csv
+    reader = csv.reader(filehandler, delimiter=delimiter, quoting=csv.QUOTE_MINIMAL)
+    current_piece = 1
+    current_out_path = os.path.join(
+        output_path,
+        output_name_template % current_piece
+    )
+    current_out_writer = csv.writer(open(current_out_path, 'w'), delimiter=delimiter)
+    current_limit = row_limit
+    if keep_headers:
+        headers = reader.next()
+        current_out_writer.writerow(headers)
+    for i, row in enumerate(reader):
+        if i + 1 > current_limit:
+            current_piece += 1
+            current_limit = row_limit * current_piece
+            current_out_path = os.path.join(
+                output_path,
+                output_name_template % current_piece
+            )
+            current_out_writer = csv.writer(open(current_out_path, 'w'), delimiter=delimiter)
+            if keep_headers:
+                current_out_writer.writerow(headers)
+        current_out_writer.writerow(row)
+
+if ask_stage("Chunk CSV?"):
+        stage("Chunking CSV")
+
+        # check if the download was successful
+        if not os.path.isfile("download/"+dest_dir+"/"+dest_dir + ".csv"):
+                print "ERROR: no data downloaded - there may be no data for the range"
+                sys.exit()
+
+        print "Chunking CSV"
+        split(open("download/"+dest_dir+"/"+dest_dir + ".csv"), output_name_template= "download/"+dest_dir+"/"+dest_dir +'-chunked_%s.csv', delimiter="\t")
+
+
 if ask_stage("Process the downloaded data?"):
         stage("Processing data")
 
@@ -324,60 +365,63 @@ if ask_stage("Process the downloaded data?"):
         # creates a column_info string, that is used in the sql query
         # to specify which columns should be ignored
         columns = 0
-        print "Opening CSV"
-        with open("download/"+dest_dir+"/"+dest_dir + ".csv") as f:
-                for line in f:
-                        print line
-                        line = line.split("\t")
-                        columns = len(line)
-                        for i in xrange(0, len(line)):
-                                if ("gbif_" + line[i]) in useful_fields:
-                                        useful_fields["gbif_" + line[i]] = i
-                        break
-        s = ""
-        for i in xrange(0, columns):
-                if i in useful_fields.values():
-                        for k, v in useful_fields.iteritems():
-                                if v == i:
-                                        s += "@var" + str(v) + ","
-                else:
-                        s += "@dummy,"
-        column_info = "(" + s[:-1] + ")"
 
-        s = ""
-        latno = 0
-        lonno = 0
-        for k, v in useful_fields.iteritems():
-                if k == "gbif_decimalLatitude":
-                        latno = v
-                elif k == "gbif_decimalLongitude":
-                        lonno = v
-                s += (str(k) + " = @var" + str(v) + ",")
+        for file in glob.glob('download/' + dest_dir + '/' + '*-chunked_*.csv'):
 
-        # set taxonomic group
-        s += "taxonomicgroup = '{group}'".format(group=taxongroup)
+                print "Opening CSV"
+                with open(file) as f:
+                        for line in f:
+                                print line
+                                line = line.split("\t")
+                                columns = len(line)
+                                for i in xrange(0, len(line)):
+                                        if ("gbif_" + line[i]) in useful_fields:
+                                                useful_fields["gbif_" + line[i]] = i
+                                break
+                s = ""
+                for i in xrange(0, columns):
+                        if i in useful_fields.values():
+                                for k, v in useful_fields.iteritems():
+                                        if v == i:
+                                                s += "@var" + str(v) + ","
+                        else:
+                                s += "@dummy,"
+                column_info = "(" + s[:-1] + ")"
 
-        set_info = "SET " + s
+                s = ""
+                latno = 0
+                lonno = 0
+                for k, v in useful_fields.iteritems():
+                        if k == "gbif_decimalLatitude":
+                                latno = v
+                        elif k == "gbif_decimalLongitude":
+                                lonno = v
+                        s += (str(k) + " = @var" + str(v) + ",")
 
-        # To do a LOAD DATA, coordinate must be null, which means it can't be indexed, which means it can't be part of the master table
-        # Therefore place coordinate into a coordinates table
+                # set taxonomic group
+                s += "taxonomicgroup = '{group}'".format(group=taxongroup)
 
-        sql = ("LOAD DATA LOCAL INFILE '" + os.path.abspath(
-                "download/"+dest_dir+"/"+dest_dir + "_fix.csv").replace("\\", "\\\\") + "' "
-                        "REPLACE INTO TABLE `{table_name}` "
-                        "FIELDS TERMINATED BY '\\t' "
-                        "LINES TERMINATED BY '\\n' "
-                "" + column_info + " " + set_info + ";").format(table_name=gbif_table)
-        print(sql)
-        db.execute_sql(sql)
+                set_info = "SET " + s
 
-        # Now add the new coordinates
-        sql = ("INSERT INTO `{coord_table_name}`(gbif_gbifid,coordinate) "
-                "SELECT gbif_gbifid, POINT(gbif_decimallatitude, gbif_decimallongitude) "
-                "FROM `{master_table_name}` "
-                "WHERE gbif_gbifid NOT IN (SELECT gbif_gbifid FROM `{coord_table_name}`)").format(coord_table_name=gbif_coordinate_table, master_table_name=gbif_table)
-        print(sql)
-        db.execute_sql(sql)
+                # To do a LOAD DATA, coordinate must be null, which means it can't be indexed, which means it can't be part of the master table
+                # Therefore place coordinate into a coordinates table
+
+                sql = ("LOAD DATA LOCAL INFILE '" + os.path.abspath(
+                        file).replace("\\", "\\\\") + "' "
+                                "REPLACE INTO TABLE `{table_name}` "
+                                "FIELDS TERMINATED BY '\\t' "
+                                "LINES TERMINATED BY '\\n' "
+                        "" + column_info + " " + set_info + ";").format(table_name=gbif_table)
+                print(sql)
+                db.execute_sql(sql)
+
+                # Now add the new coordinates
+                sql = ("INSERT INTO `{coord_table_name}`(gbif_gbifid,coordinate) "
+                        "SELECT gbif_gbifid, POINT(gbif_decimallatitude, gbif_decimallongitude) "
+                        "FROM `{master_table_name}` "
+                        "WHERE gbif_gbifid NOT IN (SELECT gbif_gbifid FROM `{coord_table_name}`)").format(coord_table_name=gbif_coordinate_table, master_table_name=gbif_table)
+                print(sql)
+                db.execute_sql(sql)
 
 stage("Finished processing data")
 
