@@ -1,5 +1,7 @@
 'use strict';
 
+/*jshint esversion: 6 */
+
 /* eslint-disable func-names, indent, no-tabs, no-var, global-require, no-unused-vars,
  prefer-destructuring, vars-on-top */
 
@@ -34,6 +36,53 @@
 			parseInt(data[3].trim()), parseInt(data[4].trim())
 		]] = data[0];
 	}
+
+	function getDirectories(path) {
+		return fs.readdirSync(path).filter(function (file) {
+			return fs.statSync(path+'/'+file).isDirectory();
+		});
+	}
+	function isActualDate(month, day, year) {
+		var tempDate = new Date(year, --month, day);
+		return month === tempDate.getMonth();
+	}
+
+	function getTimeDimension(tileDir) {
+		var timeSlices = [];
+		var tileDirectories = getDirectories(tileDir);
+		console.info("Tile sets include: " + JSON.stringify(tileDirectories));
+		tileDirectories.forEach(function (subdir) {
+			var yr;
+			var m;
+			var d;
+			var parts = subdir.split('-');
+			if (parts.length > 3) return; // Not a valid date string
+			if (Math.floor(parts[0]) == parseInt(parts[0])) {
+				yr = parseInt(parts[0]);
+			} else return;
+			if (parts.length == 1) {
+				timeSlices.push({ year: yr, month: null, day: null, dir: tileDir+'/'+subdir});
+			}
+			if (Math.floor(parts[1]) == parseInt(parts[1])) {
+				if (parts[1] > 0 && parts[1] < 13) { m = parseInt(parts[1]); }
+			} else return;
+			if (parts.length == 2) {
+				timeSlices.push({ year: yr, month: m, day: null, dir: tileDir+'/'+subdir});
+			}
+			if (Math.floor(parts[2]) == parseInt(parts[2])) {
+				d = parseInt(parts[2]);
+				if (isActualDate(m,d,yr)) {
+					timeSlices.push({ year: yr, month: m, day: d, dir: tileDir+'/'+subdir});
+				} 
+			}
+		});
+		console.info("Time slices: " + JSON.stringify(timeSlices));		
+	}
+
+	// Return time slices available for the specified plugin
+	module.exports.getTimes = function(tileDir) {
+		getTimeDimension(tileDir);
+	};
 
 	// this function is asynchronous due to the "node sync" library - however some of the functions
 	// ran below are specifically synchronous
@@ -76,6 +125,44 @@
 				if (tileName != undefined)
 					tileList.push(tileName);
 			}
+		}
+
+		var timeSlices = getTimeDimension(tileDir);
+		if (timeSlices.length == 0) {
+			console.error("There were no time slices available for this variable");
+			process.exit(1);
+		}
+
+		// Find out if requsted time exists
+		var currentTimeSlice;
+        switch(inputData.timeMode) {
+			case "EXACT":
+				var matchedSlice = timeSlices.find(x => x.year == inputData.year && x.month == inputData.month && x.day == inputData.day);
+				currentTimeSlice = matchedSlice;
+				tileDir = matchedSlice.dir;
+				break;
+			case "BEFORE":
+				var before = 
+					timeSlices
+						.filter(x => x.year <= inputData.year && x.month <= inputData.month && x.day <= inputData.day) // TODO Check nulls
+						.sort((a, b) => a.day - b.day)
+						.sort((a, b) => a.month - b.month)
+						.sort((a, b) => a.year - b.year).pop();
+				console.log("before is " + before + "from " + timeSlices);
+				tileDir = before.dir;
+				currentTimeSlice = before;
+				break;	
+			default:
+				// Assume "LATEST" was used
+				var latest = timeSlices.sort((a, b) => a.day - b.day).sort((a, b) => a.month - b.month).sort((a, b) => a.year - b.year).pop();
+				console.info("Latest is " + JSON.stringify(latest) + "from " + JSON.stringify(timeSlices));
+				tileDir = latest.dir;
+				currentTimeSlice = latest;
+				break;
+		}
+		if (currentTimeSlice == null) {
+			console.error("There was no time slice that matched [" + inputData.timeMode + "].");
+			process.exit(1);
 		}
 
 		// build a list of tif file locations
@@ -163,7 +250,7 @@
 				}
 			}
 
-			var summaryString = '{"summary": {';
+			var summaryString = `{ {dimensions: {"east": ${inputData.east}, "west": ${inputData.west}, "north": ${inputData.north}, "south": ${inputData.south}, "day": ${currentTimeSlice.day}, "month": ${currentTimeSlice.month}, "year": ${currentTimeSlice.year} }, "summary": {`;
 			var summaryMin = infoObj.bands[0].minimum;
 			var summaryMax = infoObj.bands[0].maximum;
 			var summaryMean = infoObj.bands[0].mean;

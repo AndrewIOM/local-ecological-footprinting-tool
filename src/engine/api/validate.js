@@ -1,6 +1,11 @@
 (function () {
     var executables = require("./executables");
 
+    var isActualDate = function (month, day, year) {
+        var tempDate = new Date(year, --month, day);
+        return month === tempDate.getMonth();
+    };
+
     // returns a non-empty string detailing the error if the job params are not valid 
     module.exports.isJobValid = function (job) {
         // check for null values
@@ -27,6 +32,38 @@
         // check if lat/lons form a box
         if (job.north <= job.south) return "North value (" + job.north + ") must be greater than south value (" + job.south + ")";
         if (job.east <= job.west) return "East value (" + job.east + ") must be greater than west value (" + job.west + ")";
+
+        // check valid temporal mode
+        if (job.timeMode == null) return "You must enter a temporal mode";
+        switch(job.timeMode) {
+            case "LATEST":
+                if (job.day != null || job.month != null || job.year != null) return "Cannot specify date when requesting latest datasets";
+                break;
+            case "EXACT":
+                    if(!(Math.floor(job.year) == parseInt(job.year))) return "The year entered was not valid";
+                    if (job.month != null) {
+                        if (!(Math.floor(job.month) == parseInt(job.month))) return "The month entered was not a number";
+                        if (job.month < 1 || job.month > 12) return "The month entered was not valid";
+                        if (job.day != null) {
+                            if (!(Math.floor(job.day) == parseInt(job.day))) return "The day entered was not a number";
+                            if (!isActualDate(job.month, job.day, job.year)) return "The day entered does not form a valid date";
+                        }
+                    }
+                    break;
+            case "BEFORE":
+                    if(!(Math.floor(job.year) == parseInt(job.year))) return "The year entered was not valid";
+                    if (job.month != null) {
+                        if (!(Math.floor(job.month) == parseInt(job.month))) return "The month entered was not a number";
+                        if (job.month < 1 || job.month > 12) return "The month entered was not valid";
+                        if (job.day != null) {
+                            if (!(Math.floor(job.day) == parseInt(job.day))) return "The day entered was not a number";
+                            if (!isActualDate(job.month, job.day, job.year)) return "The day entered does not form a valid date";
+                        }
+                    }
+                    break;
+            default:
+              return "The time mode was invalid: " + job.timeMode;
+          }
 
         // check that executables exist
         var availableExecutables = executables.getExecutableDefinitions();
@@ -60,7 +97,7 @@
         }
 
         return "";
-    }
+    };
 
     // returns a non-empty string detailing the error if job id request params are not valid
     module.exports.isJobIdRequestValid = function(pollRequest) {
