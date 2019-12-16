@@ -37,6 +37,24 @@ app.post("/submit", function (request, response) {
 });
 
 /**
+ * The API endpoint "/list"
+ * Lists the available datasets (executables) that may be served by this ecoset node.
+ * If spatial-temporal constraints are supplied, lists the available data within those constraints
+ */
+app.post("/list", function(request, response) {
+	var listRequest = request.body;
+	winston.info("List request recieved: " + JSON.stringify(listRequest));
+	var error = validate.isListRequestValid(listRequest);
+	if (error == "") {
+
+	} else {
+		winston.warn("Poll request " + JSON.stringify(pollRequest) + " contains invalid parameters, error = " + error);
+		response.status(400).send({ success: false, message: "Bad request data: " + error, jobState: null });
+		response.end();
+	}
+});
+
+/**
  * The API endpoint "/poll"
  * Takes user input in the form of JSON - contains the job id to poll
  */

@@ -183,7 +183,10 @@
 			east: job.east,
 			west: job.west,
 			executables: job.executables,
-			outputDir: outputDir
+			outputDir: outputDir,
+			year: job.year,
+			month: job.month,
+			day: job.day
 		}
 
 		var completed = 0;

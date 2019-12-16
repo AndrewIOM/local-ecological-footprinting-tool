@@ -74,4 +74,10 @@
 
         return "";
     }
+
+    // returns a non-empty string detailing the error if request params are not valid
+    module.exports.isListRequestValid = function(listRequest) {
+        return "";
+    };
+
 }());
