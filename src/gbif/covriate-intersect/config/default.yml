@@ -1,0 +1,14 @@
+mysql:
+    host: testdb
+    db: gbif
+    user: gbif
+    password: pass
+    gbif_table: gbif
+    gbif_coord_table: coordinates
+
+covariates:
+    dir: /somedir/
+
+ecoregions:
+    shapefile: /somedir/marineecoregions_forspdensity.shp
+    outputdir: /somedir/
