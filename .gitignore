@@ -342,3 +342,4 @@ appsettings.Production.json
 appsettings.Staging.json
 .env
 appendonly.aof
+**/test-data/*

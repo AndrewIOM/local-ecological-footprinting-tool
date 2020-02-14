@@ -50,7 +50,7 @@ namespace Ecoset.WebUI.Services.Concrete
 
         public string PersistReport(int jobId, string temporaryFile)
         {
-            var fileName = _options.Value.PersistenceFolder + jobId + "_report.pdf";
+            var fileName = Path.Combine(_options.Value.PersistenceFolder, jobId + "_report.pdf");
             if (File.Exists(fileName)) _logger.LogInformation("Overwriting previous report for job #" + jobId);
             if (!File.Exists(temporaryFile)) {
                 _logger.LogError("The temporary cache file for job #" + jobId + " did not exist. Perhaps there was a problem with its generation?");

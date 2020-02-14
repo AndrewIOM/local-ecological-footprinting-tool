@@ -12,6 +12,7 @@ namespace Ecoset.WebUI.Options
         public bool PaymentsEnabled { get; set; }
         public double MaximumAnalysisHeight { get; set; }
         public double MaximumAnalysisWidth { get; set; }
+        public string ScratchDirectory { get; set; }
 
         public EcosetAppOptions() {
             InstanceName = "Ecoset";

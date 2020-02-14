@@ -78,7 +78,7 @@ namespace Ecoset.WebUI {
             services.AddTransient<IPaymentService, WorldPayPaymentService>();
             services.AddTransient<INotificationService, NotificationService>(); 
             services.AddTransient<IOutputPersistence, FileSystemOutputPersistence>(); 
-            services.AddTransient<IReportGenerator, PhantomReportGenerator>(); 
+            services.AddSingleton<IReportGenerator, DinkReportGenerator>(); 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // 4. Hangfire for queues
