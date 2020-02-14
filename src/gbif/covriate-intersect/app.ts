@@ -33,6 +33,11 @@ type Covariate = {
     Dataset: gdal.Dataset
 }
 
+type Ecoregion = {
+    Name: string,
+    WKT: string
+}
+
 // Configuration settings
 const mysqlHost = config.get<string>('mysql.host');
 const mysqlDb = config.get<string>('mysql.db');
@@ -47,46 +52,14 @@ const openCovriates = (dir:string) : Covariate[] => {
     return files.map(f => { return { Name: f, Dataset: gdal.open(f, "r") } })
 }
 
-
-
-// Script
-// const covariates = openCovriates(covariateDirectory);
-
-// const gdalPoints = [
-//     new Point(12,10)
-// ] // List of WGS84 points
-
-// covariates.map(c => {
-
-//     const transformedPoint = gdalPoints[0].transformTo(c.Dataset.srs);
-
-//     c.Dataset.bands.get(0)
-// })
-
-
-const db = new Database({
-    host: mysqlHost,
-    database: mysqlDb,
-    user: mysqlUser,
-    password: mysqlPassword
-});
-
-type Ecoregion = {
-    Name: string,
-    WKT: string
-}
-
-// Intersect ecoregions
 const loadEcoregions = () : Ecoregion[] => {
     const ecoregions = gdal.open(ecoregionShapefile, "r");
-    return ecoregions.layers.get("marineecoregions_forspdensity").features.map(f => {
-        const name = f.fields.get("DATA_VALUE");
+    return ecoregions.layers.get("erased").features.map(f => {
+        const name = f.fields.get("Id");
         const wkt : string = f.getGeometry().toWKT() as unknown as string;
         return { Name: name, WKT: wkt };
     })
 }
-
-
 
 const countEcoregion = async (ecoregion:Ecoregion, conn:Database) => {
 
@@ -96,12 +69,23 @@ const countEcoregion = async (ecoregion:Ecoregion, conn:Database) => {
         left join ${config.get("mysql.gbif_coord_table")} c \
         on m.gbif_gbifid=c.gbif_gbifid \
         where gbif_species<>'' and \
-        ST_Contains(ST_GeomFromText('${ecoregion.WKT}'), coordinate) \
+        ST_Contains(ST_GeomFromText('${ecoregion.WKT}'), c.coordinate) \
         group by taxonomicgroup;`;
     
+    console.log(query);
     console.log("Running query for: " + ecoregion.Name);
     return await conn.query(query, undefined);
 }
+
+
+// Script
+
+const db = new Database({
+    host: mysqlHost,
+    database: mysqlDb,
+    user: mysqlUser,
+    password: mysqlPassword
+});
 
 const regions = loadEcoregions();
 console.log("Loaded " + regions.length + " ecoregion shapes.");
@@ -110,7 +94,22 @@ const outFile = config.get<string>("ecoregions.outputdir") + "/out.txt";
 console.log("Running queries...");
 
 let chain = Promise.resolve();
-for (let region of regions.reverse()) {
+for (let region of regions) {
     chain = chain.then(() => countEcoregion(region, db)
-        .then(r => fs.appendFileSync(outFile, r)));
-} 
+        .then(r => fs.appendFileSync(outFile, JSON.stringify(r))));
+}
+
+// // Script
+// const covariates = openCovriates(covariateDirectory);
+
+// const gdalPoints = [
+//     new Point(12,10)
+// ] // List of WGS84 points
+
+// covariates.map(c => {
+//     const point = gdalPoints[0];
+//     const transform = new gdal.CoordinateTransformation(point.srs, c.Dataset);
+//     const pixels = transform.transformPoint(point.x, point.y);
+//     const v = c.Dataset.bands.get(0).pixels.get(pixels.x,pixels.y);
+//     return [ c.Name, v ];
+// })

@@ -19,21 +19,13 @@ namespace Ecoset.GeoTemporal.Remote
 
         public async Task<JobFetchResponse> FetchResultAsync(JobId id)
         {
-            var request = new JobFetchRequest()
-            {
-                JobId = id.Id
-            };
-            var result = await Post<JobFetchResponse>("/fetch", request);
+            var result = await Get<JobFetchResponse>("/fetch/" + id.Id.ToString());
             return result;
         }
 
         public async Task<JobStatus> GetJobStatusAsync(JobId id)
         {
-            var request = new JobPollRequest()
-            {
-                JobId = id.Id
-            };
-            var result = await Post<JobPollResponse>("/poll", request);
+            var result = await Get<JobPollResponse>("/poll/" + id.Id.ToString());
             return result.JobStatus;
         }
 
@@ -41,6 +33,28 @@ namespace Ecoset.GeoTemporal.Remote
         {
             var result = await Post<JobSubmissionResponse>("/submit", request);
             return new JobId(result.JobId);
+        }
+
+        private async Task<T> Get<T>(string endpoint) 
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(_endpoint);
+                var response = await client.GetAsync(endpoint);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonMessage;
+                    using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                    {
+                        jsonMessage = new StreamReader(responseStream).ReadToEnd();
+                    }
+                    T responseContent = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
+                    return responseContent;
+                }
+                else {
+                    throw new HttpRequestException("The request was not successful: " + response.StatusCode);
+                }
+            }
         }
 
         private async Task<T> Post<T>(string endpoint, object request)

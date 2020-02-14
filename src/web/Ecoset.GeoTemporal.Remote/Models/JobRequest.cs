@@ -6,28 +6,46 @@ namespace Ecoset.GeoTemporal.Remote
 {
     public class JobSubmissionRequest
     {
-        [JsonProperty("north")]
+        [JsonProperty("LatitudeNorth")]
         public double North { get; set; }
-        [JsonProperty("south")]
+        [JsonProperty("LatitudeSouth")]
         public double South { get; set; }
-        [JsonProperty("east")]
+        [JsonProperty("LongitudeEast")]
         public double East { get; set; }
-        [JsonProperty("west")]
+        [JsonProperty("LongitudeWest")]
         public double West { get; set; }
-        [JsonProperty("executables")]
-        public List<Executable> Executables { get; set; }
+        [JsonProperty("TimeMode")]
+        public TimeMode TimeMode { get; set; }
+        [JsonProperty("Variables")]
+        public List<Variable> Variables { get; set; }
     }
 
-    public class Executable
+    public class Variable
     {
-        [JsonProperty("name")]
+        [JsonProperty("Name")]
         public string Name { get; set; }
-        [JsonProperty("implementation")]
-        public string Implementation { get; set; }
-        [JsonProperty("output_format")]
-        public string OutputFormat { get; set; }
-        [JsonProperty("stat")]
-        public string Stat { get; set; }
+        [JsonProperty("Method")]
+        public string Method { get; set; }
+        [JsonProperty("options")]
+        public object Options { get; set; }
+    }
+
+    public class TimeMode 
+    {
+        [JsonProperty("kind")]
+        public string Kind { get; set; }
+        [JsonProperty("date")]
+        public SimpleDate Date { get; set; }
+    }
+
+    public class SimpleDate
+    {
+        [JsonProperty("year")]
+        public int Year { get; set; }
+        [JsonProperty("month")]
+        public Nullable<int> Month { get; set; }
+        [JsonProperty("day")]
+        public Nullable<int> Day { get; set; }
     }
 
     public class JobPollRequest

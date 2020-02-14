@@ -100,14 +100,6 @@ end_date = str(args.end_date[0])
 prompt = args.prompt
 
 # ==============================================================================
-# connect to mysql
-db = MySQLDatabase(database_name, user=database_user, host=database_host,
-        port=database_port, passwd=database_password, local_infile=1)
-db.connect()
-
-print "Successfully connected to the MySQL database as '" + database_user + "'"
-
-# ==============================================================================
 # which taxon group?
 print "\nAvailable taxon groups:"
 for i in range(len(taxonconfig.sections())):
@@ -316,6 +308,7 @@ if ask_stage("Strip any corrupt/non-species/land-based rows from the csv?"):
 def split(filehandler, delimiter=',', row_limit=50000,
           output_name_template='chunked_%s.csv', output_path='.', keep_headers=True):
     import csv
+    csv.field_size_limit(100000000) # Avoid huge field problems
     reader = csv.reader(filehandler, delimiter=delimiter, quoting=csv.QUOTE_MINIMAL)
     current_piece = 1
     current_out_path = os.path.join(
@@ -349,7 +342,17 @@ if ask_stage("Chunk CSV?"):
                 sys.exit()
 
         print "Chunking CSV"
-        split(open("download/"+dest_dir+"/"+dest_dir + ".csv"), output_name_template= "download/"+dest_dir+"/"+dest_dir +'-chunked_%s.csv', delimiter="\t")
+        split(open("download/"+dest_dir+"/"+dest_dir + ".csv"), output_name_template= "download/"+dest_dir+"/"+dest_dir +'-chunked_%s.csv', delimiter="\t", keep_headers=True)
+
+
+# ==============================================================================
+# connect to mysql
+db = MySQLDatabase(database_name, user=database_user, host=database_host,
+        port=database_port, passwd=database_password, local_infile=1)
+db.connect()
+
+print "Successfully connected to the MySQL database as '" + database_user + "'"
+
 
 
 if ask_stage("Process the downloaded data?"):
@@ -415,13 +418,13 @@ if ask_stage("Process the downloaded data?"):
                 print(sql)
                 db.execute_sql(sql)
 
-                # Now add the new coordinates
-                sql = ("INSERT INTO `{coord_table_name}`(gbif_gbifid,coordinate) "
-                        "SELECT gbif_gbifid, POINT(gbif_decimallatitude, gbif_decimallongitude) "
-                        "FROM `{master_table_name}` "
-                        "WHERE gbif_gbifid NOT IN (SELECT gbif_gbifid FROM `{coord_table_name}`)").format(coord_table_name=gbif_coordinate_table, master_table_name=gbif_table)
-                print(sql)
-                db.execute_sql(sql)
+        # Now add the new coordinates
+        sql = ("INSERT INTO `{coord_table_name}`(gbif_gbifid,coordinate) "
+                "SELECT gbif_gbifid, POINT(gbif_decimallatitude, gbif_decimallongitude) "
+                "FROM `{master_table_name}` "
+                "WHERE gbif_gbifid NOT IN (SELECT gbif_gbifid FROM `{coord_table_name}`)").format(coord_table_name=gbif_coordinate_table, master_table_name=gbif_table)
+        print(sql)
+        db.execute_sql(sql)
 
 stage("Finished processing data")
 

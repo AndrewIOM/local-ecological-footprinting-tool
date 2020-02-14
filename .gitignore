@@ -6,6 +6,7 @@
 .ionide
 .vscode
 .DS_Store
+local.yml
 
 # User-specific files
 *.suo

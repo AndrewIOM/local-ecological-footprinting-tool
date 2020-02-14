@@ -6,6 +6,7 @@ services:
         volumes:
         - /Users/andrewmartin/Projects/GitHub-Projects/ecoset/apps/left-marine/sample-data:/data
         - /Users/andrewmartin/Desktop/left-cache-dev/persistence:/output
+        - ./config:/config
         restart: always
     redis:
         volumes:

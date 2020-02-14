@@ -46,8 +46,9 @@ namespace Ecoset.GeoTemporal.Remote
     public class EcosetOutput
     {
         public string Name { get; set; }
-        public string Implementation { get; set; }
-        [JsonProperty("output")]
+        [JsonProperty("method_used")]
+        public string MethodUsed { get; set; }
+        [JsonProperty("output_format")]
         public string OutputFormat { get; set; }
         [JsonProperty("data")]
         public JToken Data { get; set; }
@@ -64,8 +65,7 @@ namespace Ecoset.GeoTemporal.Remote
     public class ExecutableResult
     {
         public string Name { get; set; }
-        public string Implementation { get; set; }
-
+        public string MethodUsed { get; set; }
         public string OutputFormat { get; set; }
         public IDataResult RawData { get; set; }
     }

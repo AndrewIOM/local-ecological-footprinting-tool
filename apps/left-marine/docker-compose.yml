@@ -4,9 +4,7 @@ services:
 
     # Ecoset engine for processing datasets
     ecoset:
-        build:
-          context: ../../src/engine
-          dockerfile: Dockerfile
+        image: docker.pkg.github.com/andrewiom/ecoset-vnext/image:latest
         ports:
         - "5001"
         - "5002"
