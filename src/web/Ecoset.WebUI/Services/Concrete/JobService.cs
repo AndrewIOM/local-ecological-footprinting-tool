@@ -91,7 +91,7 @@ namespace Ecoset.WebUI.Services.Concrete
             return true;
         }
 
-        public int? SubmitJob(Job job) {
+        public async Task<int?> SubmitJob(Job job) {
             var request = new JobSubmission() {
                 Title = job.Name,
             	Description = job.Description,
@@ -102,9 +102,12 @@ namespace Ecoset.WebUI.Services.Concrete
                 South = job.LatitudeSouth,
                 Priority = 1
             };
-            var processorReference = _processor.StartJob(request).Result; //TODO await-async
-            job.JobProcessorReference = processorReference;
+            var processorReference = await _processor.StartJob(request);
+            if (String.IsNullOrEmpty(processorReference)) {
+                return null;
+            }
 
+            job.JobProcessorReference = processorReference;
             if (job.Id != 0) {
                 //Job is a resubmission. Use old database record
                 job.Status = JobStatus.Submitted;

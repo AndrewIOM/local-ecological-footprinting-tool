@@ -11,8 +11,7 @@ namespace Ecoset.WebUI.Options
     public class ReportSection
     {
         public string Name { get; set; }
-        public string Implementation { get; set; }
-        public string OutputFormat { get; set; }
-        public string Stat { get; set; }
+        public string Method { get; set; }
+        public object Options { get; set; }
     }
 }

@@ -110,7 +110,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Submit(AddJobViewModel result) {
+        public async Task<IActionResult> Submit(AddJobViewModel result) {
 
             if (!ModelState.IsValid) {
                 return View(result);
@@ -126,7 +126,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
                         CreatedBy = GetCurrentUserAsync(),
                         DateAdded = DateTime.Now
             };
-            var jobSuccess = _jobService.SubmitJob(businessModel);
+            var jobSuccess = await _jobService.SubmitJob(businessModel);
 
             if (!jobSuccess.HasValue) {
                 ModelState.AddModelError("Service", "There was an issue submitting your analysis. Please try again, or report an issue if the problem persists.");

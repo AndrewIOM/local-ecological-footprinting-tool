@@ -19,19 +19,19 @@ namespace Ecoset.GeoTemporal.Remote
 
         public async Task<JobFetchResponse> FetchResultAsync(JobId id)
         {
-            var result = await Get<JobFetchResponse>("/fetch/" + id.Id.ToString());
+            var result = await Get<JobFetchResponse>("api/v1/Data/fetch/" + id.Id.ToString());
             return result;
         }
 
         public async Task<JobStatus> GetJobStatusAsync(JobId id)
         {
-            var result = await Get<JobPollResponse>("/poll/" + id.Id.ToString());
+            var result = await Get<JobPollResponse>("api/v1/Data/status/" + id.Id.ToString());
             return result.JobStatus;
         }
 
         public async Task<JobId> SubmitJobAsync(JobSubmissionRequest request)
         {
-            var result = await Post<JobSubmissionResponse>("/submit", request);
+            var result = await Post<JobSubmissionResponse>("api/v1/Data/submit", request);
             return new JobId(result.JobId);
         }
 
@@ -48,8 +48,12 @@ namespace Ecoset.GeoTemporal.Remote
                     {
                         jsonMessage = new StreamReader(responseStream).ReadToEnd();
                     }
-                    T responseContent = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
-                    return responseContent;
+                    try {
+                        T responseContent = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
+                        return responseContent;
+                    } catch {
+                        throw new Exception("Ecoset returned an unexpected response");
+                    }
                 }
                 else {
                     throw new HttpRequestException("The request was not successful: " + response.StatusCode);

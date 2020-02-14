@@ -42,8 +42,7 @@ namespace Ecoset.WebUI.Services.Concrete
             {
                 var elem = new ExecutableResult();
                 elem.Name = output.Name;
-                elem.Implementation = output.Implementation;
-                elem.OutputFormat = output.OutputFormat;
+                elem.MethodUsed = output.MethodUsed;
 
                 try {
                     elem.RawData = rawParser.TryParse(output.Data.ToString(Formatting.None));
@@ -145,7 +144,7 @@ namespace Ecoset.WebUI.Services.Concrete
                 West = job.West,
                 North = job.North,
                 South = job.South,
-                Executables = GetCustomRequest(variables)
+                Variables = GetCustomRequest(variables)
             };
             var result = await _connection.SubmitJobAsync(command);
             return result.Id.ToString();
@@ -159,7 +158,8 @@ namespace Ecoset.WebUI.Services.Concrete
                 West = job.West,
                 North = job.North,
                 South = job.South,
-                Executables = GetReportRequest(false)
+                Variables = GetReportRequest(false),
+                TimeMode = new TimeMode { Kind = "latest", Date = null }
             };
 
             try {
@@ -168,7 +168,7 @@ namespace Ecoset.WebUI.Services.Concrete
             } catch (Exception)
             {
                 _logger.LogCritical("Job could not be submitted to EcoSet.");
-                return "";
+                return null;
             }
         }
 
@@ -180,7 +180,7 @@ namespace Ecoset.WebUI.Services.Concrete
                 West = job.West,
                 North = job.North,
                 South = job.South,
-                Executables = GetReportRequest(true)
+                Variables = GetReportRequest(true)
             };
 
             try {
@@ -198,32 +198,34 @@ namespace Ecoset.WebUI.Services.Concrete
             throw new NotImplementedException();
         }
 
-        private List<Executable> GetReportRequest(bool isPro) 
+        private List<Ecoset.GeoTemporal.Remote.Variable> GetReportRequest(bool isPro) 
         {
-            var exesList = _options.Value.FreeReportSections;
-            if(isPro) {
-                exesList = _options.Value.ProReportSections;
+            var exesList = _options.Value.ProReportSections;
+            if(!isPro) {
+                exesList = _options.Value.FreeReportSections.Select(m => {
+                    m.Options = new { resolution = 250 };
+                    // TODO keep options already loaded
+                    return m;
+                }).ToList();
             }
 
             return exesList.Select(m => 
-                new Executable() {
+                new Ecoset.GeoTemporal.Remote.Variable() {
                     Name = m.Name,
-                    Implementation = m.Implementation,
-                    OutputFormat = m.OutputFormat,
-                    Stat = m.Stat
+                    Method = m.Method,
+                    Options = m.Options
                 }
             ).ToList();
         }
 
-        private List<Executable> GetCustomRequest(List<string> customVariables) 
+        private List<Ecoset.GeoTemporal.Remote.Variable> GetCustomRequest(List<string> customVariables) 
         {
             var exesList = _options.Value.FreeReportSections;
             var toProcess = exesList.Select(m => 
-                new Executable() {
+                new Ecoset.GeoTemporal.Remote.Variable() {
                     Name = m.Name,
-                    Implementation = m.Implementation,
-                    OutputFormat = m.OutputFormat,
-                    Stat = m.Stat
+                    Method = m.Method,
+                    Options = m.Options
                 }
             ).Where(n => customVariables.Contains(n.Name)).ToList();
             return toProcess;

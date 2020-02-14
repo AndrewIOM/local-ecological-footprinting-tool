@@ -91,11 +91,11 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
             return Ok();
         }
 
-        public IActionResult RestartJob(int jobId) {
+        public async Task<IActionResult> RestartJob(int jobId) {
             var job = _jobService.GetById(jobId);
             if (job == null) return BadRequest();
 
-            var submitSuccess = _jobService.SubmitJob(job);
+            var submitSuccess = await _jobService.SubmitJob(job);
             if (submitSuccess.HasValue) return Json(new JobListItemViewModel() {
                     Id = job.Id,
                     Name = job.Name,

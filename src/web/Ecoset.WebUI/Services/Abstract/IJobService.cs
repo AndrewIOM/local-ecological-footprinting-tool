@@ -7,7 +7,7 @@ namespace Ecoset.WebUI.Services.Abstract
 {
     public interface IJobService
     {
-        int? SubmitJob(Job job);
+        Task<int?> SubmitJob(Job job);
         IEnumerable<Job> GetAll();
         IEnumerable<Job> GetAllForUser(string userId);
         Job GetById(int jobId);

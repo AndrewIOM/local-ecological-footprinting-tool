@@ -1,0 +1,153 @@
+api:
+    port: 5002
+
+queue:
+    maxjobs: 3
+    maxduration: 43200000
+
+cache:
+    host: "localhost"
+    port: 6379
+
+locations:
+    tileroot: &tileroot "c:/sometiledir"
+    cache: /Users/andrewmartin/Desktop/ecoset/cache
+
+variables:
+    - biodiversity_records:
+        name: "Biodiversity Records"
+        description: "Occurrence data for marine species"
+        unit: record
+        methods:
+            - gbif:
+                name: "GBIF Global Occurrence Data"
+                description: "A global occurrence dataset for all life on Earth."
+                license: Variable with equivalence with Creative Commons (CC0, CC BY, and CC BY-NC)
+                licenseUrl: https://www.gbif.org/en/terms
+                implementation: GbifQuery
+                options:
+                    host: localdb
+                    username: user
+                    password: password
+                    database: gbif
+                    gbif_table: gbif
+                    gbif_coord_table: gbif_coordinate
+
+    - economic_zones:
+        name: "Exclusive Economic Zones"
+        description: Exclusive Economic Zones (EEZs) as defined within the 1982 United Nations Convention on the Law of the Sea.
+        unit: soverign state
+        methods:
+            - default:
+                name: Default
+                description: Marine Boundaries version 11 as defined by the methodology at http://www.marineregions.org/eezmethodology.php
+                license: CC-BY 4.0
+                licenseUrl: https://creativecommons.org/licenses/by/4.0/
+                options:
+                    tiledir: /mnt/marinedata/vnext/exclusiveeconomiczones
+                    nodata: -9999
+
+    - ecoregions:
+        name: "Marine Ecoregions"
+        description: "Marine ecoregions are ecoregions (ecological regions) of the oceans and seas identified and defined based on biogeographic characteristics."
+        unit: ecoregion
+        methods:
+            - default:
+                name: "Default"
+                description: "Spalding MD, Fox HE, Allen GR, Davidson N, Ferdaña ZA, Finlayson M, Halpern BS, Jorge MA, Lombana A, Lourie SA, Martin KD, McManus E, Molnar J, Recchia CA, Robertson J (2007) Marine Ecoregions of the World: a bioregionalization of coast and shelf areas. BioScience 57: 573-583."
+                license: CC BY-NC 3.0
+                licenseUrl: https://creativecommons.org/licenses/by-nc/3.0/
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/marineecoregions
+                    nodata: -9999
+
+    - protected_areas:
+        name: "Marine Protected Areas"
+        description: ""
+        unit: area name
+        methods:
+            - default:
+                name: "World Database of Protected Areas (WDPA)"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/marineprotectedareas
+                    nodata: -9999
+
+    - sea_depth:
+        name: "Sea Depth"
+        description: "A global map of sea depth in metres."
+        unit: metres below sea level
+        methods:
+            - default:
+                name: "General Bathymetric Chart of the Oceans (GEBCO)"
+                description: "Weatherall et al 2015"
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/seadepth
+                    nodata: -9999
+
+    - coastal_ecosystems:
+        name: "Coastal Ecosystems"
+        description: ""
+        unit: ecosystem
+        methods:
+            - default:
+                name: "Data Synthesis"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/coastalecosystems
+                    nodata: -9999
+    
+    - vulnerability:
+        name: "Vulnerable Species"
+        description: "Globally threatened species"
+        unit: number of distinct species
+        methods:
+            - default:
+                name: "IUCN Red List"
+                description: "The IUCN Red List of Threatened Species (IUCN 2018) was used to findthe names and threat categories of species in the specified area ofinterest. All corals, fish, sea birds, marine mammals and turtlesdetermined by the IUCN to be Critically Endangered (CR), Endangered(EN), Vulnerable (VU) or Near Threatened (NT) were extracted"
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/vulnerability
+                    nodata: -9999
+
+    - migratory_count:
+        name: "Number of Migratory Species"
+        description: ""
+        unit: number of migratory species
+        methods:
+            - default:
+                name: "GROMS"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    nodata: -9999
+
+    - migratory_names:
+        name: "Migratory Species"
+        description: "Species with migration pathways"
+        unit: species names
+        methods:
+            - default:
+                name: "GROMS"
+                description: "GROMS database"
+                license: GPLv2
+                licenseUrl: https://opensource.org/licenses/GPL-3.0
+                implementation: IntersectShape
+                options:
+                    shapefileDir: /mnt/marinedata/vnext/migratory_names
+    
