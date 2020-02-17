@@ -159,22 +159,35 @@ namespace Ecoset.WebUI.Services.Concrete
         }
 
         private void UpdateJobStatus(Job job) {
-            var oldStatus = job.Status;
-            var newStatus = _processor.GetStatus(job.JobProcessorReference, oldStatus).Result;
-            if (newStatus == oldStatus) return;
+            
+            if (job.Status == JobStatus.GeneratingOutput) {
+                Console.WriteLine("Output still generating for: " + job.Id);
+                return;
+            }
+            
+            var newStatus = _processor.GetStatus(job.JobProcessorReference, job.Status).Result;
 
-            job.Status = newStatus;
-            if (newStatus == JobStatus.Completed)
-            {
+            // Outcome 1: Start generating report
+            if (newStatus == JobStatus.Completed && job.Status != JobStatus.Completed) {
+                job.Status = JobStatus.GeneratingOutput;
+                _context.Update(job);
+                _context.SaveChanges();
                 _reportGenerator.GenerateReport(job);
                 job.DateCompleted = DateTime.Now;
+                job.Status = JobStatus.Completed;
+                _context.Update(job);
+                _context.SaveChanges();
+            } else {
+                if (job.Status != newStatus) {
+                    job.Status = newStatus;
+                    _context.Update(job);
+                    _context.SaveChanges();
+                }
             }
 
             if (job.Status == JobStatus.Failed || job.Status == JobStatus.Completed) {
                 Hangfire.RecurringJob.RemoveIfExists("jobstatus_" + job.Id);
             }
-
-            _context.Update(job);
 
             _notifyService.AddJobNotification(NotificationLevel.Information, job.Id, "Analysis {0} is now {1}", new[] { job.Name, job.Status.ToString() });
             if (newStatus == JobStatus.Completed) 

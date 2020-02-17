@@ -62,14 +62,14 @@ namespace Ecoset.WebUI.Services.Concrete
 
         public string GetProData(int jobId)
         {
-            var fileName = _options.Value.PersistenceFolder + jobId + "_data.zip";
+            var fileName = Path.Combine(_options.Value.PersistenceFolder, jobId + "_data.zip");
             if (!File.Exists(fileName)) return "";
             return fileName;
         }
 
         public string GetReport(int jobId)
         {
-            var fileName = _options.Value.PersistenceFolder + jobId + "_report.pdf";
+            var fileName = Path.Combine(_options.Value.PersistenceFolder, jobId + "_report.pdf");
             if (!File.Exists(fileName)) return "";
             return fileName;
         }

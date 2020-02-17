@@ -41,10 +41,10 @@
                 <td><p data-bind="text: dateAdded"></p></td>
                 <td>
                   <div data-bind="visible: status == 'Completed'">
-                    <a target="_blank" class="btn btn-default" data-bind="attr: { href: '/Job/Report/' + id }">Download Report</a>
+                    <a target="_blank" class="btn btn-default" data-bind="attr: { href: '/Analysis/Home/Report/' + id }">Download Report</a>
                   </div>
                   <div data-bind="visible: proStatus == 'Completed'">
-                    <a target="_blank" class="btn btn-default" data-bind="attr: { href: '/Job/ProData/' + id }">Download Pro Data</a>
+                    <a target="_blank" class="btn btn-default" data-bind="attr: { href: '/Analysis/Home/ProData/' + id }">Download Pro Data</a>
                   </div>
                   <br/>
                   <!-- <button data-bind="visible: status == 'Cascading' || status == 'Processing', click: $parent.stopAnalysis" class="btn btn-default">Stop</button> -->

@@ -40,12 +40,21 @@ namespace Ecoset.WebUI.Services.Concrete
                         Orientation = Orientation.Landscape,
                         PaperSize = PaperKind.A4,
                         Margins = new MarginSettings() { Top = 10, Bottom = 10, Left = 5, Right = 5 },
-                        Out = scratchFile,
+                        Out = scratchFile
                     },
                     Objects = {
                         new ObjectSettings()
                         {
                             Page = "http://localhost:5000/Analysis/Home/GenerateReport?id=" + job.Id,
+                            PagesCount = true,
+                            FooterSettings = {FontName = "Arial", FontSize = 9, Right = "Page [sitepage] of [sitepages]"},
+                            HeaderSettings = { FontName = "Arial", FontSize = 9, Left = _options.InstanceName },
+                            WebSettings = {
+                                PrintMediaType = true
+                            },
+                            LoadSettings = {
+                                JSDelay = 60000
+                            }
                         },
                     }
                 };
