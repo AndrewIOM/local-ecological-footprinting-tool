@@ -26,7 +26,7 @@ namespace Ecoset.GeoTemporal.Remote
         public string Name { get; set; }
         [JsonProperty("Method")]
         public string Method { get; set; }
-        [JsonProperty("options")]
+        [JsonProperty("Options")]
         public object Options { get; set; }
     }
 

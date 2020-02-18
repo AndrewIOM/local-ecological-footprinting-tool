@@ -203,8 +203,7 @@ namespace Ecoset.WebUI.Services.Concrete
             var exesList = _options.Value.ProReportSections;
             if(!isPro) {
                 exesList = _options.Value.FreeReportSections.Select(m => {
-                    m.Options = new { resolution = 250 };
-                    // TODO keep options already loaded
+                    if (!m.Options.ContainsKey("resolution")) m.Options.Add("resolution",_options.Value.MaxMapPixelSize.ToString());
                     return m;
                 }).ToList();
             }

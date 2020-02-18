@@ -32,6 +32,27 @@ variables:
                     database: gbif
                     gbif_table: gbif
                     gbif_coord_table: gbif_coordinate
+                    gbif_org_table: gbif_org_lookup
+
+    - biodiversity_records_count:
+        name: "Distinct species by taxonomic group"
+        description: "Occurrence data for marine species"
+        unit: number of distinct species
+        methods:
+            - gbif:
+                name: "GBIF Global Occurrence Data"
+                description: "A global occurrence dataset for all life on Earth."
+                license: Variable with equivalence with Creative Commons (CC0, CC BY, and CC BY-NC)
+                licenseUrl: https://www.gbif.org/en/terms
+                implementation: GbifQuery
+                options:
+                    host: localdb
+                    username: user
+                    password: password
+                    database: gbif
+                    gbif_table: gbif
+                    gbif_coord_table: gbif_coordinate
+                    gbif_org_table: gbif_org_lookup
 
     - economic_zones:
         name: "Exclusive Economic Zones"
@@ -137,6 +158,124 @@ variables:
                     tiledir: /mnt/marinedata/vnext/migratory_count
                     nodata: -9999
 
+    - critical_habitat:
+        name: "Critical habitat"
+        description: ""
+        unit: presence
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    nodata: -9999
+
+    - shipping_density:
+        name: "Shipping Density"
+        description: ""
+        unit: ships per hectare
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    nodata: -9999
+
+    - fish_catches:
+        name: "Fish Catches"
+        description: ""
+        unit: tonnes per hectare
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    nodata: -9999
+
+    - aquaculture_potential:
+        name: "Aquaculture potential"
+        description: ""
+        unit: potential score
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    nodata: -9999
+
+    - windpower_potential:
+        name: "Windpower potential"
+        description: ""
+        unit: potential score
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    nodata: -9999
+
+    - wavepower_potential:
+        name: "Wavepower potential"
+        description: ""
+        unit: potential score
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    nodata: -9999
+
+    - protected_area_list:
+        name: "Protected Areas (Names)"
+        description: "Protected areas within the geotemporal context"
+        unit: protected area names
+        methods:
+            - default:
+                name: "GROMS"
+                description: "GROMS database"
+                license: GPLv2
+                licenseUrl: https://opensource.org/licenses/GPL-3.0
+                implementation: IntersectShape
+                options:
+                    shapefileDir: /mnt/marinedata/vnext/migratory_names
+                
+    - vulnerable_species_names:
+        name: "Vulnerable Species (Names)"
+        description: "Species with migration pathways"
+        unit: species names
+        methods:
+            - default:
+                name: "GROMS"
+                description: "GROMS database"
+                license: GPLv2
+                licenseUrl: https://opensource.org/licenses/GPL-3.0
+                implementation: IntersectShape
+                options:
+                    shapefileDir: /mnt/marinedata/vnext/migratory_names
+   
     - migratory_names:
         name: "Migratory Species"
         description: "Species with migration pathways"
@@ -150,4 +289,4 @@ variables:
                 implementation: IntersectShape
                 options:
                     shapefileDir: /mnt/marinedata/vnext/migratory_names
-    
+                
