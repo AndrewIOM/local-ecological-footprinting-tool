@@ -29,7 +29,7 @@ namespace Ecoset.WebUI.Services.Concrete
 
         public string PersistProData(int jobId, List<ProDataItem> items)
         {
-            var fileName = _options.Value.PersistenceFolder + jobId + "_data.zip";
+            var fileName = System.IO.Path.Combine(_options.Value.PersistenceFolder, jobId + "_data.zip");
             if (File.Exists(fileName)) {
                 _logger.LogWarning("Overwriting file with new pro data: " + fileName);
                 File.Delete(fileName);
@@ -89,7 +89,7 @@ namespace Ecoset.WebUI.Services.Concrete
 
         public string PersistData(int jobId, ReportData data)
         {
-            var fileName = _options.Value.PersistenceFolder + jobId + "_data.zip";
+            var fileName = System.IO.Path.Combine(_options.Value.PersistenceFolder, jobId + "_data.zip");
             if (File.Exists(fileName)) {
                 _logger.LogWarning("Overwriting file with new pro data: " + fileName);
                 File.Delete(fileName);
@@ -99,24 +99,34 @@ namespace Ecoset.WebUI.Services.Concrete
             foreach (var item in data.RawResults)
             {
                 var entry = zipFile.CreateEntry(item.Name + ".tif", CompressionLevel.Optimal);
-                using (BinaryWriter writer = new BinaryWriter(entry.Open())) {
-                    var extension = _formatter.SpatialData(item.Data, writer.BaseStream);
+                var tiffFile = _formatter.SpatialData(item.Data);
+                using (var writer = new BinaryWriter(entry.Open())) {
+                    using (var reader = new BinaryReader(File.OpenRead(tiffFile))) {
+                        byte[] buffer = new Byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = reader.Read(buffer, 0, 1024)) > 0) {
+                            writer.Write(buffer, 0, bytesRead);
+                        }
+                    }
+                    File.Delete(tiffFile); // Empty out scratch
                 }
             }
 
             foreach (var item in data.TableListResults) {
                 var entry = zipFile.CreateEntry(item.Name + ".csv", CompressionLevel.Optimal);
                 using (var writer = new BinaryWriter(entry.Open())) {
-                    var uniqueRowNames = item.Data.Rows.Select(r => r.Keys.Select(k => k.ToString())).SelectMany(x => x);
-                    writer.Write(String.Concat(uniqueRowNames.Select(StringToCSVCell), ','));
+                    var uniqueRowNames = item.Data.Rows.Select(r => r.Keys).SelectMany(x => x).Distinct().ToList();
+                    Console.WriteLine("Writing comma-delineated file with fields: " + String.Join(',', uniqueRowNames));
+                    Console.WriteLine("Writing comma-delineated file with " + item.Data.Rows.Count + " records");
+                    writer.Write(String.Join(',', uniqueRowNames.Select(s => StringToCSVCell(s))));
                     writer.Write('\n');
                     foreach (var record in item.Data.Rows) {
                         var processed = uniqueRowNames.Select(n => {
                             if (record.ContainsKey(n)) {
-                                return record[n];
+                                return StringToCSVCell(record[n]);
                             } else return "";
-                        });
-                        writer.Write(String.Concat(processed.Select(StringToCSVCell), ','));
+                        }).ToList();
+                        writer.Write(String.Join(',', processed));
                         writer.Write('\n');
                     }
                 }

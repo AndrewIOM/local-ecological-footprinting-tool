@@ -10,7 +10,10 @@ namespace Ecoset.GeoTemporal.Remote
             var result = new RawDataResult() 
             {
                 Stats = parsed.Stats,
-                DataCube = parsed.Data.Data
+                DataCube = parsed.Data.Data,
+                NoDataValue = parsed.Data.NoDataValue,
+                Columns = parsed.Data.Columns,
+                Rows = parsed.Data.Rows
             };
             return result;
         }
@@ -27,6 +30,12 @@ namespace Ecoset.GeoTemporal.Remote
         {
             [JsonProperty("raw")]
             public double[,] Data { get; set; }
+            [JsonProperty("nodata")]
+            public double NoDataValue { get; set; }
+            [JsonProperty("ncols")]
+            public double Columns { get; set; }
+            [JsonProperty("nrows")]
+            public double Rows { get; set; }
         }
     }
 }

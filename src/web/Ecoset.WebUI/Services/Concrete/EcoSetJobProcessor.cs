@@ -180,7 +180,8 @@ namespace Ecoset.WebUI.Services.Concrete
                 West = job.West,
                 North = job.North,
                 South = job.South,
-                Variables = GetReportRequest(true)
+                Variables = GetReportRequest(true),
+                TimeMode = new TimeMode { Kind = "latest", Date = null }
             };
 
             try {

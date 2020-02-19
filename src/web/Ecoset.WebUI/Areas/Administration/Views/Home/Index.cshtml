@@ -48,8 +48,8 @@
                   </div>
                   <br/>
                   <!-- <button data-bind="visible: status == 'Cascading' || status == 'Processing', click: $parent.stopAnalysis" class="btn btn-default">Stop</button> -->
-                  <button data-bind="visible: status == 'Failed' || status == 'Completed' || status == 'Queued' || status == 'Processing', click: $parent.restartAnalysis" class="btn btn-default">Rerun Free Report</button>
-                  <button data-bind="visible: proStatus == 'Failed' || proStatus == 'Completed' || proStatus == 'Submitted' || proStatus == 'Queued' || proStatus == 'Processing', click: $parent.restartPro" class="btn btn-default">Recreate Pro Data</button>
+                  <button data-bind="visible: status == 'Failed' || status == 'Completed' || status == 'Queued' || status == 'Processing' || status == 'GeneratingOutput', click: $parent.restartAnalysis" class="btn btn-default">Rerun Free Report</button>
+                  <button data-bind="visible: proStatus == 'Failed' || proStatus == 'Completed' || proStatus == 'Submitted' || proStatus == 'Queued' || proStatus == 'Processing' || proStatus == 'GeneratingOutput', click: $parent.restartPro" class="btn btn-default">Recreate Pro Data</button>
                 </td>
             </tr>
         </tbody>

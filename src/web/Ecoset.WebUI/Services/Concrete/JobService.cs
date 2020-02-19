@@ -204,8 +204,8 @@ namespace Ecoset.WebUI.Services.Concrete
 
         private async Task UpdateProStatusAsync(Job job) {
 
-            if (job.Status == JobStatus.GeneratingOutput) {
-                Console.WriteLine("Output still generating for: " + job.Id);
+            if (job.ProActivation.ProcessingStatus == JobStatus.GeneratingOutput) {
+                Console.WriteLine("Data download archive still generating for: " + job.Id);
                 return;
             }
 
@@ -215,11 +215,17 @@ namespace Ecoset.WebUI.Services.Concrete
                 job.ProActivation.ProcessingStatus = JobStatus.GeneratingOutput;
                 _context.Update(job);
                 _context.SaveChanges();
-                var data = _processor.GetReportData(job.JobProcessorReference).Result;
-                _outputPersistence.PersistData(job.Id, data);
-                job.ProActivation.ProcessingStatus = JobStatus.Completed;
-                _context.Update(job);
-                _context.SaveChanges();
+                try {
+                    var data = _processor.GetReportData(job.JobProcessorReference).Result;
+                    _outputPersistence.PersistData(job.Id, data);
+                    job.ProActivation.ProcessingStatus = JobStatus.Completed;
+                    _context.Update(job);
+                    _context.SaveChanges();
+                } catch {
+                    job.ProActivation.ProcessingStatus = JobStatus.Failed;
+                    _context.Update(job);
+                    _context.SaveChanges();
+                }
             } else {
                 if (job.Status != newStatus) {
                     job.Status = newStatus;
@@ -269,6 +275,9 @@ namespace Ecoset.WebUI.Services.Concrete
                 Priority = 2
             };
             var processorReference = await _processor.StartProJob(request);
+            if (String.IsNullOrEmpty(processorReference)) {
+                return false;
+            }
 
             if (!isAdmin && _appOptions.PaymentsEnabled) {
                 user.Credits = user.Credits - 1;

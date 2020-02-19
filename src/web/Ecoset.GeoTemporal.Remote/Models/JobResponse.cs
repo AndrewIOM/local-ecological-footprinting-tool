@@ -76,6 +76,9 @@ namespace Ecoset.GeoTemporal.Remote
     {
         public Statistics Stats { get; set; }
         public double[,] DataCube { get; set; }
+        public double NoDataValue { get; set; }
+        public double Columns { get; set; }
+        public double Rows { get; set; }
     }
 
     public class DataTableListResult : IDataResult
