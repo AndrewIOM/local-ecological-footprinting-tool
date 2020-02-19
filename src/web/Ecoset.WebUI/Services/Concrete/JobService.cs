@@ -121,7 +121,7 @@ namespace Ecoset.WebUI.Services.Concrete
             var savedJob = _context.Jobs.First(j => j.JobProcessorReference == job.JobProcessorReference);
             _notifyService.AddJobNotification(NotificationLevel.Success, savedJob.Id, "Analysis {0} successfully queued for processing.", new[] { job.Name });
         
-            Hangfire.RecurringJob.AddOrUpdate("jobstatus_" + savedJob.Id, () => UpdateJobStatus(savedJob.Id), Cron.Minutely);
+            Hangfire.RecurringJob.AddOrUpdate("jobstatus_" + savedJob.Id, () => UpdateJobStatusAsync(savedJob.Id), Cron.Minutely);
 
             return savedJob.Id;
         }
@@ -129,10 +129,10 @@ namespace Ecoset.WebUI.Services.Concrete
         public void RefreshJobStatus(int jobId) {
             var job = _context.Jobs.FirstOrDefault(m => m.Id == jobId);
             if (job == null) return;
-            Hangfire.RecurringJob.AddOrUpdate("jobstatus_" + job.Id, () => UpdateJobStatus(job.Id), Cron.Minutely);
+            Hangfire.RecurringJob.AddOrUpdate("jobstatus_" + job.Id, () => UpdateJobStatusAsync(job.Id), Cron.Minutely);
         }
 
-        public void UpdateJobStatus(int jobId) {
+        public async Task UpdateJobStatusAsync(int jobId) {
             Console.WriteLine("Updating job status for " + jobId);
             var result = _context.Jobs
                 .Include(m => m.CreatedBy)
@@ -140,11 +140,11 @@ namespace Ecoset.WebUI.Services.Concrete
                 .Include(m => m.ProActivation)
                 .FirstOrDefault(m => m.Id == jobId);
             if (result != null) {
-                UpdateJobStatus(result);
+                await UpdateJobStatusAsync(result);
             }
         }
 
-        public void UpdateProStatus(int jobId) {
+        public async Task UpdateProStatusAsync(int jobId) {
             Console.WriteLine("Updating pro status for " + jobId);
             var result = _context.Jobs
                 .Include(m => m.CreatedBy)
@@ -153,19 +153,19 @@ namespace Ecoset.WebUI.Services.Concrete
                 .FirstOrDefault(m => m.Id == jobId);
             if (result != null) {
                 if (result.ProActivation != null) {
-                    UpdateProStatus(result);
+                    await UpdateProStatusAsync(result);
                 }
             }
         }
 
-        private void UpdateJobStatus(Job job) {
+        private async Task UpdateJobStatusAsync(Job job) {
             
             if (job.Status == JobStatus.GeneratingOutput) {
                 Console.WriteLine("Output still generating for: " + job.Id);
                 return;
             }
             
-            var newStatus = _processor.GetStatus(job.JobProcessorReference, job.Status).Result;
+            var newStatus = await _processor.GetStatus(job.JobProcessorReference, job.Status);
 
             // Outcome 1: Start generating report
             if (newStatus == JobStatus.Completed && job.Status != JobStatus.Completed) {
@@ -202,23 +202,36 @@ namespace Ecoset.WebUI.Services.Concrete
             }
         }
 
-        private void UpdateProStatus(Job job) {
-            var oldStatus = job.ProActivation.ProcessingStatus;
-            var newStatus = _processor.GetStatus(job.ProActivation.JobProcessorReference, oldStatus).Result; //TODO await-async
-            if (newStatus == oldStatus) return;
-            job.ProActivation.ProcessingStatus = newStatus;
+        private async Task UpdateProStatusAsync(Job job) {
+
+            if (job.Status == JobStatus.GeneratingOutput) {
+                Console.WriteLine("Output still generating for: " + job.Id);
+                return;
+            }
+
+            // Update status and begin generating outputs if required
+            var newStatus = await _processor.GetStatus(job.ProActivation.JobProcessorReference, job.ProActivation.ProcessingStatus);
+            if (newStatus == JobStatus.Completed && job.ProActivation.ProcessingStatus != JobStatus.Completed) {
+                job.ProActivation.ProcessingStatus = JobStatus.GeneratingOutput;
+                _context.Update(job);
+                _context.SaveChanges();
+                var data = _processor.GetReportData(job.JobProcessorReference).Result;
+                _outputPersistence.PersistData(job.Id, data);
+                job.ProActivation.ProcessingStatus = JobStatus.Completed;
+                _context.Update(job);
+                _context.SaveChanges();
+            } else {
+                if (job.Status != newStatus) {
+                    job.Status = newStatus;
+                    _context.Update(job);
+                    _context.SaveChanges();
+                }
+            }
+
             if (job.ProActivation.ProcessingStatus == JobStatus.Failed || job.ProActivation.ProcessingStatus == JobStatus.Completed) {
                 Hangfire.RecurringJob.RemoveIfExists("prostatus_" + job.Id);
             }
 
-            if (job.ProActivation.ProcessingStatus == JobStatus.Completed)
-            {
-                var files = _processor.GetReportFiles(job.ProActivation.JobProcessorReference).Result; //TODO await-async
-                var items = files.Select(x => new ProDataItem { FileExtension = x.Item3, Contents = x.Item2, LayerName = x.Item1 }).ToList();
-                _outputPersistence.PersistProData(job.Id, items);
-            }
-
-            _context.Update(job);
             if (job.ProActivation.ProcessingStatus == JobStatus.Completed) {
                 _notifyService.AddJobNotification(NotificationLevel.Information, job.Id, "{0}: pro data ready for download", new[] { job.Name });
             }
@@ -276,7 +289,7 @@ namespace Ecoset.WebUI.Services.Concrete
             _context.Update(job);
             _context.Update(user);
             _context.SaveChanges();
-            Hangfire.RecurringJob.AddOrUpdate("prostatus_" + job.Id, () => UpdateProStatus(job.Id), Cron.Minutely);
+            Hangfire.RecurringJob.AddOrUpdate("prostatus_" + job.Id, () => UpdateProStatusAsync(job.Id), Cron.Minutely);
 
             if (!isAdmin && _appOptions.PaymentsEnabled) {
                 _notifyService.AddJobNotification(NotificationLevel.Success, job.Id, 

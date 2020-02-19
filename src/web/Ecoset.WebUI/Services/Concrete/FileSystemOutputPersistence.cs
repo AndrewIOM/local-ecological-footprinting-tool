@@ -7,6 +7,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Text;
+using Ecoset.WebUI.Models;
+using System.Linq;
 
 namespace Ecoset.WebUI.Services.Concrete
 {
@@ -14,10 +16,15 @@ namespace Ecoset.WebUI.Services.Concrete
     {
         private ILogger<FileSystemOutputPersistence> _logger;
         private IOptions<FileSystemPersistenceOptions> _options;
+        private IDataFormatter _formatter;
 
-        public FileSystemOutputPersistence(ILogger<FileSystemOutputPersistence> logger, IOptions<FileSystemPersistenceOptions> options) {
+        public FileSystemOutputPersistence(
+            ILogger<FileSystemOutputPersistence> logger, 
+            IOptions<FileSystemPersistenceOptions> options,
+            IDataFormatter formatter) {
             _logger = logger;
             _options = options;
+            _formatter = formatter;
         }
 
         public string PersistProData(int jobId, List<ProDataItem> items)
@@ -57,6 +64,65 @@ namespace Ecoset.WebUI.Services.Concrete
                 return "";
             }
             File.Copy(temporaryFile, fileName, true);
+            return fileName;
+        }
+
+        private static string StringToCSVCell(string str)
+        {
+            bool mustQuote = (str.Contains(",") || str.Contains("\"") || str.Contains("\r") || str.Contains("\n"));
+            if (mustQuote)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("\"");
+                foreach (char nextChar in str)
+                {
+                    sb.Append(nextChar);
+                    if (nextChar == '"')
+                        sb.Append("\"");
+                }
+                sb.Append("\"");
+                return sb.ToString();
+            }
+
+            return str;
+        }
+
+        public string PersistData(int jobId, ReportData data)
+        {
+            var fileName = _options.Value.PersistenceFolder + jobId + "_data.zip";
+            if (File.Exists(fileName)) {
+                _logger.LogWarning("Overwriting file with new pro data: " + fileName);
+                File.Delete(fileName);
+            }
+            var zipFile = ZipFile.Open(fileName, ZipArchiveMode.Create);
+
+            foreach (var item in data.RawResults)
+            {
+                var entry = zipFile.CreateEntry(item.Name + ".tif", CompressionLevel.Optimal);
+                using (BinaryWriter writer = new BinaryWriter(entry.Open())) {
+                    var extension = _formatter.SpatialData(item.Data, writer.BaseStream);
+                }
+            }
+
+            foreach (var item in data.TableListResults) {
+                var entry = zipFile.CreateEntry(item.Name + ".csv", CompressionLevel.Optimal);
+                using (var writer = new BinaryWriter(entry.Open())) {
+                    var uniqueRowNames = item.Data.Rows.Select(r => r.Keys.Select(k => k.ToString())).SelectMany(x => x);
+                    writer.Write(String.Concat(uniqueRowNames.Select(StringToCSVCell), ','));
+                    writer.Write('\n');
+                    foreach (var record in item.Data.Rows) {
+                        var processed = uniqueRowNames.Select(n => {
+                            if (record.ContainsKey(n)) {
+                                return record[n];
+                            } else return "";
+                        });
+                        writer.Write(String.Concat(processed.Select(StringToCSVCell), ','));
+                        writer.Write('\n');
+                    }
+                }
+            }
+
+            zipFile.Dispose();
             return fileName;
         }
 

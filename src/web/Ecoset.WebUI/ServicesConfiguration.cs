@@ -77,6 +77,7 @@ namespace Ecoset.WebUI {
             services.AddTransient<IJobProcessor, EcoSetJobProcessor>();
             services.AddTransient<IPaymentService, WorldPayPaymentService>();
             services.AddTransient<INotificationService, NotificationService>(); 
+            services.AddTransient<IDataFormatter, TiffDataFormatter>(); 
             services.AddTransient<IOutputPersistence, FileSystemOutputPersistence>(); 
             services.AddSingleton<IReportGenerator, DinkReportGenerator>(); 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
