@@ -64,6 +64,7 @@ namespace Ecoset.WebUI.Services.Concrete
                 return "";
             }
             File.Copy(temporaryFile, fileName, true);
+            File.Delete(temporaryFile);
             return fileName;
         }
 
