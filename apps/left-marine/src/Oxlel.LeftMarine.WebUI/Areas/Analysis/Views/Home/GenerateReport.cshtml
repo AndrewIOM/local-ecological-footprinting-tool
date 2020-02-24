@@ -450,7 +450,7 @@
               <ul id="marine-protected-areas-list" class="list-group row appendix-list">
 
               @{
-                var mpa = Model.TableListResults.FirstOrDefault(m => m.Name == "protected_areas_list");
+                var mpa = Model.TableListResults.FirstOrDefault(m => m.Name == "protected_area_list");
                 if (mpa != null) {
                   @foreach (var r in mpa.Data.Rows) {
                     <li class="list-group-item col-xs-3"><em>@r["string"]</em></li>
@@ -478,7 +478,7 @@
               <ul id="vulnerable_species_names" class="list-group row appendix-list">
 
               @{
-                var vulnerable = Model.TableListResults.FirstOrDefault(m => m.Name == "vulnerable_species_list");
+                var vulnerable = Model.TableListResults.FirstOrDefault(m => m.Name == "vulnerable_species_names");
                 if (vulnerable != null) {
                   @foreach (var r in vulnerable.Data.Rows) {
                     var latinName = r["string"].Split('(')[0];

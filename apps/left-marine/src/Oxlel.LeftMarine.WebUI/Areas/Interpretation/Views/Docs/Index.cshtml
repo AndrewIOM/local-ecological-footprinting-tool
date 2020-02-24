@@ -1,0 +1,177 @@
+@{
+    ViewData["Title"] = "Documentation";
+}
+<h2 id="getting-started">@ViewData["Title"].</h2>
+<p>LEFT can be used to quickly generate PDF reports, or for more advanced data analysis.</p>
+
+<div class="row">
+    <nav class="col-xs-3 bs-docs-sidebar">
+        <ul id="sidebar" class="nav nav-stacked fixed">
+            <li>
+                <a href="#getting-started">Getting Started</a>
+            </li>
+            <li>
+                <a href="#dashboard">The LEFT Dashboard</a>
+                <ul class="nav nav-stacked">
+                    <li><a href="#dashboard">Home</a></li>
+                    <li><a href="#dashboard-log">Activity Log</a></li>
+                    <li><a href="#dashboard-analyses">Analyses</a></li>
+                    <li><a href="#dashboard-api">Data Packages</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#reports">Generate Personalised LEFT Reports</a>
+                <ul class="nav nav-stacked">
+                    <li><a href="#report-analysis">Submitting an Analysis</a></li>
+                    <li><a href="#report-interpret">Viewing and downloading the report</a></li>
+                    <li><a href="#report-prodata">Obtaining geotemporal datasets</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#api-overview">Generate Custom Data Bundles</a>
+                <ul class="nav nav-stacked">
+                    <li><a href="#api-docs">View the API documentation</a></li>
+                    <li><a href="#api-availability">What data is available?</a></li>
+                    <li><a href="#api-firstpackage">Requesting your first data package</a></li>
+                    <li><a href="#api-dataformats">Data formats</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#account">Your Account</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="col-md-9">
+
+        <h3 id="getting-started">Getting Started</h3>
+        <p>Welcome to LEFT. After creating a free account, you will be able to view a sample analysis. </p>
+        <br/>
+
+        <h3 id="dashboard">The LEFT Dashboard</h3>
+        <hr/>
+        <p>The LEFT dashboard is your hub for keeping tabs of your LEFT analyses. </p>
+        <img src="/images/docs/dashboard.png" class="img-responsive" alt="Map of local streets in left report"/>
+        <p>The dashboard gives you continuously up-to-date information about recent activity (completion of jobs etc.), and your credit balance. You can also browse all of your LEFT analyses using the analysis map. </p>
+        <br/>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4 id="dashboard-log">Activity Log</h4>
+                <p>The activity log displays actively updating information about changes to your account. </p>
+                <p>These include: job submissions, job status updates, credit purchases, and the spending of credits. </p>
+            </div>
+            <div class="col-md-6">
+                <img src="/images/docs/activity-log.png" class="img-responsive" alt="Map of local streets in left report"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4 id="dashboard-analyses">Your Analyses</h4>
+                <p>From this section, you can access detailed information about your analysis, including search and sort capability.</p>
+                <p>
+                    Live updates are provided as to the current status of your analyses.  An analysis proceeds through the following stages:
+                    <ol>
+                        <li><strong>Submitted.</strong> The analysis has been accepted by the Oxford University servers for processing, and is in the queue.</li>
+                        <li><strong>Processing.</strong> The analysis is currently running, with data being computed. The report is also compiled during this process. </li>
+                        <li><strong>Complete.</strong> Your analysis results are ready.</li>
+                    </ol>
+                </p>
+                <p>These include: job submissions, job status updates, credit purchases, and the spending of credits. </p>
+            </div>
+            <div class="col-md-6">
+                <img src="/images/docs/analyses.png" class="img-responsive" alt="Map of local streets in left report"/>
+            </div>
+        </div>
+
+        <h4 id="dashboard-api">Access to Data Packges</h4>
+        <p>This page of the dashboard provides an overview of your requests to the data packages API. See <a href="#api-overview">the API overview</a> below for more details.</p>
+
+        <h3 id="reports">Generate Personalised LEFT Reports</h3>
+        <hr/>
+        <p>We can automatically generate a report containing maps and information for your area of interest.</p>
+
+        <h4 id="report-analysis">Submit an Analysis</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <p>To submit an analysis, all that is required is a name for the analysis, description and location. Using the drawing tool, you can select a rectangle on the map for analysis.</p>
+                <p>Please note that the maximum spatial extent for one analysis is 4 decimal degrees squared. </p>
+            </div>
+            <div class="col-md-6">
+                <img src="/images/docs/submit-analysis.png" class="img-responsive" alt="Map of local streets in left report"/>
+            </div>
+        </div>
+        <br/>
+
+        <h4 id="report-interpret">Interpreting your report</h3>
+        <p>Information about interpreting an analysis to go here.</p>
+        <br/>
+
+        <h4 id="report-prodata">Obtaining the datasets shown in the report</h3>
+        <p>LEFT can optionally generate an archive of the underlying data shown in your report. You may request the archive on the analysis page of interest within your dashboard.</p>
+        <br/>
+
+
+        <h3 id="api-overview">Custom Data Packages</h3>
+        <hr/>
+        <p>You can query LEFT programatically to obtain one or many of LEFT's data sources along custom spatial-temporal dimensions. </p>
+        <div class="alert alert-info" role="alert">Please note that Data Packages are size- and rate-limited. You may only request two packages concurrently; the maximum area is ten decimal degrees squared.</div>
+
+        <h4 id="api-docs">API Documentation</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <p>Programmatic access to LEFT is provided through our Data Packge API. The available functions and required request formats may be explored within the Swagger interface, which documents the latest version of the API.</p>
+                <p></p>
+                <p>
+                    <a href="/swagger" type="button" class="btn btn-primary">Swagger API Docs</a>
+                    <a href='@Url.Action("DataPackage", "Dashboard", new { area = "Interpretation" })' type="button" class="btn btn-default">Your Package Activity</a>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <img src="/images/docs/swagger.png" class="img-responsive" alt="Swagger API interface"/>
+            </div>
+        </div>
+        <br/>
+
+        <h4 id="api-availability">Exploring the data available</h3>
+        <p>You can explore the available datasets using the <em>variables</em> endpoint. For each variable - an environmental property with a common unit - there may be one or many methods of calculation. Subsequently, for each method data may be available for specific times and places.</p>
+        <p>Variables and methods are referred to by their short name or ID when making further requests.</p>
+        <br/>
+
+        <h4 id="api-firstpackage">Your first data package</h3>
+        <p>There are five key stages to query the data packages API:
+            <ol>
+                <li>Determine data products of interest using the 'variables' endpoint.</li>
+                <li>Authenticate to the API using your LEFT account.</li>
+                <li>Submit a valid Data Package request for a time and place.</li>
+                <li>Wait for your package to become ready (NB processing time varies substantially between methods).</li>
+                <li>Retrieve the data package.</li>
+            </ol>
+        </p>
+        <p>A key stage is authentication. You must request a JWT token using the <em>auth</em> endpoint and include this token within your `apiKey` field of the request header. For more information, see the Swagger API documentation.</p>
+        <br/>
+
+        <h4 id="api-dataformats">Formats Used in Data Packages</h3>
+        <p>Data packages may contain datasets defined as data cubes (along latitude and longitude dimensions) or data tables.</p>
+        <br/>
+
+        <h3 id="account"> Your Account</h3>
+        <hr/>
+        <p>Your account </p>
+
+        <br/>
+        <h4 id="account-email">Email Preferences</h4>
+        <p>LEFT will notify your when an analysis completes via email by default. Any notification that shows in the activity log, however can have email notifications enabled or disabled.</p>
+        <br/>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('body').scrollspy({
+        target: '.bs-docs-sidebar',
+        offset: 10
+    });
+});
+</script>
