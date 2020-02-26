@@ -5,13 +5,6 @@ ENV ASPNETCORE_ENVIRONMENT=Development
 RUN mkdir -p /cache
 RUN mkdir -p /persistence
 
-# Setup NodeJs + phantomjs
-RUN apt-get update && \
-    apt-get install -y wget && \
-    apt-get install -y gnupg2 && \
-    wget -qO- https://deb.nodesource.com/setup_10.x | bash - && \
-    apt-get install -y build-essential nodejs phantomjs
-
 # LibMan installs front-end dependencies e.g. jquery, bootstrap.
 RUN dotnet tool install -g Microsoft.Web.LibraryManager.CLI
 ENV PATH="$PATH:/root/.dotnet/tools"

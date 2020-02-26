@@ -18,9 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="pdf\*">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
+    <Content Include="libwkhtmltox.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>  
   </ItemGroup>
 
 </Project>

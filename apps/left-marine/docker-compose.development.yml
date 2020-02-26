@@ -1,18 +1,38 @@
 version: '3.5'
 services:
-    ecoset:
+
+    ecoset.api:
         volumes:
-        - ./sample-data:/data
-        - ./test-data/output:/output
-        - ./config:/config
-        restart: always
-    redis:
+        - C:\data\vnext:/data
+        - ./test-data/ecoset-cache:/output
+        - ./config/ecoset:/usr/src/app/config
+        - ./test-data/ecoset-logs:/logs
+        environment:
+        - ES_CACHE_DIR=/output
+
+    ecoset.cache:
         volumes:
         - "./test-data/redis-data/:/data/"
-        restart: always
-    left:
+
+    web.ui:
         volumes:
-        - "./test-data/left-cache/:/cache/"
-        - "./test-data/persistence/:/persistence/"
+        - "./test-data/webui-scratch/:/cache/"
+        - "./test-data/webui-persistence/:/persistence/"
         environment:
         - ASPNETCORE_ENVIRONMENT=Development
+        - Account__Admin__DefaultAdminUserName=${ADMINUSER}
+        - Account__Admin__DefaultAdminPassword=${ADMINPASSWORD}
+        - PersistenceFolder=/persistence
+        - EcosetApp__ScratchDirectory=/cache
+        - EcosetApp__MapboxStaticKey=${MAPBOXSTATICKEY}
+        - EcosetApp__MapboxAccessToken=${MAPBOXTOKEN}
+
+    reverse-proxy:
+        volumes:
+        - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      
+    web.db:
+        volumes:
+        - ./test-data/mssql/data:/var/opt/mssql/data
+        - ./test-data/mssql/log:/var/opt/mssql/log
+        - ./test-data/mssql/secrets:/var/opt/mssql/secrets

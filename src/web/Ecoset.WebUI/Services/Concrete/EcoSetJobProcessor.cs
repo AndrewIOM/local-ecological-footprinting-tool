@@ -165,9 +165,9 @@ namespace Ecoset.WebUI.Services.Concrete
             try {
                 var result = await _connection.SubmitJobAsync(command);
                 return result.Id.ToString();
-            } catch (Exception)
+            } catch (Exception e)
             {
-                _logger.LogCritical("Job could not be submitted to EcoSet.");
+                _logger.LogCritical("Job could not be submitted to EcoSet. The error was: " + e.Message);
                 return null;
             }
         }

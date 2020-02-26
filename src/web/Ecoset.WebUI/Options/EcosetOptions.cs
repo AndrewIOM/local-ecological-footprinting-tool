@@ -13,6 +13,7 @@ namespace Ecoset.WebUI.Options
         public double MaximumAnalysisHeight { get; set; }
         public double MaximumAnalysisWidth { get; set; }
         public string ScratchDirectory { get; set; }
+        public int Port { get; set; }
 
         public EcosetAppOptions() {
             InstanceName = "Ecoset";
@@ -26,6 +27,7 @@ namespace Ecoset.WebUI.Options
             PaymentsEnabled = false;
             MaximumAnalysisHeight = 4.00;
             MaximumAnalysisWidth = 4.00;
+            Port = 80;
         }
     }
 }

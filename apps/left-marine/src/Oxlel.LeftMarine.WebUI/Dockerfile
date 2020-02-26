@@ -1,16 +1,20 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-bionic AS build
 
 ENV ASPNETCORE_ENVIRONMENT=Development
 
 RUN mkdir -p /cache
 RUN mkdir -p /persistence
 
-# Setup NodeJs + phantomjs
-RUN apt-get update && \
-    apt-get install -y wget && \
-    apt-get install -y gnupg2 && \
-    wget -qO- https://deb.nodesource.com/setup_10.x | bash - && \
-    apt-get install -y build-essential nodejs phantomjs
+# Setup DinkToPDF dependencies
+RUN apt update
+RUN apt-get install -y libssl1.0-dev
+RUN apt install -y libgdiplus
+RUN ln -s /usr/lib/libgdiplus.so /lib/x86_64-linux-gnu/libgdiplus.so
+RUN apt-get install -y --no-install-recommends zlib1g fontconfig libfreetype6 libx11-6 libxext6 libxrender1 wget gdebi
+RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+# RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-dev-20200127/wkhtmltox_0.12.6-0.20200125.25.dev.ba575ea.buster_amd64.deb
+RUN gdebi --n wkhtmltox_0.12.5-1.bionic_amd64.deb
+RUN ln -s /usr/local/lib/libwkhtmltox.so /usr/lib/libwkhtmltox.so
 
 # LibMan installs front-end dependencies e.g. jquery, bootstrap.
 RUN dotnet tool install -g Microsoft.Web.LibraryManager.CLI
@@ -35,4 +39,5 @@ RUN dotnet publish -c Release
 VOLUME /cache
 VOLUME /persistence
 
-ENTRYPOINT dotnet bin/Release/netcoreapp3.0/publish/Oxlel.LeftMarine.WebUI.dll
+WORKDIR /build/apps/left-marine/src/Oxlel.LeftMarine.WebUI/bin/Release/netcoreapp3.0/publish
+ENTRYPOINT [ "dotnet", "Oxlel.LeftMarine.WebUI.dll" ]

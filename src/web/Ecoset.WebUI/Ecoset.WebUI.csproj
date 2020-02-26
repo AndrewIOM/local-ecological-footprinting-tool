@@ -28,7 +28,6 @@
     <ProjectReference Include="../Ecoset.GeoTemporal.Remote/Ecoset.GeoTemporal.Remote.csproj" />
     <EmbeddedResource Include="wwwroot\**\*" />
     <Content Update="**\*.cshtml" Pack="false" />
-    <Content Update="pdf\rasterise.js" Pack="false" />
   </ItemGroup>
 
 </Project>

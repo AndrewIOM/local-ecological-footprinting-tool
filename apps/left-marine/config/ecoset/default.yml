@@ -2,16 +2,19 @@ api:
     port: 5002
 
 queue:
-    maxjobs: 3
+    maxjobs: 5
     maxduration: 43200000
 
 cache:
-    host: "localhost"
+    host: "ecoset.cache"
     port: 6379
 
 locations:
-    tileroot: &tileroot "c:/sometiledir"
     cache: /Users/andrewmartin/Desktop/ecoset/cache
+
+gbif_db_host: &gbif_db_host test
+gbif_db_user: &gbif_db_user test
+gbif_db_password: &gbif_db_password test
 
 variables:
     - biodiversity_records:
@@ -26,11 +29,11 @@ variables:
                 licenseUrl: https://www.gbif.org/en/terms
                 implementation: GbifQuery
                 options:
-                    host: localdb
-                    username: user
-                    password: password
+                    host: *gbif_db_host
+                    username: *gbif_db_user
+                    password: *gbif_db_password
                     database: gbif
-                    gbif_table: gbif
+                    gbif_table: master
                     gbif_coord_table: gbif_coordinate
                     gbif_org_table: gbif_org_lookup
 
@@ -46,11 +49,11 @@ variables:
                 licenseUrl: https://www.gbif.org/en/terms
                 implementation: GbifQuery
                 options:
-                    host: localdb
-                    username: user
-                    password: password
+                    host: *gbif_db_host
+                    username: *gbif_db_user
+                    password: *gbif_db_password
                     database: gbif
-                    gbif_table: gbif
+                    gbif_table: master
                     gbif_coord_table: gbif_coordinate
                     gbif_org_table: gbif_org_lookup
 
@@ -64,8 +67,9 @@ variables:
                 description: Marine Boundaries version 11 as defined by the methodology at http://www.marineregions.org/eezmethodology.php
                 license: CC-BY 4.0
                 licenseUrl: https://creativecommons.org/licenses/by/4.0/
+                implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/exclusiveeconomiczones
+                    tiledir: /data/exclusiveeconomiczones
                     nodata: -9999
 
     - ecoregions:
@@ -80,7 +84,7 @@ variables:
                 licenseUrl: https://creativecommons.org/licenses/by-nc/3.0/
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/marineecoregions
+                    tiledir: /data/marineecoregions
                     nodata: -9999
 
     - protected_areas:
@@ -95,7 +99,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/marineprotectedareas
+                    tiledir: /data/marineprotectedareas
                     nodata: -9999
 
     - sea_depth:
@@ -110,7 +114,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/seadepth
+                    tiledir: /data/seadepth
                     nodata: -9999
 
     - coastal_ecosystems:
@@ -125,7 +129,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/coastalecosystems
+                    tiledir: /data/coastalecosystems
                     nodata: -9999
     
     - vulnerability:
@@ -140,7 +144,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/vulnerability
+                    tiledir: /data/vulnerability
                     nodata: -9999
 
     - migratory_count:
@@ -155,7 +159,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    tiledir: /data/migratory_count
                     nodata: -9999
 
     - critical_habitat:
@@ -170,7 +174,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    tiledir: /data/criticalhabitat
                     nodata: -9999
 
     - shipping_density:
@@ -185,7 +189,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    tiledir: /data/shippingdensity
                     nodata: -9999
 
     - fish_catches:
@@ -200,7 +204,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    tiledir: /data/fishcatches
                     nodata: -9999
 
     - aquaculture_potential:
@@ -215,7 +219,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    tiledir: /data/aquaculture
                     nodata: -9999
 
     - windpower_potential:
@@ -230,7 +234,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    tiledir: /data/windpower
                     nodata: -9999
 
     - wavepower_potential:
@@ -245,7 +249,37 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /mnt/marinedata/vnext/migratory_count
+                    tiledir: /data/wavepower
+                    nodata: -9999
+
+    - npp:
+        name: "Net Primary Productivity"
+        description: ""
+        unit: unknown
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/npp
+                    nodata: -9999
+                                
+    - currents:
+        name: "Ocean Currents"
+        description: ""
+        unit: unknown
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/currents
                     nodata: -9999
 
     - protected_area_list:
@@ -260,7 +294,7 @@ variables:
                 licenseUrl: https://opensource.org/licenses/GPL-3.0
                 implementation: IntersectShape
                 options:
-                    shapefileDir: /mnt/marinedata/vnext/migratory_names
+                    shapefileDir: /data/protectedarea_names
                 
     - vulnerable_species_names:
         name: "Vulnerable Species (Names)"
@@ -274,8 +308,8 @@ variables:
                 licenseUrl: https://opensource.org/licenses/GPL-3.0
                 implementation: IntersectShape
                 options:
-                    shapefileDir: /mnt/marinedata/vnext/migratory_names
-   
+                    shapefileDir: /data/vulnerablespecies_names
+    
     - migratory_names:
         name: "Migratory Species"
         description: "Species with migration pathways"
@@ -288,5 +322,5 @@ variables:
                 licenseUrl: https://opensource.org/licenses/GPL-3.0
                 implementation: IntersectShape
                 options:
-                    shapefileDir: /mnt/marinedata/vnext/migratory_names
+                    shapefileDir: /data/migratory_names
                 

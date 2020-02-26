@@ -45,7 +45,7 @@ namespace Ecoset.WebUI.Services.Concrete
                     Objects = {
                         new ObjectSettings()
                         {
-                            Page = "http://localhost:5000/Analysis/Home/GenerateReport?id=" + job.Id,
+                            Page = "http://localhost:" + _options.Port + "/Analysis/Home/GenerateReport?id=" + job.Id,
                             PagesCount = true,
                             FooterSettings = {FontName = "Arial", FontSize = 9, Right = "Page [sitepage] of [sitepages]"},
                             HeaderSettings = { FontName = "Arial", FontSize = 9, Left = _options.InstanceName },

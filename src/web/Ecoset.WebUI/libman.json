@@ -3,8 +3,21 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
+      "provider": "unpkg",
+      "library": "topojson-client@1.8.0",
+      "destination": "wwwroot/lib/topojson-client"
+    },
+    {
+      "library": "d3@4.7.4",
+      "destination": "wwwroot/lib/d3"
+    },
+    {
       "library": "jquery@3.4.1",
       "destination": "wwwroot/lib/jquery"
+    },
+    {
+      "library": "underscore.js@1.8.3",
+      "destination": "wwwroot/lib/underscore"
     },
     {
       "library": "bootstrap-tour@0.11.0",
