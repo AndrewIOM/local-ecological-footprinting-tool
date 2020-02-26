@@ -23,6 +23,17 @@ namespace Ecoset.GeoTemporal.Remote
             return result;
         }
 
+        public Task<JobFetchResponse> TryFetchResultAsync(JobId id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<VariableListItem[]> ListAvailableDatasets()
+        {
+            var result = await Get<VariableListItem[]>("api/v1/Data/list");
+            return result;
+        }
+
         public async Task<JobStatus> GetJobStatusAsync(JobId id)
         {
             var result = await Get<JobPollResponse>("api/v1/Data/status/" + id.Id.ToString());
@@ -94,11 +105,5 @@ namespace Ecoset.GeoTemporal.Remote
                 }
             }
         }
-
-        public Task<JobFetchResponse> TryFetchResultAsync(JobId id)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

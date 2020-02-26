@@ -8,5 +8,6 @@ namespace Ecoset.GeoTemporal.Remote
         Task<JobStatus> GetJobStatusAsync(JobId id);
         Task<JobFetchResponse> FetchResultAsync(JobId id);
         Task<JobFetchResponse> TryFetchResultAsync(JobId id);
+        Task<VariableListItem[]> ListAvailableDatasets();
     }
 }

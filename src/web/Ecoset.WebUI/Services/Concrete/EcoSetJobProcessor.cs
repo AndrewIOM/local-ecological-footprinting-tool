@@ -240,5 +240,32 @@ namespace Ecoset.WebUI.Services.Concrete
             else return Models.JobStatus.Submitted;
         }
 
+        public async Task<List<Models.Variable>> ListVariables()
+        {
+            var available = await _connection.ListAvailableDatasets();
+            return available.Select(m => {
+                var methods = 
+                    m.Methods.Select(n => {
+                        return new Ecoset.WebUI.Models.VariableMethod() {
+                            Id = n.Id,
+                            Name = n.Name,
+                            License = n.License,
+                            LicenseUrl = n.LicenseUrl,
+                            TimesAvailable = new MethodTime() {
+                                TimeSlices = n.TemporalExtent.Slices.Select(s => { return new Models.SimpleDate() { Day = s.Day, Month = s.Month, Year = s.Year }; }).ToList(),
+                                ExtentMax = new Models.SimpleDate() { Day = n.TemporalExtent.MaxDate.Day, Month = n.TemporalExtent.MaxDate.Month, Year = n.TemporalExtent.MaxDate.Year },
+                                ExtentMin =  new Models.SimpleDate() { Day = n.TemporalExtent.MinDate.Day, Month = n.TemporalExtent.MinDate.Month, Year = n.TemporalExtent.MinDate.Year }
+                            } };
+                    }).ToList();
+                return new Ecoset.WebUI.Models.Variable() {
+                    Id = m.Id,
+                    Name = m.FriendlyName,
+                    Description = m.Description,
+                    Unit = m.Unit,
+                    Methods = methods
+                    };
+                }).ToList();
+            }
+        }
+
     }
-}

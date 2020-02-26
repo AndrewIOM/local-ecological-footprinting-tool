@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Ecoset.WebUI.Models;
 using Microsoft.Extensions.Options;
 using Ecoset.WebUI.Options;
+using Ecoset.WebUI.Services.Abstract;
 
 namespace Ecoset.WebUI.Areas.API.Controllers {
 
@@ -17,9 +18,11 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
 
         private readonly UserManager<ApplicationUser> _userManager;
         private ReportContentOptions _reportOptions;
-        public VariableApiController (UserManager<ApplicationUser> userManager, IOptions<ReportContentOptions> reportOptions) {
+        private IJobProcessor _processor;
+        public VariableApiController (UserManager<ApplicationUser> userManager, IOptions<ReportContentOptions> reportOptions, IJobProcessor processor) {
             _userManager = userManager;
             _reportOptions = reportOptions.Value;
+            _processor = processor;
         }
 
         /// <summary>
@@ -27,15 +30,13 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         /// </summary>
         [HttpGet]
         [Route("list")]
-        public IActionResult List(GeotemporalContext context) {
-            var sampleVariables = new List<Variable>() {
-                new Variable() { Name = "Snow Cover", Description = "Cool" },
-                new Variable() { Name = "Air Temperature", Description = "Hot" }};
-            return Json(sampleVariables);
+        public async Task<IActionResult> List(GeotemporalContext context) {
+            var variables = await _processor.ListVariables();
+            return Json(variables);
         }
 
         /// <summary>
-        /// Lists available variables from this ecoset node.
+        /// Details of available methods and geo-temporal contexts.
         /// </summary>
         [HttpGet("/detail/{variableName}")]
         public IActionResult Detail(string variableName) {
