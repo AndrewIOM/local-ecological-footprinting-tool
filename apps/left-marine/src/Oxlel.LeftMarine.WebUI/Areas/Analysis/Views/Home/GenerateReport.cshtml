@@ -304,13 +304,13 @@
               <h2>CONTEXT</h2>
             </div>
           </div>
-          @MapPage("economic_zones")
+          @{ MapPage("economic_zones"); }
         </div>
-        <div class="report-section" id="protected_areas-section">@MapPage("protected_areas")</div>
-        <div class="report-section" id="ecoregions-section">@MapPage("ecoregions")</div>
-        <div class="report-section" id="depth-section">@MapPage("depth")</div>
-        <div class="report-section" id="benthic_roughness-section">@MapPage("benthic_roughness")</div>
-        <div class="report-section" id="coastal_ecosystems-section">@MapPage("coastal_ecosystems")</div>
+        <div class="report-section" id="protected_areas-section">@{ MapPage("protected_areas"); }</div>
+        <div class="report-section" id="ecoregions-section">@{ MapPage("ecoregions"); }</div>
+        <div class="report-section" id="depth-section">@{ MapPage("sea_depth"); }</div>
+        <div class="report-section" id="benthic_roughness-section">@{ MapPage("benthic_roughness"); }</div>
+        <div class="report-section" id="coastal_ecosystems-section">@{ MapPage("coastal_ecosystems"); }</div>
 
         @* Section 4. Biodiversity *@
         <div class="report-section" id="species-occurrence-section">
@@ -404,9 +404,9 @@
             </div>
           </div>
         </div>
-        <div class="report-section" id="vulnerability-section">@MapPage("vulnerability")</div>
-        <div class="report-section" id="migratory_count-section">@MapPage("migratory_count")</div>
-        <div class="report-section" id="critical_habitat-section">@MapPage("critical_habitat")</div>
+        <div class="report-section" id="vulnerability-section">@{ MapPage("vulnerability"); }</div>
+        <div class="report-section" id="migratory_count-section">@{ MapPage("migratory_count"); }</div>
+        <div class="report-section" id="critical_habitat-section">@{ MapPage("critical_habitat"); }</div>
 
 
         @* Section 5. Competing Uses *@
@@ -416,12 +416,12 @@
               <h2>COMPETING USES</h2>
             </div>
           </div>
-          @MapPage("shipping_density")
+          @{ MapPage("shipping_density"); }
         </div>
-        <div class="report-section" id="fish_catches-section">@MapPage("fish_catches")</div>
-        <div class="report-section" id="aquaculture_potential-section">@MapPage("aquaculture_potential")</div>
-        <div class="report-section" id="windpower_potential-section">@MapPage("windpower_potential")</div>
-        <div class="report-section" id="wavepower_potential-section">@MapPage("wavepower_potential")</div>
+        <div class="report-section" id="fish_catches-section">@{ MapPage("fish_catches"); }</div>
+        <div class="report-section" id="aquaculture_potential-section">@{ MapPage("aquaculture_potential"); }</div>
+        <div class="report-section" id="windpower_potential-section">@{ MapPage("windpower_potential"); }</div>
+        <div class="report-section" id="wavepower_potential-section">@{ MapPage("wavepower_potential"); }</div>
 
 
         @* Section 6. Processes *@
@@ -431,15 +431,15 @@
               <h2>PROCESSES</h2>
             </div>
           </div>
-          @MapPage("sst")
+          @{ MapPage("sst"); }
         </div>
-        <div class="report-section" id="sst_fronts-section">@MapPage("sst_fronts")</div>
-        <div class="report-section" id="salinity-section">@MapPage("salinity")</div>
-        <div class="report-section" id="npp-section">@MapPage("npp")</div>
-        <div class="report-section" id="sea_ice-section">@MapPage("sea_ice")</div>
-        <div class="report-section" id="currents-section">@MapPage("currents")</div>
-        <div class="report-section" id="tides-section">@MapPage("tides")</div>
-        <div class="report-section" id="sea_state-section">@MapPage("sea_state")</div>
+        <div class="report-section" id="sst_fronts-section">@{ MapPage("sst_fronts"); }</div>
+        <div class="report-section" id="salinity-section">@{ MapPage("salinity"); }</div>
+        <div class="report-section" id="npp-section">@{ MapPage("npp"); }</div>
+        <div class="report-section" id="sea_ice-section">@{ MapPage("sea_ice"); }</div>
+        <div class="report-section" id="currents-section">@{ MapPage("currents"); }</div>
+        <div class="report-section" id="tides-section">@{ MapPage("tides"); }</div>
+        <div class="report-section" id="sea_state-section">@{ MapPage("sea_state"); }</div>
 
         @* Section 7. Threats *@
         <div class="report-section" id="competing-uses-section">
@@ -448,12 +448,12 @@
               <h2>THREATS</h2>
             </div>
           </div>
-          @MapPage("sst_trend")
+          @{ MapPage("sst_trend"); }
         </div>
-        <div class="report-section" id="coral_bleaching-section">@MapPage("coral_bleaching")</div>
-        <div class="report-section" id="acidification-section">@MapPage("acidification")</div>
-        <div class="report-section" id="sea_level_rise-section">@MapPage("sea_level_rise")</div>
-        <div class="report-section" id="invasive_species-section">@MapPage("invasive_species")</div>
+        <div class="report-section" id="coral_bleaching-section">@{ MapPage("coral_bleaching"); }</div>
+        <div class="report-section" id="acidification-section">@{ MapPage("acidification"); }</div>
+        <div class="report-section" id="sea_level_rise-section">@{ MapPage("sea_level_rise"); }</div>
+        <div class="report-section" id="invasive_species-section">@{ MapPage("invasive_species"); }</div>
 
 
         @* Section 8. References *@
@@ -636,10 +636,12 @@
 @{
     void MapPage(string variableId)
     {
-      var paletteUrl = hasPalette[executableResult.Name] ? "/palettes/" + executableResult.Name + ".json" : null;
+      var paletteUrl = hasPalette[variableId] ? "/palettes/" + variableId + ".json" : null;
+      var executableResult = Model.RawResults.FirstOrDefault(m => m.Name == variableId);
+      if (executableResult == null) return;
       <div class="row">
           <div class="col-sm-12">
-            <h3>@prettyTitles[executableResult.Name]</h3>
+            <h3>@prettyTitles[variableId]</h3>
             <hr/>
           </div>
         </div>
@@ -647,19 +649,19 @@
         <div class="col-sm-5">
 
           <p>
-            @Html.Raw(descriptions[executableResult.Name])
+            @Html.Raw(descriptions[variableId])
           </p>
 
           <div class="panel panel-default legend">
-            <div class="panel-heading">@units[executableResult.Name]</div>
+            <div class="panel-heading">@units[variableId]</div>
             <div class="panel-body">
-              <div id="@executableResult.Name-scale" class="section-scale"></div>
+              <div id="@variableId-scale" class="section-scale"></div>
             </div>
           </div>
         </div>
         <div class="col-sm-7">
-        <div id="@executableResult.Name-map" class="section-map"></div>
-        <p>@mapLegend[executableResult.Name]</p>
+        <div id="@variableId-map" class="section-map"></div>
+        <p>@mapLegend[variableId]</p>
         </div>
       </div>
       <div class="create-script">
