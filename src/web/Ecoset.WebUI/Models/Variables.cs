@@ -10,6 +10,10 @@ namespace Ecoset.WebUI.Models {
         public string Description { get; set; }
         public string Unit { get; set; }
         public List<VariableMethod> Methods { get; set; }
+
+        public Variable() {
+            Methods = new List<VariableMethod>();
+        }
     }
 
     public class VariableMethod
@@ -26,6 +30,10 @@ namespace Ecoset.WebUI.Models {
         public SimpleDate ExtentMax { get; set; }
         public SimpleDate ExtentMin { get; set; }
         public List<SimpleDate> TimeSlices { get; set; }
+
+        public MethodTime() {
+            TimeSlices = new List<SimpleDate>();
+        }
     }
 
     public class SimpleDate

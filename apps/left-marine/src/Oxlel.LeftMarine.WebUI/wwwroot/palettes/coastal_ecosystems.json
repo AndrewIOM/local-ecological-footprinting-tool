@@ -5,5 +5,6 @@
     {"value": 4,"R": 128,"G": 128,"B": 255,"class": "Saltmarsh"},
     {"value": 5,"R": 0,"G": 0,"B": 255,"class": "Seagrass"},
     {"value": 6,"R": 128,"G": 128,"B": 64,"class": "Tidal flat"},
+    {"value": 7,"R": 255,"G": 211,"B": 0,"class": "Coral Reefs"},
     {"value": 255,"R": 192,"G": 192,"B": 192,"class": "Land"}
 ] 

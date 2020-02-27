@@ -35,6 +35,10 @@ namespace Ecoset.GeoTemporal.Remote
         public Date MinDate { get; set; }
         [JsonProperty("maxDate")]
         public Date MaxDate { get; set; }
+        
+        public TemporalDimension() {
+            Slices = Array.Empty<SimpleDate>();
+        }
     }
 
     public class Date

@@ -15,7 +15,7 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Area("Api")]
-    [Route("/api/v1/data")]
+    [Route("/api/v1/package")]
     public class DataPackageApiController : Controller {
 
         private readonly IJobService _jobService;

@@ -115,6 +115,21 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/seadepth
+                    nodata: 0
+
+    - sea_state:
+        name: "Sea State"
+        description: ""
+        unit: metres
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/seastate
                     nodata: -9999
 
     - coastal_ecosystems:
@@ -145,7 +160,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/vulnerability
-                    nodata: -9999
+                    nodata: -999
 
     - migratory_count:
         name: "Number of Migratory Species"
@@ -160,7 +175,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/migratory_count
-                    nodata: -9999
+                    nodata: -999
 
     - critical_habitat:
         name: "Critical habitat"
@@ -190,7 +205,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/shippingdensity
-                    nodata: -9999
+                    nodata: 255
 
     - fish_catches:
         name: "Fish Catches"
@@ -205,7 +220,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/fishcatches
-                    nodata: -9999
+                    nodata: -999
 
     - aquaculture_potential:
         name: "Aquaculture potential"
@@ -220,7 +235,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/aquaculture
-                    nodata: -9999
+                    nodata: 255
 
     - windpower_potential:
         name: "Windpower potential"
@@ -235,7 +250,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/windpower
-                    nodata: -9999
+                    nodata: 255
 
     - wavepower_potential:
         name: "Wavepower potential"
@@ -250,6 +265,36 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/wavepower
+                    nodata: 255
+
+    - sea_ice:
+        name: "Sea Ice"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/seaice
+                    nodata: -9999
+
+    - tides:
+        name: "Tides"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/tides
                     nodata: -9999
 
     - npp:
@@ -266,7 +311,68 @@ variables:
                 options:
                     tiledir: /data/npp
                     nodata: -9999
-                                
+
+    - sst:
+        name: "Sea Surface Temperature"
+        description: ""
+        unit: degrees Celsius
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/sst
+                    nodata: -9999
+
+    - sst_trend:
+        name: "Sea Surface Temperature Trend"
+        description: ""
+        unit: degrees Celsius per year
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/ssttrend
+                    nodata: -9999
+
+    - sst_fronts:
+        name: "Sea Surface Temperature Fronts"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/sstfronts
+                    nodata: -9999  
+
+    - salinity:
+        name: "Sea Surface Salinity"
+        description: ""
+        unit: effective salinity units
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/salinity
+                    nodata: -9999  
+
+
     - currents:
         name: "Ocean Currents"
         description: ""
@@ -281,6 +387,81 @@ variables:
                 options:
                     tiledir: /data/currents
                     nodata: -9999
+
+    - benthic_roughness:
+        name: "Benthic Roughness"
+        description: ""
+        unit: dimensionless
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/benthicroughness
+                    nodata: -9999
+
+    - coral_bleaching:
+        name: "Coral Bleaching"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/coralbleaching
+                    nodata: -9999
+
+    - acidification:
+        name: "Ocean Acidification"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/ph
+                    nodata: -9999
+
+    - sea_level_rise:
+        name: "Sea Level Rise"
+        description: ""
+        unit: metres
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/sealevelrise
+                    nodata: -9999 
+
+    - invasive_species:
+        name: "Invasive Species"
+        description: ""
+        unit: count
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/invasivespecies
+                    nodata: -9999 
 
     - protected_area_list:
         name: "Protected Areas (Names)"
@@ -323,4 +504,3 @@ variables:
                 implementation: IntersectShape
                 options:
                     shapefileDir: /data/migratory_names
-                
