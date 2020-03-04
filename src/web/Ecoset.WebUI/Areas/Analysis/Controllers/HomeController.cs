@@ -164,7 +164,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
         {
             var job = _jobService.GetById(id);
             if (job == null) return BadRequest();
-            if (job.Status != JobStatus.Completed) return BadRequest();
+            if (job.Status != JobStatus.Completed && job.Status != JobStatus.GeneratingOutput) return BadRequest();
 
             var user = GetCurrentUserAsync();
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");

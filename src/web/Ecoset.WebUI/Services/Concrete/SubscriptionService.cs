@@ -1,6 +1,11 @@
 using System;
 using System.IO;
+using System.Linq;
+using Ecoset.WebUI.Data;
+using Ecoset.WebUI.Models;
 using Ecoset.WebUI.Services.Abstract;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Ecoset.WebUI.Services.Concrete
 {
@@ -8,18 +13,17 @@ namespace Ecoset.WebUI.Services.Concrete
     {
         private readonly ApplicationDbContext _context;
         private ILogger<SubscriptionService> _logger;
-        public AuthMessageSender(ILogger<SubscriptionService> logger, ApplicationDbContext context) {
+        public SubscriptionService(ILogger<SubscriptionService> logger, ApplicationDbContext context) {
             _logger = logger;
             _context = context;
         }
 
         public Subscription GetActiveForUser(string userId) {
-            var user = _context.Users.Include(m => m.Subscriptions).ThenInclude(s => s.GroupSubscription).FirstOrDefault(m => m.Id == userId);
+            var user = _context.Users.Include(m => m.Subscriptions).ThenInclude(s => s.GroupSubscriptions).FirstOrDefault(m => m.Id == userId);
             if (user == null) return null;
             
             // TODO Include wildcard subscriptions
-
-            return user.Subscriptions.Where(s => s.StartDate >= DateTime.Now && s.EndDate < DateTime.Now);
+            return user.Subscriptions.FirstOrDefault(s => s.StartDate >= DateTime.Now && (s.Expires.HasValue ? s.Expires.Value < DateTime.Now : true));
         }
 
         public void Revoke(string subscriptionId) {

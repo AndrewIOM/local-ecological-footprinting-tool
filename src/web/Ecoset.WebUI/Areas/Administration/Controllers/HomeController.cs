@@ -11,6 +11,7 @@ using Ecoset.WebUI.Models;
 using Ecoset.WebUI.Models.AdminViewModels;
 using Ecoset.WebUI.Services.Abstract;
 using Ecoset.WebUI.Enums;
+using System;
 
 namespace Ecoset.WebUI.Areas.Administration.Controllers
 {
@@ -56,20 +57,20 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
                 return View(vm);
             }
 
-            var user = _context.Users.FirstOrDefault(m => m.Id == userId);
+            var user = _context.Users.FirstOrDefault(m => m.Id == vm.MasterUserId);
             if (user == null) {
                 ModelState.AddModelError("userId", "The specified master user does not exist");
                 return View(vm);
             }
 
             var subscription = new Subscription() {
-                StartDate = vm.StartDate == null ? DateTime.Now : vm.StartDate,
-                Expires = vm.Expires,
+                StartDate = vm.StartTime.HasValue ? vm.StartTime.Value : DateTime.Now,
+                Expires = vm.ExpiryTime,
                 Revoked = false,
                 RateLimit = vm.RateLimit,
                 AnalysisCap = vm.AnalysisCap,
                 PrimaryContact = user,
-                GroupSubscriptions = new List<GroupSubscriptions>()
+                GroupSubscriptions = new List<GroupSubscription>()
             };
 
             // Add subscription
@@ -251,10 +252,6 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
         }
 
         public IActionResult Subscriptions() {
-            return Ok();
-        }
-
-        public IActionResult AddSubscription() {
             return Ok();
         }
 

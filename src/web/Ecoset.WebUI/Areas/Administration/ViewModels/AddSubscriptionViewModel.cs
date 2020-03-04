@@ -1,11 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ecoset.WebUI.Models.AdminViewModels {
 
     public class AddSubscriptionViewModel
     {
         [Required]
-        public int MasterUserId { get; set; }
+        public string MasterUserId { get; set; }
         
         public DateTime? StartTime { get; set; }
         public DateTime? ExpiryTime { get; set; }

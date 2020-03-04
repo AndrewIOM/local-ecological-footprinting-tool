@@ -30,7 +30,7 @@ namespace Ecoset.WebUI.Options
             MaximumAnalysisHeight = 4.00;
             MaximumAnalysisWidth = 4.00;
             Port = 80;
-            GlobalPerWeekCap = 100;
+            GlobalAnalysisCap = 100;
             GlobalRateLimit = 3;
         }
     }
