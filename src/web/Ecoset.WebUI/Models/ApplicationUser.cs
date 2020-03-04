@@ -22,6 +22,8 @@ namespace Ecoset.WebUI.Models
         public bool AgreedToCommunication { get; set; }
         public bool EmailOnJobCompletion { get; set; }
 
+        public virtual List<Subscription> Subscriptions { get; set; }
+
         /// <summary>
         /// Navigation property for the roles this user belongs to.
         /// </summary>

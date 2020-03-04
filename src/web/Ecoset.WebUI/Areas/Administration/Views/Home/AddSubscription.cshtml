@@ -1,0 +1,71 @@
+@model Ecoset.WebUI.Models.AdminViewModels.AddSubscriptionViewModel
+
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Subscriptions";
+    ViewData["SubTitle"] = "Register a new subscription";
+}
+
+<p>Subscriptions remove rate limits on user accounts. Subscriptions must be assigned to an individual.</p>
+<p>An organisation may hold a subscription that applies to all of its staff. To do this, add a group subscription email wildcard to the new subscription here.</p>
+
+<form asp-action="Submit" asp-anti-forgery="true" onsubmit="" id="map-form">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="MasterUserId" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <select asp-for="MasterUserId" class="form-control">
+            @foreach(var user in ViewBag.Users) {
+                <option value="@user.Id">@user.Name</option>
+            }
+            </select>
+            <span asp-validation-for="MasterUserId" class="text-danger"></span>
+            <p>The assigned user is the contact for this subscription.</p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartTime" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="StartTime" class="form-control" />
+            <span asp-validation-for="StartTime" class="text-danger"></span>
+        </div>
+        <p>If you do not set a start time, the subscription will be active immediately.</p>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ExpiryTime" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="ExpiryTime" class="form-control" />
+            <span asp-validation-for="ExpiryTime" class="text-danger"></span>
+        </div>
+        <p>If you do not set an end time, the subscription will become perpetual. Note that you may still revoke this subcription at any time.</p>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RateLimit" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="RateLimit" class="form-control" />
+            <span asp-validation-for="RateLimit" class="text-danger"></span>
+        </div>
+        <p>If set, lifts the rate limit for this subscription beyond the global rate limit. If a rate is not specified, the subscription will be unlimited.</p>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="AnalysisCap" class="col-md-4 control-label"></label>
+        <div class="col-md-8">
+            <input asp-for="AnalysisCap" class="form-control" />
+            <span asp-validation-for="AnalysisCap" class="text-danger"></span>
+        </div>
+        <p>If set, lifts the per week total analysis cap for the subscription beyond the global cap for individual users. If not set, the subscription will be unlimited.
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <input id="submit" class="btn btn-primary" type="submit" value="Register"/>
+            <a asp-action="Index" class="btn btn-default">Cancel</a>
+        </div>
+    </div>
+
+</form>

@@ -14,4 +14,10 @@ namespace Ecoset.WebUI.Models.AdminViewModels {
         public bool IsAdmin { get; set; }
         public int Credits { get; set; }
     }
+
+    public class UserDropdownItemViewModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
 }

@@ -45,6 +45,39 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult AddSubscription() {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddSubscription(AddSubscriptionViewModel vm) {
+            if (!ModelState.IsValid) {
+                return View(vm);
+            }
+
+            var user = _context.Users.FirstOrDefault(m => m.Id == userId);
+            if (user == null) {
+                ModelState.AddModelError("userId", "The specified master user does not exist");
+                return View(vm);
+            }
+
+            var subscription = new Subscription() {
+                StartDate = vm.StartDate == null ? DateTime.Now : vm.StartDate,
+                Expires = vm.Expires,
+                Revoked = false,
+                RateLimit = vm.RateLimit,
+                AnalysisCap = vm.AnalysisCap,
+                PrimaryContact = user,
+                GroupSubscriptions = new List<GroupSubscriptions>()
+            };
+
+            // Add subscription
+            _context.Subscriptions.Add(subscription);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
         public IActionResult AddCredits(string userId, int credits) {
             Contract.Requires(credits > 0 && credits < 50);
 
@@ -55,7 +88,7 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
             _context.SaveChanges();
 
             _notificationService.AddUserNotification(NotificationLevel.Information, userId, 
-                "You've been gifted {0} free credits.", new string[] { credits.ToString() });
+                "You have recieved {0} credits.", new string[] { credits.ToString() });
 
             return Ok();
         }
