@@ -15,8 +15,8 @@
   prettyTitles["beta_diversity"] = "Spatial Pattern of Biodiversity";
   prettyTitles["vulnerability"] = "Vulnerability";
   prettyTitles["intactness"] = "Intactness";
-  prettyTitles["migratory_buffered"] = "Connectivity: Migratory Species";
-  prettyTitles["wetlands"] = "Connectivity: Wetlands";
+  prettyTitles["migratory"] = "Connectivity: Migratory Species";
+  prettyTitles["wetland"] = "Connectivity: Wetlands";
   prettyTitles["resilience"] = "Resilience";
   prettyTitles["sev"] = "Summary Ecological Value";
   prettyTitles["ecoregions"] = "Ecoregions";
@@ -27,8 +27,8 @@
   descriptions["beta_diversity"] = "Georeferenced occurrence records for plants and terrestrial vertebrates were retrieved from GBIF (see page three). Species records were combined with environmental covariates to express the pattern of biodiversity (beta-diversity, i.e. spatial turnover in species) across the area of interest. To do this, a Generalised Dissimilarity Model (GDM; Ferrier et al 2002) was run. The environmental covariates used in the model were annual mean temperature, annual mean precipitation, temperature seasonality, precipitation seasonality (Hijmans et al 2005), soil nitrogen, soil water holding capacity (Land and Water Development Division, FAO 2003), and land cover class (GlobCover 2009). To ensure the maximum number of records for modelling, occurrence data were obtained for the area of interest and a surrounding 3-degree buffer.";
   descriptions["vulnerability"] = "The IUCN Red List of Threatened Species (IUCN 2014) was queried to find the names of threatened species in the specified area of interest. All terrestrial amphibians, reptiles, birds, mammals, and plants determined by the IUCN to be either Critically endangered (CR), Endangered (EN), Vulnerable (VU), or Near Threatened (NT) were extracted. The Red List also identified the countries and sub-national administrative regions where each species is native (excluding areas where the species is vagrant or introduced). <br><br>The Global Administrative Areas database version 2.0 (www.gadm.org) was then used to create polygons comprising all the administrative regions in each species range defined by the IUCN. Each polygon represented the potential maximum extent of occurrence, within which a species distribution should be modelled. The same extent was used to sample background environmental variables for species distribution modelling. <br><br>For each threatened species, all unique geo-referenced records within the potential maximum extent were obtained from the Global Biodiversity Information Facility (GBIF, gbif.org). A set of environmental covariates was then created for each location with a GBIF record. The covariates used were land cover from GlobCover 2009, mean annual temperature, temperature seasonality, total annual precipitation, and precipitation seasonality from Hijmans (2005), and elevation and slope from Farr (2007). <br><br>The potential distribution of each threatened species with more than 10 unique occurrence records was modelled using MaxEnt (Maximum Entropy Algorithm; Phillips et al., 2006). MaxEnt creates a climate suitability model for each species, predicting where a species could potentially occur based on habitat conditions. <br><br>A list of the threatened vertebrate species included in modelling can be found in Appendix 1.";
   descriptions["intactness"] = "To identify patches of intact habitat in the specified area of interest, the land cover map (see page four) was reclassified. Pixels in the urban/artificial, bare ground, and snow/ice categories were omitted from consideration. Every remaining pixel was assigned to a group of neighbouring pixels with the same land cover class, and the area of each group in hectares was calculated. In the resulting map those areas with a greater intact patch size are less fragmented, and carry a higher ecological value.";
-  descriptions["migratory_buffered"] = "To remotely characterise important migratory routes, the Global Register of Migratory Species (GROMS; www.groms.de; Riede 2004) was queried. This database provides a list of migratory vertebrate specie (terrestrial birds and mammals) and digital maps describing migratory routes. Grids for all species shown to have a migratory route across the area of interest were added together to yield an estimate of migratory species density.";
-  descriptions["wetlands"] = "Wetlands and drainage channels are also important for supporting the migration of species across landscapes. A measure of wetland dispersal corridors in the specified area of interest was derived from the land cover map described on page four. Pixels within 100 metres of water bodies were identified. Those buffer zones, along with pixels classed as Inland water or Wetland, were assigned a high ecological value of 1.  All other land pixels were given a value of 0 for this measure of connectivity.";
+  descriptions["migratory"] = "To remotely characterise important migratory routes, the Global Register of Migratory Species (GROMS; www.groms.de; Riede 2004) was queried. This database provides a list of migratory vertebrate specie (terrestrial birds and mammals) and digital maps describing migratory routes. Grids for all species shown to have a migratory route across the area of interest were added together to yield an estimate of migratory species density.";
+  descriptions["wetland"] = "Wetlands and drainage channels are also important for supporting the migration of species across landscapes. A measure of wetland dispersal corridors in the specified area of interest was derived from the land cover map described on page four. Pixels within 100 metres of water bodies were identified. Those buffer zones, along with pixels classed as Inland water or Wetland, were assigned a high ecological value of 1.  All other land pixels were given a value of 0 for this measure of connectivity.";
   descriptions["resilience"] = "The resilience of vegetation to climate perturbations was estimated using monthly time series of Enhanced Vegetation Index (EVI) and three climate variables over the period 2000-2013. A PCA regression was performed between EVI and air temperature, the ratio of actual to potential evapotranspiration, and cloud cover. This identified the months when EVI is related to climate drivers and measured the strength of that relationship over 14 years. For those months with a strong climate response, variability in vegetation productivity was divided by climate variability as a metric of vegetation sensitivity. <br><br>In the resultant resilience map, high values indicate areas where vegetation greenness showed relatively little change despite fluctuations in climate. Low resilience values reveal areas where photosynthetic activity changed even in the face of small fluctuations in climate. For full details of the methodology used to calculate the resilience metric please see Seddon et al (2016).";
   descriptions["sev"] = "In addition to the preceding maps, a summary ecological valuation (SEV) was calculated for the specified area of interest. In this, each of the above layers was standardised into a map of Z-scores. Z-scores were then added together to show the landscape pattern of each layer on a scale comparable to all the other layers. Pixels with a high Z-score are areas which appear to be relatively important in a number of the preceding analyses (e.g. more resilient, higher number of threated species, higher levels of beta-diversity etc) and therefore are of high ecological risk if damaged. In contrast, those with a low score are less ecologically important. ";
 
@@ -37,30 +37,19 @@
   mapLegend["beta_diversity"] = "Map displaying beta-diversity in the specified area of interest. High values of beta-diversity (in yellow) represent greater spatial heterogenity in the set of species present compared to other parts of the area of interest. Low beta-diversity values (in blue) indicate a relatively homogeneous set of species. Spatial resolution is 1 arcsec, or approximately 30 metres.";
   mapLegend["vulnerability"] = "Vulnerability map showing the number of globally threatened (CR, EN, VU) and near-threatened (NT) terrestrial vertebrates and plant species estimated to occur in the specified area of interest. Yellow indicates where the landscape probably contains the highest number of threatened species. See Appendix 1 for a list of species names. Spatial resolution is 1 arcsec, or approximately 30 metres.";
   mapLegend["intactness"] = "Intactness map. Values express the size of the land cover patch to which each pixel belongs. Urban, bare, and snow pixels were assigned an intactness value of 0. Resolution of the data is 1 arcsec, or about 30m.";
-  mapLegend["migratory_buffered"] = "Number of migration routes where those areas with the greatest number of migratory species potentially passing through an area are marked in yellow. A list of the migratory species potentially crossing this area can be found in Appendix 2. Resolution of the data is 1 arcsec, or about 30m.";
-  mapLegend["wetlands"] = "Map of wetland connectivity. Areas of potential connectivity, i.e. open water, within 100m of water, or permanent wetland, are marked in yellow. The resolution of the data is 1 arcsec, approximately 30m.";
+  mapLegend["migratory"] = "Number of migration routes where those areas with the greatest number of migratory species potentially passing through an area are marked in yellow. A list of the migratory species potentially crossing this area can be found in Appendix 2. Resolution of the data is 1 arcsec, or about 30m.";
+  mapLegend["wetland"] = "Map of wetland connectivity. Areas of potential connectivity, i.e. open water, within 100m of water, or permanent wetland, are marked in yellow. The resolution of the data is 1 arcsec, approximately 30m.";
   mapLegend["resilience"] = "Map displaying vegetation persistence across the selected region over the past 14 years despite climate fluctuation. Yellow indicates regions where vegetation appears to demonstrate greater resilience to climatic perturbations occurring between 2000-2013.";
   mapLegend["sev"] = "Summary ecological value of all LEFT layers in the area of interest. The resolution of the data is 1 arcsec, approximately 30m.";
   mapLegend["ecoregions"] = "Terrestrial Ecoregions in the specified area of interest and in a surrounding 3-degree buffer. Spatial resolution is 1 arcsec, or approximately 30 metres";
-
-  var noDataValue = new Dictionary<string,double>();
-  noDataValue["landcover"] = -9999;
-  noDataValue["beta_diversity"] = -9999;
-  noDataValue["vulnerability"] = -9999;
-  noDataValue["intactness"] = 255;
-  noDataValue["migratory_buffered"] = 255;
-  noDataValue["wetlands"] = 255;
-  noDataValue["resilience"] = -9999;
-  noDataValue["sev"] = -9999;
-  noDataValue["ecoregions"] = -9999;
 
   var units = new Dictionary<string,string>();
   units["landcover"] = "Class";
   units["beta_diversity"] = "Biodiversity";
   units["vulnerability"] = "Number of Globally Threatened Species";
   units["intactness"] = "Patch Area";
-  units["migratory_buffered"] = "Number of Migratory Species";
-  units["wetlands"] = "Wetland";
+  units["migratory"] = "Number of Migratory Species";
+  units["wetland"] = "Wetland";
   units["resilience"] = "Resilience";
   units["sev"] = "Summary Ecological Value Z-Score";
   units["ecoregions"] = "Ecoregion";
@@ -70,8 +59,8 @@
   isCategorical["beta_diversity"] = false;
   isCategorical["vulnerability"] = false;
   isCategorical["intactness"] = false;
-  isCategorical["migratory_buffered"] = false;
-  isCategorical["wetlands"] = true;
+  isCategorical["migratory"] = false;
+  isCategorical["wetland"] = true;
   isCategorical["resilience"] = false;
   isCategorical["sev"] = false;
   isCategorical["ecoregions"] = true;
@@ -81,36 +70,11 @@
   maskValues["beta_diversity"] = "true";
   maskValues["vulnerability"] = "false";
   maskValues["intactness"] = "true";
-  maskValues["migratory_buffered"] = "false";
-  maskValues["wetlands"] = "false";
+  maskValues["migratory"] = "false";
+  maskValues["wetland"] = "false";
   maskValues["resilience"] = "true";
   maskValues["sev"] = "true";
   maskValues["ecoregions"] = "false";
-
-  var refMeanSd = new Dictionary<string, string>();
-  refMeanSd["beta_diversity"] = "beta_diversity";
-  refMeanSd["vulnerability"] = "vulnerability"; 
-  refMeanSd["intactness"] = "intactness";
-  refMeanSd["migratory_buffered"] = "migratory"; 
-  refMeanSd["wetlands"] = "wetland";  
-  refMeanSd["resilience"] = "resilience";
-
-  <!-- TODO: build this into Ecoset instead -->
-  var scaleFactorsMean = new Dictionary<string, int>();
-  scaleFactorsMean["vulnerability"] = 100;
-  scaleFactorsMean["beta_diversity"] = 1;
-  scaleFactorsMean["intactness"] = 100;
-  scaleFactorsMean["migratory_buffered"] = 100;
-  scaleFactorsMean["wetlands"] = 100;
-  scaleFactorsMean["resilience"] = 1;
-
-  var scaleFactorsStdev = new Dictionary<string, int>();
-  scaleFactorsStdev["vulnerability"] = 100;
-  scaleFactorsStdev["beta_diversity"] = 1;
-  scaleFactorsStdev["intactness"] = 100;
-  scaleFactorsStdev["migratory_buffered"] = 100;
-  scaleFactorsStdev["wetlands"] = 100;
-  scaleFactorsStdev["resilience"] = 1;
 
   var speciesCategories = new Dictionary<string, string>();
   speciesCategories["amphibia"] = "Amphibians";
@@ -125,37 +89,38 @@
   occurrenceColours["mammalia"] = "orange";
   occurrenceColours["reptilia"] = "cyan";
   occurrenceColours["plantae"] = "green";
+
+  var gbiflist = Model.TableListResults.FirstOrDefault(m => m.Name == "biodiversity_records_count");
+  
+  // Area of land in 3 degree buffer zone used to calculate local species density
+  double landMetresSquared = 0;
+  var landArea = Model.TableListResults.FirstOrDefault(m => m.Name == "land_area"); 
+  if (landArea != null) {
+    var landRow = landArea.Data.Rows.FirstOrDefault(x => x["Category"] == "Land");
+    if (landRow != null) landMetresSquared = double.Parse(landRow["MetreSquared"]);
+  }
 }
 
-    <!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>@siteConfig.Value.InstanceShortName Report</title>
+    <meta name="description" content="Ecoset Report">
+    <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/styles/report.css">
+    <script src="/lib/jquery/jquery.js"></script>
+    <script src="/lib/underscore/underscore.js"></script>
+    <script src="/lib/d3/d3.js"></script>
+    <script src="/lib/topojson-client/dist/topojson.js"></script>
+    <script src="/scripts/report.js"></script>
+  </head>
+  
+  <body>
+    <div class="container">
 
-    <html lang="en">
-
-    <head>
-      <meta charset="utf-8">
-
-      <title>LEFT Report</title>
-      <meta name="description" content="NatCap Report">
-
-      <link href="https://fonts.googleapis.com/css?family=Droid+Sans+Mono" rel="stylesheet">
-      <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
-      <link rel="stylesheet" href="/styles/report.css">
-      <!--[if lt IE 9]>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
-  <![endif]-->
-
-      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.7.4/d3.js"></script>
-      <script src="http://d3js.org/topojson.v1.min.js"></script>
-      <script src="/scripts/report.js"></script>
-    </head>
-
-    <body>
-
-      <div class="container">
-        <div class="report-title-page">
+      @* Section 1. Title Page *@
+      <div class="report-title-page">
         <div class="row">
           <div class="six columns">
             <img src="/images/logo-black.png" style="width:25em;margin:10em auto 5em auto" />
@@ -171,51 +136,49 @@
             <p>This report was generated automatically by Oxford Environmental Tools on @DateTime.Now<span>.</span></p>
           </div>
         </div>
-        </div>
+      </div>
 
-        <div id="report-sections">
-
-          <div id="intro-section" class="report-section">
-            <div class="row">
-              <div class="col-md-12">
-                <h2>Introduction</h2>
-                <hr/>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div id="test-map" class="section-map"></div>
-                <p>The Local Ecological Footprinting Tool (LEFT) was developed to provide a simple-to-use tool for industries and landowners who have to make quick preliminary decisions about land-use change, and to assist in minimising the environmental impact of their operations.</p>
-                <p>The tool processes a series of high-quality open-access environmental datasets using standardised algorithms to produce maps at 30m resolution of land cover class, number of globally threatened terrestrial vertebrate and plant species, biodiversity of terrestrial vertebrates and plants, habitat intactness, wetland habitat connectivity, number of migratory species, and vegetation resilience. These results are aggregated in a single summary map showing the pattern of relative ecological value.</p>
-                <p>This report briefly describes the methods and datasets used to generate the maps for the specified area of interest. Further details on the modelling approach, datasets, and choice of ecological variables can be found in Willis et al. (2012; 2014; 2015), Seddon et al. (2016), and Long et al. (2016 – in press)</p>
-                <p>Please note that this report was generated automatically. If you have any questions about LEFT or this output, please email support@left.zoo.ox.ac.uk.</p>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-12">
-                <h2>Location</h2>
-                <hr/>
-              </div>
-            </div>
-            <div class="row">
-              
-              <div class="col-md-8">
-                <svg id="pinpoint-map"></svg>
-                <script>
-                  $(function() {
-                    drawGlobalPinpointMap("pinpoint-map", @Model.North, @Model.South, @Model.East, @Model.West)
-                  });
-                </script>
-                <p style='text-align: center'><strong>Specified Area of Interest</strong><br/> Latitude:@Model.South to @Model.North Decimal Degrees. <br/>Longitude: @Model.West to @Model.East Decimal Degrees.</p>
-              </div>
-              <div class="col-md-4">
-                 <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/static/geojson(%7B%0A%22type%22%3A%22Feature%22%2C%0A%22properties%22%3A%7B%22stroke%22:%22%23FF0000%22%2C%22fill-opacity%22:0.2%7D%2C%0A%22geometry%22%3A%7B%0A%22type%22%3A%22Polygon%22%2C%0A%22coordinates%22%3A%5B%5B%5B @Model.West%2C @Model.South%5D%2C%5B @Model.West%2C @Model.North%5D%2C%5B @Model.East%2C @Model.North%5D%2C%5B @Model.East%2C @Model.South%5D%2C%5B @Model.West%2C @Model.South%5D%5D%5D%0A%7D%0A%7D))/auto/450x450@2x?access_token=@siteConfig.Value.MapboxAccessToken&logo=false" style="width: 100%;"/>
-              </div>
-
+      @* Section 2. Introduction *@
+      <div id="report-sections">
+        <div id="intro-section" class="report-section">
+          <div class="row">
+            <div class="col-md-12">
+              <h2>Introduction</h2>
+              <hr/>
             </div>
           </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div id="test-map" class="section-map"></div>
+              <p>The Local Ecological Footprinting Tool (LEFT) was developed to provide a simple-to-use tool for industries and landowners who have to make quick preliminary decisions about land-use change, and to assist in minimising the environmental impact of their operations.</p>
+              <p>The tool processes a series of high-quality open-access environmental datasets using standardised algorithms to produce maps at 30m resolution of land cover class, number of globally threatened terrestrial vertebrate and plant species, biodiversity of terrestrial vertebrates and plants, habitat intactness, wetland habitat connectivity, number of migratory species, and vegetation resilience. These results are aggregated in a single summary map showing the pattern of relative ecological value.</p>
+              <p>This report briefly describes the methods and datasets used to generate the maps for the specified area of interest. Further details on the modelling approach, datasets, and choice of ecological variables can be found in Willis et al. (2012; 2014; 2015), Seddon et al. (2016), and Long et al. (2016 – in press)</p>
+              <p>Please note that this report was generated automatically. If you have any questions about LEFT or this output, please email support@left.zoo.ox.ac.uk.</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8">
+              <h2>Location</h2>
+              <hr/>
+              <svg id="pinpoint-map"></svg>
+              <script>
+                $(function() {
+                  drawGlobalPinpointMap("pinpoint-map", @Model.North, @Model.South, @Model.East, @Model.West)
+                });
+              </script>
+              <p style='text-align: center'><strong>Specified Area of Interest</strong><br/> Latitude:@Model.South to @Model.North Decimal Degrees. <br/>Longitude: @Model.West to @Model.East Decimal Degrees.</p>
+            </div>
+            <div class="col-md-4">
+                <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/static/geojson(%7B%0A%22type%22%3A%22Feature%22%2C%0A%22properties%22%3A%7B%22stroke%22:%22%23FF0000%22%2C%22fill-opacity%22:0.2%7D%2C%0A%22geometry%22%3A%7B%0A%22type%22%3A%22Polygon%22%2C%0A%22coordinates%22%3A%5B%5B%5B @Model.West%2C @Model.South%5D%2C%5B @Model.West%2C @Model.North%5D%2C%5B @Model.East%2C @Model.North%5D%2C%5B @Model.East%2C @Model.South%5D%2C%5B @Model.West%2C @Model.South%5D%5D%5D%0A%7D%0A%7D))/auto/450x450@2x?access_token=@siteConfig.Value.MapboxAccessToken&logo=false" style="width: 100%;"/>
+            </div>
+          </div>
+        </div>
 
+        <div class="report-section" id="ecoregions-section">@{ MapPage("ecoregions"); }</div>
+        <div class="report-section" id="landcover-section">@{ MapPage("ecoregions"); }</div>
+        <div class="report-section" id="intactness-section">@{ MapPage("intactness"); }</div>
+
+        @* Section: Biodiversity Occrrences *@
         <div class="report-section" id="species_occurrence-section">
           <div class="row">
             <div class="col-md-12">
@@ -225,12 +188,7 @@
           </div>
           <div class="row">
             <div class="col-md-5">
-            
-              <p>Georeferenced species occurrence records were retrieved from the Global Biodiversity Information Facility (GBIF, www.gbif.org, see page three). The adjacent map indicates the distribution of the georeferenced GBIF species occurrence records of amphibians, reptiles, birds, mammals, and plants for the specified area of interest plus a 3-degree buffer zone. Any duplicate records (of the same species recorded more than once in the same location) were removed. Text files containing these records are available in a premium analysis.</p>
-              @{ 
-                var gbiflist = Model.TableListResults.FirstOrDefault(m => m.Name == "gbif_count");
-              }
-                  
+              <p>Georeferenced species occurrence records were retrieved from the Global Biodiversity Information Facility (GBIF, www.gbif.org, see page three). The adjacent map indicates the distribution of the georeferenced GBIF species occurrence records of amphibians, reptiles, birds, mammals, and plants for the specified area of interest plus a 3-degree buffer zone. Any duplicate records (of the same species recorded more than once in the same location) were removed. Text files containing these records are available in a premium analysis.</p>                  
               <table class="table">
                 <thead>
                   <tr>
@@ -240,7 +198,6 @@
                     <th>No. of Occurrences</th>
                   </tr>
                 </thead>
-                  
                 <tbody>
                   @if(gbiflist != null) {
                     @foreach (KeyValuePair<string, string> entry in occurrenceColours) {
@@ -266,15 +223,14 @@
                   }
                 </tbody>
               </table>
-
             </div>
             <div class="col-md-7">
-            <div id="gbif_list-map" class="section-map"></div>
+              <div id="gbif_list-map" class="section-map"></div>
             </div>
           </div>
           <div class="create-script">
             @{
-                var occurrence = Model.TableListResults.FirstOrDefault(m => m.Name == "gbif_list");
+                var occurrence = Model.TableListResults.FirstOrDefault(m => m.Name == "biodiversity_records");
                 if (occurrence != null) {
                   <script>
                     $(function() {
@@ -302,317 +258,234 @@
               }
           </div>
         </div>
-      </div>
-
-          @foreach (var executableResult in Model.RawResults) {
-            if(@executableResult.Name != "migratory") {
-            var paletteUrl = isCategorical[executableResult.Name] ? "/palettes/" + executableResult.Name + ".json" : null;
-
-          <div class="report-section" id="@(executableResult.Name)-section">
-            <div class="row">
-              <div class="col-md-12">
-                <h2>@prettyTitles[executableResult.Name]</h2>
-                <hr/>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-5">
-
-                <p>
-                  @Html.Raw(descriptions[executableResult.Name])
-                </p>
-
-                <div class="panel panel-default legend">
-                  <div class="panel-heading">@units[executableResult.Name]</div>
-                  <div class="panel-body">
-                    <div id="@executableResult.Name-scale" class="section-scale"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-7">
-              <div id="@executableResult.Name-map" class="section-map"></div>
-              <p>@mapLegend[executableResult.Name]</p>
-              </div>
-            </div>
-            <div class="create-script">
-              <script>
-                $(function() {
-                  var north = @Model.North;
-                  var south = @Model.South;
-                  var east = @Model.East;
-                  var west = @Model.West;
-
-                  if("@executableResult.Name" == "ecoregions" || "@executableResult.Name" == "migratory_buffered") {
-                    north = Math.min(90, north + 3);
-                    south = Math.max(-90, south - 3);
-                    east = Math.min(180, east + 3);
-                    west = Math.max(-180, west - 3);
-                  }
-
-                  var plot = new SpatialPlot("@executableResult.Name", {north:north, south:south, east:east, west:west});
-                  plot.setup();
-                  plot.addGraticule();
-                  plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), @noDataValue[executableResult.Name], "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name].ToString().ToLower());
-                  plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
-                });
-              </script>
-            </div>
-          </div>
-          }
-          }
-
-        <div class="report-section">
-            <div class="row">
-              <div class="col-md-12">
-                <h2>Data Assurance Information: <small>Data Assurance Metric (DAM)</small></h2>
-                <hr/>
-                <p>The output and validity of results will be significantly influenced by the availability or, conversely, the paucity, of data available in the databases for the selected region. The most critical data in this respect are the species occurrence records contained in GBIF. Due to sampling bias, GBIF coverage for some regions of the world is better than others (Gaiji et al., 2012). In order to provide a first estimate of the confidence that can be placed in the output from a region, a metric to assess the density of species occurrence records was devised. In this, the number of species records was obtained from GBIF for each taxonomic group (amphibians, reptiles, birds, mammals, plants) in the user-specified area of interest, as well as in a much larger reference area comprising the WWF ecoregions that intersect the area of interest. Species density was then calculated by dividing the number of different species in an area by the size of the area raised to an exponent of 0.2. Exponentiation is necessary in order to consistently control for the logarithmic form of species-area relationships and allow species densities from areas of different sizes to be directly comparable (Rosenweig 2012). The density of local species occurrence records for a taxonomic group can be compared to the density of records for the same group in the much larger reference area. This gives a first approximation of the degree to which the GBIF records available for a specified area of interest provide a good representation of the species expected in that area, based on wider biogeographical patterns and species-area relationships.</p>
-                <p>The table below shows species densities for the area of interest and the broader reference area, and the ratio of those densities. A representation score above 1.0 means that the number of species records retrieved was higher than expected, so the data are more reliable. Representation below 1.0 indicates poorer GBIF coverage and less reliable species data.</p>
-                
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Taxon</th>
-                      <th>Species density (area of interest)</th>
-                      <th>Species density (reference area)</th>
-                      <th>Representation</th>
-                    </tr>
-                  </thead>
-                    
-                  @foreach (KeyValuePair<string, string> entry in speciesCategories) {
-                    var densityResultsLocal = Model.TableStatsResults.FirstOrDefault(m => m.Name == "gbif_" + entry.Key + "_local");
-                    var densityResultsZonal = Model.TableStatsResults.FirstOrDefault(m => m.Name == "gbif_" + entry.Key + "_zonal");
-                    var localString = "Unknown";
-                    var zonalString = "Unknown";
-                    var localValue = 1.0f;
-                    var zonalValue = 1.0f;
-                    var representationString = "Unknown";
-                    var scaleFactor = 10.0f;
-                    if(entry.Key == "plantae") {
-                      scaleFactor = 1.0f;
-                    }
-
-                    if(densityResultsLocal != null) {
-                      localValue = densityResultsLocal.Data.Stats.Mean / scaleFactor;
-                      localString = Math.Round(localValue, 2).ToString();
-                    }
-                    if(densityResultsZonal != null) {
-                      zonalValue = densityResultsZonal.Data.Stats.Mean / scaleFactor;
-                      zonalString = Math.Round(zonalValue, 2).ToString();
-                    }
-                    if(densityResultsLocal != null && densityResultsZonal != null) {
-                      representationString = Math.Round(localValue / zonalValue, 2).ToString();
-                    }
-
-                    <tr>
-                      <td>@entry.Value</td>
-                      <td>@localString</td>
-                      <td>@zonalString</td>
-                      <td>@representationString</td>
-                    </tr>
-                  }
-                </table>
-              
-              </div>
-            </div>
         </div>
+        @* Section: Biodiversity Occrrences *@
 
-        <div class="report-section">
-          <div class="row">
-            <div class="col-md-12">
-              <h2>Data Assurance Information: <small>Comparison to Other Regions (COAM)</small></h2>
-              <p>To appreciate the importance of the ecological values obtained for the specified area of interest relative to other regions, a 'compared to other areas metric' (COAM) was calculated. This metric used the polygons of the WWF Terrestrial Ecoregion Classification (Olson et al, 2001) to identify zones ecologically similar to the area of interest. Zonal statistics were then used to assess the importance of each LEFT layer relative to the same measure over the entire ecoregion. For each layer, the difference in standard scores between the area of interest and the broader ecoregions is presented in the following chart. This shows whether a study area is relatively more or less ecologically valuable than other regions with similar biogeographic characterisitics.</p>
-              @* <p>The ecoregions that intersect the region of interest are: <strong>Unknown</strong>.</p> *@
+      <div class="report-section" id="vulnerability-section">@{ MapPage("vulnerability"); }</div>
+      <div class="report-section" id="migratory-section">@{ MapPage("migratory"); }</div>
+      <div class="report-section" id="wetland-section">@{ MapPage("wetland"); }</div>
+      <div class="report-section" id="beta_diversity-section">@{ MapPage("beta_diversity"); }</div>
+      <div class="report-section" id="resilience-section">@{ MapPage("resilience"); }</div>
+      <div class="report-section" id="sev-section">@{ MapPage("sev"); }</div>
 
-              <table class="table">
-                <thead>
+      @* Section: Biodiversity Assurance *@
+      <div class="report-section">
+        <div class="row">
+          <div class="col-md-12">
+            <h2>Data Assurance Information: <small>Data Assurance Metric (DAM)</small></h2>
+            <hr/>
+            <p>The output and validity of results will be significantly influenced by the availability or, conversely, the paucity, of data available in the databases for the selected region. The most critical data in this respect are the species occurrence records contained in GBIF. Due to sampling bias, GBIF coverage for some regions of the world is better than others (Gaiji et al., 2012). In order to provide a first estimate of the confidence that can be placed in the output from a region, a metric to assess the density of species occurrence records was devised. In this, the number of species records was obtained from GBIF for each taxonomic group (amphibians, reptiles, birds, mammals, plants) in the user-specified area of interest, as well as in a much larger reference area comprising the WWF ecoregions that intersect the area of interest. Species density was then calculated by dividing the number of different species in an area by the size of the area raised to an exponent of 0.2. Exponentiation is necessary in order to consistently control for the logarithmic form of species-area relationships and allow species densities from areas of different sizes to be directly comparable (Rosenweig 2012). The density of local species occurrence records for a taxonomic group can be compared to the density of records for the same group in the much larger reference area. This gives a first approximation of the degree to which the GBIF records available for a specified area of interest provide a good representation of the species expected in that area, based on wider biogeographical patterns and species-area relationships.</p>
+            <p>The table below shows species densities for the area of interest and the broader reference area, and the ratio of those densities. A representation score above 1.0 means that the number of species records retrieved was higher than expected, so the data are more reliable. Representation below 1.0 indicates poorer GBIF coverage and less reliable species data.</p>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Taxon</th>
+                  <th>Species density (area of interest)</th>
+                  <th>Species density (reference area)</th>
+                  <th>Representation</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (KeyValuePair<string, string> entry in speciesCategories) {
+                  var densityResultsZonal = Model.TableStatsResults.FirstOrDefault(m => m.Name == "species_density_" + entry.Key);
+                  var localString = "Unknown";
+                  var zonalString = "Unknown";
+                  var localValue = 1.0;
+                  var zonalValue = 1.0;
+                  var representationString = "Unknown";
+
+                  var gbifCount = gbiflist.Data.Rows.FirstOrDefault(m => m["taxon"] == entry.Key);
+                  if (gbifCount != null && landMetresSquared != 0) {
+                    localValue = double.Parse(gbifCount["species"]) / System.Math.Pow((oceanMetresSquared / 1000.0), 0.2);
+                    localString = Math.Round(localValue, 2).ToString();
+                  }
+                  if(densityResultsZonal != null) {
+                    zonalValue = densityResultsZonal.Data.Stats.Mean;
+                    zonalString = Math.Round(zonalValue, 2).ToString();
+                  }
+                  if(localString != "Unknown" && zonalString != "Unknown") {
+                    representationString = Math.Round(localValue / zonalValue, 2).ToString();
+                  }
                   <tr>
-                    <th>Layer</th>
-                    <th>Min</th>
-                    <th>Max</th>
-                    <th>Mean</th>
-                    <th>SD</th>
-                    <th>Ref. Mean</th>
-                    <th>Ref. SD</th>
+                    <td>@entry.Value</td>
+                    <td>@localString</td>
+                    <td>@zonalString</td>
+                    <td>@representationString</td>
                   </tr>
-                </thead>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      @* End Section: Biodiversity Assurance *@
+
+      @* Section: COAM *@      
+      <div class="report-section">
+        <div class="row">
+          <div class="col-md-12">
+            <h2>Data Assurance Information: <small>Comparison to Other Regions (COAM)</small></h2>
+            <p>To appreciate the importance of the ecological values obtained for the specified area of interest relative to other regions, a 'compared to other areas metric' (COAM) was calculated. This metric used the polygons of the WWF Terrestrial Ecoregion Classification (Olson et al, 2001) to identify zones ecologically similar to the area of interest. Zonal statistics were then used to assess the importance of each LEFT layer relative to the same measure over the entire ecoregion. For each layer, the difference in standard scores between the area of interest and the broader ecoregions is presented in the following chart. This shows whether a study area is relatively more or less ecologically valuable than other regions with similar biogeographic characterisitics.</p>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Layer</th>
+                  <th>Min</th>
+                  <th>Max</th>
+                  <th>Mean</th>
+                  <th>SD</th>
+                  <th>Ref. Mean</th>
+                  <th>Ref. SD</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var result in Model.RawResults) {
+                  <tr>
+                    <td>@prettyTitles[result.Name]</td>
+                    <td>@result.Data.Stats.Min</td>
+                    <td>@result.Data.Stats.Max</td>
+                    <td>@result.Data.Stats.Mean</td>
+                    <td>@result.Data.Stats.StdDev</td>
+                    @{
+                      var foundmean = false;
+                      var foundstdev = false;
+                      var refmean = "";
+                      var refstdev = "";
+                      var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalmean");
+                      var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
+                    }
+                    @if (tableStatsResultsMean != null) {
+                      refmean = (Math.Round(tableStatsResultsMean.Data.Stats.Mean / scaleFactorsMean[result.Name], 3)).ToString();
+                      foundmean = true;
+                    }
+                    @if (tableStatsResultsStdev != null) {
+                      refstdev = (Math.Round(tableStatsResultsStdev.Data.Stats.Mean / scaleFactorsStdev[result.Name], 3)).ToString();
+                      foundstdev = true;
+                    }
+                    @if (foundmean) {
+                      <td>@refmean</td>
+                    } else {
+                      <td>Unknown</td>
+                    }
+                    @if (foundstdev) {
+                      <td>@refstdev</td>
+                    } else {
+                      <td>Unknown</td> 
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>        
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <svg id="coam-graph" width="800" height="300"></svg>
+            <script>
+              $(function() { 
+                var data = [];
                 @foreach (var result in Model.RawResults) {
                   @if (refMeanSd.ContainsKey(result.Name)) {
-                    <tr>
-                      <td>@prettyTitles[result.Name]</td>
-                      <td>@result.Data.Stats.Min</td>
-                      <td>@result.Data.Stats.Max</td>
-                      <td>@result.Data.Stats.Mean</td>
-                      <td>@result.Data.Stats.StdDev</td>
-                      @{
-                        var foundmean = false;
-                        var foundstdev = false;
-                        var refmean = "";
-                        var refstdev = "";
-                        var prefix = result.Name;
-
-                        if(prefix == "wetlands") {
-                          prefix = "wetland";
-                        }
-
-                        if(prefix == "migratory_buffered") {
-                          prefix = "migratory";
-                        }
-
-                        var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == prefix + "_zonalmean");
-                        var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == prefix + "_zonalstdev");
-                      }
-                      @if (tableStatsResultsMean != null) {
-                        refmean = (Math.Round(tableStatsResultsMean.Data.Stats.Mean / scaleFactorsMean[result.Name], 3)).ToString();
-                        foundmean = true;
-                      }
-
-                      @if (tableStatsResultsStdev != null) {
-                        refstdev = (Math.Round(tableStatsResultsStdev.Data.Stats.Mean / scaleFactorsStdev[result.Name], 3)).ToString();
-                        foundstdev = true;
-                      }
-                      @if (foundmean) {
-                        <td>@refmean</td>
-                      } else {
-                        <td>Unknown</td>
-                      }
-                      @if (foundstdev) {
-                        <td>@refstdev</td>
-                      } else {
-                        <td>Unknown</td> 
-                      }
-                    </tr>
-                  }
-                }
-              </table>
-            </div>
-          </div>
-
-          <div class="row justify-content-center">
-            <div class="col-md-8">
-              <svg id="coam-graph" width="800" height="300"></svg>
-              <script>
-                $(function() { 
-                  var data = [];
-                  @foreach (var result in Model.RawResults) {
-                    @if (refMeanSd.ContainsKey(result.Name)) {
-                      var prefix = result.Name;
-                      if(prefix == "wetlands") {
-                        prefix = "wetland";
-                      }
-
-                      var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == prefix + "_zonalmean");
-                      var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == prefix + "_zonalstdev");
-                      if(tableStatsResultsMean != null && tableStatsResultsStdev != null) {
-
-                        var localMean = result.Data.Stats.Mean;
-                        var localStdev = result.Data.Stats.StdDev;
-                        var zonalMeanScaled = tableStatsResultsMean.Data.Stats.Mean / scaleFactorsMean[result.Name];
-                        var zonalStdevScaled = tableStatsResultsStdev.Data.Stats.Mean / scaleFactorsStdev[result.Name];
-                        var z = (localMean - zonalMeanScaled) / zonalStdevScaled;
-                        var sd = localStdev / zonalStdevScaled;
-
-                        <text>
-                        data.push({
-                          "name": "@prettyTitles[result.Name]",
-                          "value": @z,
-                          "sd": @sd
-                        });
-                        </text>
-                      }
+                    var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalmean");
+                    var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
+                    if(tableStatsResultsMean != null && tableStatsResultsStdev != null) {
+                      var localMean = result.Data.Stats.Mean;
+                      var localStdev = result.Data.Stats.StdDev;
+                      var zonalMeanScaled = tableStatsResultsMean.Data.Stats.Mean;
+                      var zonalStdevScaled = tableStatsResultsStdev.Data.Stats.Mean;
+                      var z = (localMean - zonalMeanScaled) / zonalStdevScaled;
+                      var sd = localStdev / zonalStdevScaled;
+                      <text>
+                      data.push({
+                        "name": "@prettyTitles[result.Name]",
+                        "value": @z,
+                        "sd": @sd
+                      });
+                      </text>
                     }
                   }
-                  drawCoamGraph(data);
-                });
-              </script>
-              <p>Table and chart indicating the importance of the area of interest relative to the reference region for each layer (standard scores +/- uncertainty in standard scores). If a layer has a positive standard score then the area of interest is more important than the reference region; a layer with a negative standard score is less important in the study area than in the reference region.</p>
-            </div>
+                }
+                drawCoamGraph(data);
+              });
+            </script>
+            <p>Table and chart indicating the importance of the area of interest relative to the reference region for each layer (standard scores +/- uncertainty in standard scores). If a layer has a positive standard score then the area of interest is more important than the reference region; a layer with a negative standard score is less important in the study area than in the reference region.</p>
           </div>
         </div>
+      </div>
+      @* End Section: COAM *@
 
+      @* Section: References *@
+      <div class="report-section">
+        <div class="row">
+          <div class="col-md-12">
+            <h3>References</h3>
+            <ul class="reference-list">
+              <li>Ferrier S, Drielsma M et al (2002) Extended statistical approaches to modelling spatial pattern in biodiversity in northeast New South Wales.  II.  Community-level modelling.  Biodiversity and Conservation.  11: 2309-2338 </li>
+              <li>Hijmans RJ, Cameron SE et al (2005) Very high resolution interpolated climate surfaces for global land areas.  International Journal of Climatology.  25: 1965-1978</li>
+              <li>IUCN (2014) Red list of threatened species.  Version 2014.1</li>
+              <li>Land and Water Development Division, FAO, Rome (2003) The digital soil map of the world.</li>
+              <li>Olson DM, Dinerstein E et al (2001) Terrestrial ecoregions of the world: a new map of life on earth.  Bioscience 51: 933-938</li>
+              <li>Phillips SJ, Anderson RP et al (2006) Maximum entropy modelling of species geographic distributions.  Ecological Modelling 190: 231-259</li>
+              <li>Riede K (2004) Global register of migratory species: from global to regional scales.  Final report of the R&D Projekt.  Bonn, Federal Agency for Nature Conservation.</li>
+              <li>Rosenzweig ML, Donoghue J, Li YM, Yuan C (2011) Estimating species density. In Magurran AE and McGill BJ (eds) Biological Diversity: frontiers in measurement and assessment. Oxford University Press.</li>
+              <li>Seddon A W R, Macias-Fauria M, Long P R, Benz D, Willis K J (2016) Sensitivity of global terrestrial ecosystems to climate variability. Nature 531: 229-232</li>
+              <li>Willis K J, Jeffers E S, Tovar C, Long P R, Caithness N, Smit M G D, Hagemann R, Collin-Hansen C, and Weissenberger J (2012) Determining the ecological value of landscapes beyond protected areas.  Biol Cons  147: 3-12</li>
+              <li>Willis K J, Macias Fauria M, Gasparatos A, Long P R (2014) Identifying and mapping biodiversity: where can we damage? In, Helm D, Hepburn C (eds) Nature in the balance: the economics of biodiversity. Oxford University Press.</li>
+              <li>Willis K J, Seddon A W R, Long P R, Jeffers E S, Caithness N, Thurston M, Smit M G D, Hagemann R, and Macias-Fauria M (2015) Remote assessment of locally important ecological features across landscapes: how representative of reality?  Ecological Applications  25: 1290–1302</li>
+            </ul>
 
-        <div class="report-section">
-          <div class="row">
-            <div class="col-md-12">
-              
-              <h3>References</h3>
-              <ul class="reference-list">
-                <li>Ferrier S, Drielsma M et al (2002) Extended statistical approaches to modelling spatial pattern in biodiversity in northeast New South Wales.  II.  Community-level modelling.  Biodiversity and Conservation.  11: 2309-2338 </li>
-                <li>Hijmans RJ, Cameron SE et al (2005) Very high resolution interpolated climate surfaces for global land areas.  International Journal of Climatology.  25: 1965-1978</li>
-                <li>IUCN (2014) Red list of threatened species.  Version 2014.1</li>
-                <li>Land and Water Development Division, FAO, Rome (2003) The digital soil map of the world.</li>
-                <li>Olson DM, Dinerstein E et al (2001) Terrestrial ecoregions of the world: a new map of life on earth.  Bioscience 51: 933-938</li>
-                <li>Phillips SJ, Anderson RP et al (2006) Maximum entropy modelling of species geographic distributions.  Ecological Modelling 190: 231-259</li>
-                <li>Riede K (2004) Global register of migratory species: from global to regional scales.  Final report of the R&D Projekt.  Bonn, Federal Agency for Nature Conservation.</li>
-                <li>Rosenzweig ML, Donoghue J, Li YM, Yuan C (2011) Estimating species density. In Magurran AE and McGill BJ (eds) Biological Diversity: frontiers in measurement and assessment. Oxford University Press.</li>
-                <li>Seddon A W R, Macias-Fauria M, Long P R, Benz D, Willis K J (2016) Sensitivity of global terrestrial ecosystems to climate variability. Nature 531: 229-232</li>
-                <li>Willis K J, Jeffers E S, Tovar C, Long P R, Caithness N, Smit M G D, Hagemann R, Collin-Hansen C, and Weissenberger J (2012) Determining the ecological value of landscapes beyond protected areas.  Biol Cons  147: 3-12</li>
-                <li>Willis K J, Macias Fauria M, Gasparatos A, Long P R (2014) Identifying and mapping biodiversity: where can we damage? In, Helm D, Hepburn C (eds) Nature in the balance: the economics of biodiversity. Oxford University Press.</li>
-                <li>Willis K J, Seddon A W R, Long P R, Jeffers E S, Caithness N, Thurston M, Smit M G D, Hagemann R, and Macias-Fauria M (2015) Remote assessment of locally important ecological features across landscapes: how representative of reality?  Ecological Applications  25: 1290–1302</li>
-              </ul>
-
-              <hr/>
-              <h3>Credits</h3>
-              <p>
-                LEFT was funded by Statoil ASA. The project was conceived by Kathy Willis and Elizabeth Jeffers of the Zoology Department, University of Oxford and Randi Hagemann, Tone Karin Frost, Mathijs Smit, Christian Collin-Hansen, and Jurgen Weissenberger from Statoil. The algorithms in LEFT were elaborated by Peter Long, David Benz, Marc Macias Fauria, and Alistair Seddon of the Zoology Department, University of Oxford. LEFT's software architecture was developed by Andrew Martin and Philip Holland of the Zoology Department, University of Oxford.
-              </p>
-              <hr/>
-              <small>
-                Copyright © 2010-@System.DateTime.Now.Year
-                This report (including any attachments) has been supplied for the exclusive use and benefit of the person (or its principal, as the case may be) who made the contract of supply for the report and is subject to the terms and conditions forming part of that contract. If a third party uses this report for any purpose, it does so at its own risk and the University of Oxford ("the University") accepts no responsibility for any such use. Additionally, the University accepts no duty of care to any such third party.
-                Notwithstanding that use of this report by a third party is not intended or permitted by the University, subject to the following paragraph, the University hereby excludes all liability in connection with any use of this report made by a third party (whether in contract, tort (including negligence) or otherwise) to the fullest extent permitted by law, including (without limitation or affecting the generality of the foregoing) in respect of liability for any loss of profits or of contracts, loss of business or of revenues, loss of goodwill or reputation, whether caused directly or indirectly.
-                Nothing in this disclaimer is intended to limit or exclude any liability which cannot be limited or excluded by law, including for death or personal injury caused by negligence or for fraudulent misrepresentation. The copyright in this report belongs to the University of Oxford and no express or implied licence is given to any third party to copy or reproduce it or any part without the University's prior written consent.
-              </small>
-
-            </div>
+            <hr/>
+            <h3>Credits</h3>
+            <p>LEFT was funded by Statoil ASA. The project was conceived by Kathy Willis and Elizabeth Jeffers of the Zoology Department, University of Oxford and Randi Hagemann, Tone Karin Frost, Mathijs Smit, Christian Collin-Hansen, and Jurgen Weissenberger from Statoil. The algorithms in LEFT were elaborated by Peter Long, David Benz, Marc Macias Fauria, and Alistair Seddon of the Zoology Department, University of Oxford. LEFT's software architecture was developed by Andrew Martin and Philip Holland of the Zoology Department, University of Oxford.</p>
+            <hr/>
+            <small>
+              Copyright © 2010-@System.DateTime.Now.Year
+              This report (including any attachments) has been supplied for the exclusive use and benefit of the person (or its principal, as the case may be) who made the contract of supply for the report and is subject to the terms and conditions forming part of that contract. If a third party uses this report for any purpose, it does so at its own risk and the University of Oxford ("the University") accepts no responsibility for any such use. Additionally, the University accepts no duty of care to any such third party.
+              Notwithstanding that use of this report by a third party is not intended or permitted by the University, subject to the following paragraph, the University hereby excludes all liability in connection with any use of this report made by a third party (whether in contract, tort (including negligence) or otherwise) to the fullest extent permitted by law, including (without limitation or affecting the generality of the foregoing) in respect of liability for any loss of profits or of contracts, loss of business or of revenues, loss of goodwill or reputation, whether caused directly or indirectly.
+              Nothing in this disclaimer is intended to limit or exclude any liability which cannot be limited or excluded by law, including for death or personal injury caused by negligence or for fraudulent misrepresentation. The copyright in this report belongs to the University of Oxford and no express or implied licence is given to any third party to copy or reproduce it or any part without the University's prior written consent.
+            </small>
           </div>
         </div>
+      </div>
+      @* End Section: References *@
 
-        <div class="report-section">
-          <div class="row">
-            <div class="col-md-12">
-              
-              <h2>Appendices</h2>
-              <hr/>
-
-              <div id="vulnerable-species" class="appendix">
+      @* Section: Appendices *@
+      <div class="report-section">
+        <div class="row">
+          <div class="col-md-12">
+            <h2>Appendices</h2>
+            <hr/>
+            <div id="vulnerable-species" class="appendix">
               <h4>Appendix 1. Vulnerable Species</h4>
               <p>The IUCN Redlist of Threatened Species (IUCN 2014) includes the following species of terrestrial mam- mals, birds, reptiles, and amphibians that have been modelled to be potentially present in the specified area of interest (NT = Near Threatened, VU = Vulnerable, EN = Endangered, CR = Critically Endangered):</p>
-
               <ul id="vulnerable-species-list" class="list-group row appendix-list">
-
-              @{
-                var vulnerable = Model.TableListResults.FirstOrDefault(m => m.Name == "vulnerable_species_list");
-                if (vulnerable != null) {
-                  @foreach (var r in vulnerable.Data.Rows) {
-                    var latinName = r["string"].Split('(')[0];
-                    var bracket = "(" + r["string"].Split('(')[1];
-                    <li class="list-group-item col-xs-4"><em>@latinName</em> @bracket</li>
+                @{
+                  var vulnerable = Model.TableListResults.FirstOrDefault(m => m.Name == "vulnerable_species_names");
+                  if (vulnerable != null) {
+                    @foreach (var r in vulnerable.Data.Rows) {
+                      var latinName = r["string"].Split('(')[0];
+                      var bracket = "(" + r["string"].Split('(')[1];
+                      <li class="list-group-item col-xs-4"><em>@latinName</em> @bracket</li>
+                    }
                   }
                 }
-              }
-
               </ul>
-              </div>
-
-              <div id="migratory-species" class="appendix">
+            </div>
+            <div id="migratory-species" class="appendix">
               <h4>Appendix 2. Migratory Species</h4>
               <p>The following migratory species identified in the Global register of Migratory Species (GROMS; Riede et al 2004) have migration routes which intersect the specified area of interest:</p>
               <ul id="migratory-species-list" class="list-group row appendix-list">
-
-              @{
-                var migratory = Model.TableListResults.FirstOrDefault(m => m.Name == "migratory_species_list");
-                if (migratory != null) {
-                  @foreach (var r in migratory.Data.Rows) {
-                    <li class="list-group-item col-xs-3"><em>@r["latin"]</em></li>
+                @{
+                  var migratory = Model.TableListResults.FirstOrDefault(m => m.Name == "migratory_species_names");
+                  if (migratory != null) {
+                    @foreach (var r in migratory.Data.Rows) {
+                      <li class="list-group-item col-xs-3"><em>@r["latin"]</em></li>
+                    }
                   }
                 }
-              }
-
               </ul>
-              </div>
-
-              <div id="data-sources" class="appendix">
+            </div>
+            <div id="data-sources" class="appendix">
               <h4>Appendix 3. Data Sources</h4>
               <p>Georeferenced species records obtained from the GBIF occurrence API (http://www.gbif.org/occurrence) are shared according to the GBIF Data Use Agreement, which includes the provision that users of any data accessed through or retrieved via the GBIF Portal will always give credit to the original data publishers. The following list identifies the data sources for all occurrence records which have been used in this analysis.</p>
               <ul id="data-source-list" class="list-group row appendix-list"></ul>
@@ -621,12 +494,69 @@
                   populateDataSources();
                 });
               </script>
-              </div>
-
             </div>
           </div>
         </div>
       </div>
-    </body>
+      @* End Section: Appendices *@
 
-    </html>
+    </div>
+  </body>
+</html>
+
+@{
+    void MapPage(string variableId)
+    {
+      var paletteUrl = hasPalette[variableId] ? "/palettes/" + variableId + ".json" : null;
+      var executableResult = Model.RawResults.FirstOrDefault(m => m.Name == variableId);
+      if (executableResult == null) return;
+      <div class="row">
+          <div class="col-sm-12">
+            <h3>@prettyTitles[variableId]</h3>
+            <hr/>
+          </div>
+        </div>
+      <div class="row">
+        <div class="col-sm-5">
+
+          <p>
+            @Html.Raw(descriptions[variableId])
+          </p>
+
+          <div class="panel panel-default legend">
+            <div class="panel-heading">@units[variableId]</div>
+            <div class="panel-body">
+              <div id="@variableId-scale" class="section-scale"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-7">
+        <div id="@variableId-map" class="section-map"></div>
+        <p>@mapLegend[variableId]</p>
+        </div>
+      </div>
+      <div class="create-script">
+        <script>
+          $(function() {
+            var north = @Model.North;
+            var south = @Model.South;
+            var east = @Model.East;
+            var west = @Model.West;
+
+            if("@executableResult.Name" == "ecoregions") {
+              north = Math.min(90, north + 3);
+              south = Math.max(-90, south - 3);
+              east = Math.min(180, east + 3);
+              west = Math.max(-180, west - 3);
+            }
+
+            var plot = new SpatialPlot("@executableResult.Name", {north:north, south:south, east:east, west:west});
+            plot.setup();
+            plot.addGraticule();
+            plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), @executableResult.Data.NoDataValue, "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name]);
+            plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
+          });
+        </script>
+      </div>
+  }
+}

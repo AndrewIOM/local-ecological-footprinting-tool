@@ -1,0 +1,488 @@
+api:
+    port: 5002
+
+queue:
+    maxjobs: 5
+    maxduration: 43200000
+
+cache:
+    host: "ecoset.cache"
+    port: 6379
+
+locations:
+    cache: /Users/andrewmartin/Desktop/ecoset/cache
+
+variables:
+    - biodiversity_records:
+        name: "Biodiversity Records"
+        description: "Individual occurrence records for terrestrial species"
+        unit: record
+        methods:
+            - gbif:
+                name: "GBIF Global Occurrence Data"
+                description: "A global occurrence dataset for all life on Earth."
+                license: Variable with equivalence with Creative Commons (CC0, CC BY, and CC BY-NC)
+                licenseUrl: https://www.gbif.org/en/terms
+                implementation: GbifQuery
+                options:
+                    host: *gbif_db_host
+                    username: *gbif_db_user
+                    password: *gbif_db_password
+                    database: gbif
+                    gbif_table: master
+                    gbif_coord_table: gbif_coordinate
+                    gbif_org_table: gbif_org_lookup
+
+    - biodiversity_records_count:
+        name: "Distinct species by taxonomic group"
+        description: "Occurrence data for terrestrial species"
+        unit: number of distinct species
+        methods:
+            - gbif:
+                name: "GBIF Global Occurrence Data"
+                description: "A global occurrence dataset for all life on Earth."
+                license: Variable with equivalence with Creative Commons (CC0, CC BY, and CC BY-NC)
+                licenseUrl: https://www.gbif.org/en/terms
+                implementation: GbifQuery
+                options:
+                    host: *gbif_db_host
+                    username: *gbif_db_user
+                    password: *gbif_db_password
+                    database: gbif
+                    gbif_table: master
+                    gbif_coord_table: gbif_coordinate
+                    gbif_org_table: gbif_org_lookup
+
+    - landcover:
+        name: "Land Cover"
+        description: "Land cover"
+        unit: landcover class
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/landcover
+                    nodata: -9999
+
+    - ecoregions:
+        name: "Ecoregions"
+        description: "Ecoregions..."
+        unit: ecoregion
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/ecoregions
+                    nodata: -9999
+
+    - vulnerable_species_names:
+        name: "Vulnerable Species (Names)"
+        description: "Species with migration pathways"
+        unit: species names
+        methods:
+            - default:
+                name: "GROMS"
+                description: "GROMS database"
+                license: GPLv2
+                licenseUrl: https://opensource.org/licenses/GPL-3.0
+                implementation: IntersectShape
+                options:
+                    shapefileDir: /data/vulnerablespecies_names
+
+    - vulnerability:
+        name: "Vulnerability"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/vulnerability
+                    nodata: -9999
+                
+    - vulnerability_zonalmean:
+        name: "Zonal mean: vulnerability"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/vulnerability/zonalmean
+                    nodata: -9999
+                    scalefactor: 0.01
+
+    - vulnerability_zonalstdev:
+        name: "Zonal standard deviation: vulnerability"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/vulnerability/zonalstdev
+                    nodata: -9999
+                    scalefactor: 0.01
+                
+    - beta_diversity:
+        name: "Beta-diversity"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/betadiversity
+                    nodata: -9999
+
+    - beta_diversity_zonalmean:
+        name: "Zonal mean: beta-diversity"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/betadiversity/zonalmean
+                    nodata: -9999
+
+    - beta_diversity_zonalstdev:
+        name: "Zonal standard deviation: beta-diversity"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/betadiversity/zonalstdev
+                    nodata: -9999
+
+    - intactness:
+        name: "Intactness of Habitat"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/intectness
+                    nodata: -9999
+
+    - intactness_zonalmean:
+        name: "Zonal mean: intactness"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/intactness/zonalmean
+                    nodata: -9999
+                    scalefactor: 0.01
+
+    - intactness_zonalstdev:
+        name: "Zonal standard deviation: intactness"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/intactness/zonalstdev
+                    nodata: -9999
+                    scalefactor: 0.01
+
+    - migratory_names:
+        name: "Migratory Species"
+        description: "Species with migration pathways"
+        unit: species names
+        methods:
+            - default:
+                name: "GROMS"
+                description: "GROMS database"
+                license: GPLv2
+                licenseUrl: https://opensource.org/licenses/GPL-3.0
+                implementation: IntersectShape
+                options:
+                    shapefileDir: /data/migratory_names
+                
+    - migratory:
+        name: "Migratory Species Count"
+        description: "..."
+        unit: number of species
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/migratory
+                    nodata: -9999
+
+
+    - migratory_zonalmean:
+        name: "Zonal mean: migratory"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/migratory/zonalmean
+                    nodata: -9999
+                    scalefactor: 0.01
+
+    - migratory_zonalstdev:
+        name: "Zonal standard deviation: migratory"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/migratory/zonalstdev
+                    nodata: -9999
+                    scalefactor: 0.01
+
+    - wetland:
+        name: "Wetland"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/wetlands
+                    nodata: -9999
+
+    - wetland_zonalmean:
+        name: "Zonal mean: wetland"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/wetland/zonalmean
+                    nodata: -9999
+                    scalefactor: 0.01
+
+    - wetland_zonalstdev:
+        name: "Zonal standard deviation: wetland"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/wetland/zonalstdev
+                    nodata: -9999      
+                    scalefactor: 0.01          
+
+    - resilience:
+        name: "Resilience"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/resilience
+                    nodata: -9999
+
+    - resilience_zonalmean:
+        name: "Zonal mean: resilience"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/resilience/zonalmean
+                    nodata: -9999
+
+    - resilience_zonalstdev:
+        name: "Zonal standard deviation: resilience"
+        description: "..."
+        unit: unknown
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/resilience/zonalstdev
+                    nodata: -9999
+
+    # - sev
+
+    - land_area:
+        name: "Land area"
+        description: "The area of landmass"
+        unit: kilometres squared
+        methods:
+            - default:
+                name: "default"
+                description: "Area of land at 10m resolution caluclated from Natural Earth data."
+                license: ""
+                licenseUrl: ""
+                implementation: CalculateArea
+                options:
+                    shapefileDir: /data/land
+                    field: featurecla
+
+    - species_density_mammalia:
+        name: "Species Density: Mammals"
+        description: "Density of species"
+        unit: density
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/speciesdensity/mammalia
+                    nodata: -9999 
+                    scalefactor: 0.1
+
+    - species_density_amphibia:
+        name: "Species Density: Amphibians"
+        description: "Density of species"
+        unit: density
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/speciesdensity/amphibia
+                    nodata: -9999 
+                    scalefactor: 0.1
+
+    - species_density_aves:
+        name: "Species Density: Birds"
+        description: "Density of species"
+        unit: density
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/speciesdensity/aves
+                    nodata: -9999 
+                    scalefactor: 0.1
+
+    - species_density_plantae:
+        name: "Species Density: Plants"
+        description: "Density of species"
+        unit: density
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/speciesdensity/plantae
+                    nodata: -9999 
+                    scalefactor: 1.0
+
+    - species_density_reptilia:
+        name: "Species Density: Reptiles"
+        description: "Density of species"
+        unit: density
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/speciesdensity/reptilia
+                    nodata: -9999 
+                    scalefactor: 0.1

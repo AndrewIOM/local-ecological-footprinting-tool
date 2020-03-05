@@ -2,20 +2,40 @@
 
 version: '3.5'
 services:
-    ecoset:
-        volumes:
-        - /Users/andrewmartin/Projects/GitHub-Projects/ecoset/apps/left-marine/sample-data:/data
-        - /Users/andrewmartin/Desktop/left-cache-dev/persistence:/output
-        - ./ecoset.json:/usr/src/app/executables/config/local.json
-        restart: always
 
-    redis:
+    ecoset.api:
         volumes:
-        - "./data/redis-data/:/data/"
-        restart: always
-    left:
+        - C:\data\vnext-terr:/data
+        - ./test-data/ecoset-cache:/output
+        - ./config/ecoset:/usr/src/app/config
+        - ./test-data/ecoset-logs:/logs
+        environment:
+        - ES_CACHE_DIR=/output
+    restart: always
+
+    ecoset.cache:
         volumes:
-        - "/Users/andrewmartin/Desktop/left-cache-dev/cache/:/cache/"
-        - "/Users/andrewmartin/Desktop/left-cache-dev/persistence/:/persistence/"
+        - "./test-data/redis-data/:/data/"
+
+    web.ui:
+        volumes:
+        - "./test-data/webui-scratch/:/cache/"
+        - "./test-data/webui-persistence/:/persistence/"
         environment:
         - ASPNETCORE_ENVIRONMENT=Development
+        - Account__Admin__DefaultAdminUserName=${ADMINUSER}
+        - Account__Admin__DefaultAdminPassword=${ADMINPASSWORD}
+        - PersistenceFolder=/persistence
+        - EcosetApp__ScratchDirectory=/cache
+        - EcosetApp__MapboxStaticKey=${MAPBOXSTATICKEY}
+        - EcosetApp__MapboxAccessToken=${MAPBOXTOKEN}
+
+    reverse-proxy:
+        volumes:
+        - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
+        
+    web.db:
+        volumes:
+        - ./test-data/mssql/data:/var/opt/mssql/data
+        - ./test-data/mssql/log:/var/opt/mssql/log
+        - ./test-data/mssql/secrets:/var/opt/mssql/secrets
