@@ -131,6 +131,7 @@ variables:
                 options:
                     tiledir: /data/seastate
                     nodata: -9999
+                    scalefactor: 0.01
 
     - coastal_ecosystems:
         name: "Coastal Ecosystems"
@@ -281,6 +282,7 @@ variables:
                 options:
                     tiledir: /data/seaice
                     nodata: 255
+                    scalefactor: 0.01
 
     - tides:
         name: "Tides"
@@ -296,6 +298,7 @@ variables:
                 options:
                     tiledir: /data/tides
                     nodata: -9999
+                    scalefactor: 0.001
 
     - npp:
         name: "Net Primary Productivity"
@@ -311,6 +314,7 @@ variables:
                 options:
                     tiledir: /data/npp
                     nodata: 255
+                    scalefactor: 0.001
 
     - sst:
         name: "Sea Surface Temperature"
@@ -370,7 +374,8 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/salinity
-                    nodata: -9999  
+                    nodata: -9999
+                    scalefactor: 0.01
 
     - currents:
         name: "Ocean Currents"
@@ -386,6 +391,7 @@ variables:
                 options:
                     tiledir: /data/currents
                     nodata: -9999
+                    scalefactor: 0.001
 
     - benthic_roughness:
         name: "Benthic Roughness"
@@ -534,3 +540,4 @@ variables:
                 options:
                     tiledir: /data/speciesdensity/coral
                     nodata: -9999 
+

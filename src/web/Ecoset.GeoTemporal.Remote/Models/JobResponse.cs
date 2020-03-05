@@ -56,9 +56,13 @@ namespace Ecoset.GeoTemporal.Remote
 
     public class Statistics
     {
+        [JsonProperty("Minimum")]
         public float Min { get; set; }
+        [JsonProperty("Maximum")]
         public float Max { get; set; }
+        [JsonProperty("Mean")]
         public float Mean { get; set; }
+        [JsonProperty("StDev")]
         public float StdDev { get; set; }
     }
 
