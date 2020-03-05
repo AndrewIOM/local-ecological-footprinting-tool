@@ -104,9 +104,10 @@ var SpatialPlot = function (id, extent) {
         var projectedGraticuleBoundsBl = self.projection.invert([bl_x, bl_y]);
         var projectedGraticuleBoundsTr = self.projection.invert([tr_x, tr_y]);
 
-        var step = Math.round(Math.min(self.north - self.south, self.east - self.west) / 4.0 * 100) / 100;
+        var stepx = Math.round((self.east - self.west) / 4.0 * 100) / 100;
+        var stepy = Math.round((self.north - self.south) / 4.0 * 100) / 100;
         var graticule = d3.geoGraticule()
-            .step([step, step])
+            .step([stepx, stepy])
             .extent([projectedGraticuleBoundsBl, projectedGraticuleBoundsTr]);
 
         function to2dp(num) {
@@ -206,7 +207,7 @@ var SpatialPlot = function (id, extent) {
         if (self.paletteUrl == "") {
             var allData = _.union.apply(_, data.DataCube);
             var allData_dataOnly = _.filter(allData, function (d) {
-                return d != self.noDataValue
+                return d != self.noDataValue && !isNaN(d)
             });
             var max = _.max(allData_dataOnly);
             var min = _.min(allData_dataOnly);
@@ -298,7 +299,7 @@ var SpatialPlot = function (id, extent) {
                 var alpha = null;
                 if (ix >= 0 && ix < dataWidth && iy >= 0 && iy < dataHeight) {
                     var value = data.DataCube[iy][ix];
-                    if (value === self.noDataValue) {
+                    if (value === self.noDataValue || isNaN(value)) {
                         rgbString = "rgb(177,177,177)";
                         alpha = 255;
                     } else {
