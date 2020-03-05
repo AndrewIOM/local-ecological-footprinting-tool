@@ -15,7 +15,7 @@ locations:
 gbif_db_host: &gbif_db_host test
 gbif_db_user: &gbif_db_user test
 gbif_db_password: &gbif_db_password test
-
+    
 variables:
     - biodiversity_records:
         name: "Biodiversity Records"
@@ -280,7 +280,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/seaice
-                    nodata: -9999
+                    nodata: 255
 
     - tides:
         name: "Tides"
@@ -310,7 +310,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/npp
-                    nodata: -9999
+                    nodata: 255
 
     - sst:
         name: "Sea Surface Temperature"
@@ -325,7 +325,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/sst
-                    nodata: -9999
+                    nodata: 255
 
     - sst_trend:
         name: "Sea Surface Temperature Trend"
@@ -355,7 +355,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/sstfronts
-                    nodata: -9999  
+                    nodata: 255  
 
     - salinity:
         name: "Sea Surface Salinity"
@@ -371,7 +371,6 @@ variables:
                 options:
                     tiledir: /data/salinity
                     nodata: -9999  
-
 
     - currents:
         name: "Ocean Currents"
@@ -432,6 +431,7 @@ variables:
                 options:
                     tiledir: /data/ph
                     nodata: -9999
+                    scalefactor: 0.001
 
     - sea_level_rise:
         name: "Sea Level Rise"
@@ -504,3 +504,33 @@ variables:
                 implementation: IntersectShape
                 options:
                     shapefileDir: /data/migratory_names
+
+    - land_area:
+        name: "Land area"
+        description: "The area of landmass"
+        unit: kilometres squared
+        methods:
+            - default:
+                name: "default"
+                description: "Area of land at 10m resolution caluclated from Natural Earth data."
+                license: ""
+                licenseUrl: ""
+                implementation: CalculateArea
+                options:
+                    shapefileDir: /data/land
+                    field: featurecla
+
+    - species_density_coral:
+        name: "Species Density: Coral"
+        description: "Density of species"
+        unit: density
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/speciesdensity/coral
+                    nodata: -9999 

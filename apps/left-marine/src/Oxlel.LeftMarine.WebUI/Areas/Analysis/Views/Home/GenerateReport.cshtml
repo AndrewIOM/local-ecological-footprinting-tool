@@ -128,7 +128,7 @@
   units["invasive_species"] = "count";
 
   var hasPalette = new Dictionary<string,bool>();
-  hasPalette["sea_depth"] = true;
+  hasPalette["sea_depth"] = false;
   hasPalette["ecoregions"] = true;
   hasPalette["economic_zones"] = true;
   hasPalette["vulnerability"] = false;
@@ -227,6 +227,16 @@
   occurrenceColours["marine mammal"] = "orange";
   occurrenceColours["seabird"] = "blue";
   occurrenceColours["turtle"] = "green";
+
+  double oceanMetresSquared = 0;
+  double landMetresSquared = 0;
+  var landArea = Model.TableListResults.FirstOrDefault(m => m.Name == "land_area"); 
+  if (landArea != null) {
+    var landRow = landArea.Data.Rows.FirstOrDefault(x => x["Category"] == "Land");
+    var noneRow = landArea.Data.Rows.FirstOrDefault(x => x["Category"] == "none");
+    if (landRow != null) landMetresSquared = double.Parse(landRow["MetreSquared"]);
+    if (noneRow != null) oceanMetresSquared = double.Parse(noneRow["MetreSquared"]);
+  }
 }
 
 <!DOCTYPE html>
@@ -400,7 +410,48 @@
             <div class="col-md-12">
               <h3>Biodiversity Data Quality</h3>
               <hr/>
-              <p>Coming soon.</p>
+              <p>The output and validity of results will be significantly influenced by the availability or, conversely, the paucity, of data available in the databases for the selected region. The most critical data in this respect are the species occurrence records contained in GBIF. Due to sampling bias, GBIF coverage for some regions of the world is better than others (Gaiji et al., 2012). In order to provide a first estimate of the confidence that can be placed in the output from a region, a metric to assess the density of species occurrence records was devised. In this, the number of species records was obtained from GBIF for each taxonomic group (amphibians, reptiles, birds, mammals, plants) in the user-specified area of interest, as well as in a much larger reference area comprising the WWF ecoregions that intersect the area of interest. Species density was then calculated by dividing the number of different species in an area by the size of the area raised to an exponent of 0.2. Exponentiation is necessary in order to consistently control for the logarithmic form of species-area relationships and allow species densities from areas of different sizes to be directly comparable (Rosenweig 2012). The density of local species occurrence records for a taxonomic group can be compared to the density of records for the same group in the much larger reference area. This gives a first approximation of the degree to which the GBIF records available for a specified area of interest provide a good representation of the species expected in that area, based on wider biogeographical patterns and species-area relationships.</p>
+              <p>The table below shows species densities for the area of interest and the broader reference area, and the ratio of those densities. A representation score above 1.0 means that the number of species records retrieved was higher than expected, so the data are more reliable. Representation below 1.0 indicates poorer GBIF coverage and less reliable species data.</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Taxon</th>
+                    <th>Species density (area of interest)</th>
+                    <th>Species density (reference area)</th>
+                    <th>Representation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach (KeyValuePair<string, string> entry in speciesCategories) {
+                    var densityResultsZonal = Model.TableStatsResults.FirstOrDefault(m => m.Name == "species_density_" + entry.Key);
+                    var localString = "Unknown";
+                    var zonalString = "Unknown";
+                    double localValue = 1.0;
+                    double zonalValue = 1.0;
+                    var representationString = "Unknown";
+                    
+                    var gbifCount = gbiflist.Data.Rows.FirstOrDefault(m => m["taxon"] == entry.Key);
+                    if (gbifCount != null && oceanMetresSquared != 0) {
+                      localValue = double.Parse(gbifCount["species"]) / System.Math.Pow((oceanMetresSquared / 1000.0), 0.2);
+                      localString = Math.Round(localValue, 2).ToString();
+                    }
+                    if(densityResultsZonal != null) {
+                      zonalValue = densityResultsZonal.Data.Stats.Mean;
+                      zonalString = Math.Round(zonalValue, 2).ToString();
+                    }
+                    if(localString != "Unknown" && zonalString != "Unknown") {
+                      representationString = Math.Round(localValue / zonalValue, 2).ToString();
+                    }
+
+                    <tr>
+                      <td>@entry.Value</td>
+                      <td>@localString</td>
+                      <td>@zonalString</td>
+                      <td>@representationString</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -455,8 +506,108 @@
         <div class="report-section" id="sea_level_rise-section">@{ MapPage("sea_level_rise"); }</div>
         <div class="report-section" id="invasive_species-section">@{ MapPage("invasive_species"); }</div>
 
+        @* Section 8. Zonal Statistics *@
+        <div class="report-section">
+          <div class="row">
+            <div class="col-md-12">
+              <h2>DATA ASSURANCE: <small>Comparison to Other Regions (COAM)</small></h2>
+              <p>To appreciate the importance of the ecological values obtained for the specified area of interest relative to other regions, a 'compared to other areas metric' (COAM) was calculated. This metric used the polygons of the WWF Terrestrial Ecoregion Classification (Olson et al, 2001) to identify zones ecologically similar to the area of interest. Zonal statistics were then used to assess the importance of each LEFT layer relative to the same measure over the entire ecoregion. For each layer, the difference in standard scores between the area of interest and the broader ecoregions is presented in the following chart. This shows whether a study area is relatively more or less ecologically valuable than other regions with similar biogeographic characterisitics.</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Layer</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>Mean</th>
+                    <th>SD</th>
+                    <th>Ref. Mean</th>
+                    <th>Ref. SD</th>
+                  </tr>
+                </thead>
+                @foreach (var result in Model.RawResults.Where(m => !m.Name.Contains("species_density_"))) {
+                  <tr>
+                    <td>@prettyTitles[result.Name]</td>
+                    <td>@result.Data.Stats.Min</td>
+                    <td>@result.Data.Stats.Max</td>
+                    <td>@result.Data.Stats.Mean</td>
+                    <td>@result.Data.Stats.StdDev</td>
+                    @{
+                      var foundmean = false;
+                      var foundstdev = false;
+                      var refmean = "";
+                      var refstdev = "";
+                      var prefix = result.Name;
+                      var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == prefix + "_zonalmean");
+                      var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == prefix + "_zonalstdev");
+                    }
+                    @if (tableStatsResultsMean != null) {
+                      refmean = (Math.Round(tableStatsResultsMean.Data.Stats.Mean / 1, 3)).ToString();
+                      foundmean = true;
+                    }
 
-        @* Section 8. References *@
+                    @if (tableStatsResultsStdev != null) {
+                      refstdev = (Math.Round(tableStatsResultsStdev.Data.Stats.Mean / 1, 3)).ToString();
+                      foundstdev = true;
+                    }
+                    @if (foundmean) {
+                      <td>@refmean</td>
+                    } else {
+                      <td>Unknown</td>
+                    }
+                    @if (foundstdev) {
+                      <td>@refstdev</td>
+                    } else {
+                      <td>Unknown</td> 
+                    }
+                  </tr>
+                }
+              </table>
+            </div>
+          </div>
+
+        @{
+          var coamContext = new List<string>() { "", "" };
+          var coamBiodiversity = new List<string>() { "", "" };
+          var coamCompetingUses = new List<string>() { "", "" };
+          var coamProcesses = new List<string>() { "", "" };
+          var coamThreats = new List<string>() { "", "" };
+        }
+
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <svg id="coam-graph" width="800" height="300"></svg>
+              <script>
+                $(function() { 
+                  var data = [];
+                  @foreach (var result in Model.RawResults) {
+                      var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalmean");
+                      var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
+                      if(tableStatsResultsMean != null && tableStatsResultsStdev != null) {
+                        var localMean = result.Data.Stats.Mean;
+                        var localStdev = result.Data.Stats.StdDev;
+                        var zonalMeanScaled = tableStatsResultsMean.Data.Stats.Mean / 1;
+                        var zonalStdevScaled = tableStatsResultsStdev.Data.Stats.Mean / 1;
+                        var z = (localMean - zonalMeanScaled) / zonalStdevScaled;
+                        var sd = localStdev / zonalStdevScaled;
+                        <text>
+                        data.push({
+                          "name": "@prettyTitles[result.Name]",
+                          "value": @z,
+                          "sd": @sd
+                        });
+                        </text>
+                      }
+                  }
+                  drawCoamGraph(data);
+                });
+              </script>
+              <p>Table and chart indicating the importance of the area of interest relative to the reference region for each layer (standard scores +/- uncertainty in standard scores). If a layer has a positive standard score then the area of interest is more important than the reference region; a layer with a negative standard score is less important in the study area than in the reference region.</p>
+            </div>
+          </div>
+        </div>
+
+
+        @* Section 9. References *@
         <div class="report-section">
           <div class="row">
             <div class="col-sm-12">
@@ -539,7 +690,7 @@
           </div>
         </div>
 
-        @* Section 9. Marine Protected Area list *@
+        @* Section 10. Marine Protected Area list *@
         <div class="report-section">
           <div class="row">
             <div class="col-sm-12">
@@ -562,7 +713,7 @@
         </div>
 
 
-        @* Section 10. Vulnerable species list *@
+        @* Section 11. Vulnerable species list *@
         <div class="report-section">
           <div class="row">
             <div class="col-sm-12">
@@ -587,7 +738,7 @@
           </div>
         </div>
 
-        @* Section 11. Migratory species list *@
+        @* Section 12. Migratory species list *@
         <div class="report-section">
           <div class="row">
             <div class="col-sm-12">
@@ -609,7 +760,7 @@
           </div>
         </div>
 
-        @* Section 12. Data sources *@
+        @* Section 13. Data sources *@
         <div class="report-section">
           <div class="row">
             <div class="col-sm-12">
@@ -629,8 +780,7 @@
 
       </div>
     </body>
-
-    </html>
+  </html>
 
 
 @{
