@@ -38,5 +38,5 @@ RUN dotnet publish -c Release
 VOLUME /cache
 VOLUME /persistence
 
-WORKDIR /build/apps/left-marine/src/Oxlel.LeftMarine.WebUI/bin/Release/netcoreapp3.1/publish
-ENTRYPOINT [ "dotnet", "Oxlel.LeftMarine.WebUI.dll" ]
+WORKDIR /build/apps/left/src/Oxlel.Left.WebUI/bin/Release/netcoreapp3.1/publish
+ENTRYPOINT [ "dotnet", "Oxlel.Left.WebUI.dll" ]

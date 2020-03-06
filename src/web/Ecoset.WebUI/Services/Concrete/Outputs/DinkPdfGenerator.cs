@@ -8,6 +8,7 @@ using DinkToPdf.Contracts;
 using Ecoset.WebUI.Models;
 using Ecoset.WebUI.Options;
 using Ecoset.WebUI.Services.Abstract;
+using Microsoft.Extensions.Logging;
 
 namespace Ecoset.WebUI.Services.Concrete
 {
@@ -17,13 +18,38 @@ namespace Ecoset.WebUI.Services.Concrete
         private IHttpContextAccessor _context;
         private SynchronizedConverter _converter;
         private EcosetAppOptions _options;
+        private ILogger<DinkReportGenerator> _logger;
 
-        public DinkReportGenerator(IOutputPersistence persistence, IHttpContextAccessor httpContextAccessor, IOptions<EcosetAppOptions> options)
+        public DinkReportGenerator(IOutputPersistence persistence, 
+            IHttpContextAccessor httpContextAccessor, 
+            IOptions<EcosetAppOptions> options,
+            ILogger<DinkReportGenerator> logger)
         {
             _persistence = persistence;
             _context = httpContextAccessor;
             _converter = new SynchronizedConverter(new PdfTools());
             _options = options.Value;
+            _logger = logger;
+            _converter.PhaseChanged += LogPhaseChanged;
+            _converter.ProgressChanged += LogProgressChanged;
+            _converter.Warning += LogWarning;
+            _converter.Error += LogError;
+        }
+
+        private void LogPhaseChanged(object sender, DinkToPdf.EventDefinitions.PhaseChangedArgs e) {
+            _logger.LogInformation(1, "Phase change: " + e.CurrentPhase + " - " + e.Description);
+        }
+
+        private void LogProgressChanged(object sender, DinkToPdf.EventDefinitions.ProgressChangedArgs e) {
+            _logger.LogInformation(1, "PDF Generation: " + e.Description);
+        }
+
+        private void LogWarning(object sender, DinkToPdf.EventDefinitions.WarningArgs e) {
+            _logger.LogWarning(1, "PDF Generation: " + e.Message);
+        }
+
+        private void LogError(object sender, DinkToPdf.EventDefinitions.ErrorArgs e) {
+            _logger.LogError(1, "PDF Generation: " + e.Message);
         }
 
         public string GenerateReport(Job job)
@@ -53,7 +79,9 @@ namespace Ecoset.WebUI.Services.Concrete
                                 PrintMediaType = true
                             },
                             LoadSettings = {
-                                JSDelay = 60000
+                                JSDelay = 60000 * 3,
+                                StopSlowScript = false,
+                                DebugJavascript = true,
                             }
                         },
                     }

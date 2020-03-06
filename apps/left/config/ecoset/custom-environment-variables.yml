@@ -1,0 +1,6 @@
+locations:
+    cache: ES_CACHE_DIR
+
+gbif_db_host: &gbif_db_host ES_GBIF_HOST
+gbif_db_user: &gbif_db_user ES_GBIF_USER
+gbif_db_password: &gbif_db_password ES_GBIF_PASSWORD

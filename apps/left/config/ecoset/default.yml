@@ -201,8 +201,8 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/intectness
-                    nodata: -9999
+                    tiledir: /data/intactness
+                    nodata: 255
 
     - intactness_zonalmean:
         name: "Zonal mean: intactness"
@@ -263,7 +263,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/migratory
-                    nodata: -9999
+                    nodata: 255
 
 
     - migratory_zonalmean:
@@ -311,7 +311,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/wetlands
-                    nodata: -9999
+                    nodata: 255
 
     - wetland_zonalmean:
         name: "Zonal mean: wetland"
@@ -325,7 +325,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/wetland/zonalmean
+                    tiledir: /data/wetlands/zonalmean
                     nodata: -9999
                     scalefactor: 0.01
 
@@ -341,7 +341,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/wetland/zonalstdev
+                    tiledir: /data/wetlands/zonalstdev
                     nodata: -9999      
                     scalefactor: 0.01          
 

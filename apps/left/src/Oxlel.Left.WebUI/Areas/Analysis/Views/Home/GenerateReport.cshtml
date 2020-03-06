@@ -54,6 +54,17 @@
   units["sev"] = "Summary Ecological Value Z-Score";
   units["ecoregions"] = "Ecoregion";
 
+  var hasPalette = new Dictionary<string,bool>();
+  hasPalette["landcover"] = true;
+  hasPalette["beta_diversity"] = false;
+  hasPalette["vulnerability"] = false;
+  hasPalette["intactness"] = false;
+  hasPalette["migratory"] = false;
+  hasPalette["wetland"] = true;
+  hasPalette["resilience"] = false;
+  hasPalette["sev"] = false;
+  hasPalette["ecoregions"] = true;
+
   var isCategorical = new Dictionary<string,bool>();
   isCategorical["landcover"] = true;
   isCategorical["beta_diversity"] = false;
@@ -142,40 +153,36 @@
       <div id="report-sections">
         <div id="intro-section" class="report-section">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-12">
               <h2>Introduction</h2>
               <hr/>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-7">
               <div id="test-map" class="section-map"></div>
               <p>The Local Ecological Footprinting Tool (LEFT) was developed to provide a simple-to-use tool for industries and landowners who have to make quick preliminary decisions about land-use change, and to assist in minimising the environmental impact of their operations.</p>
               <p>The tool processes a series of high-quality open-access environmental datasets using standardised algorithms to produce maps at 30m resolution of land cover class, number of globally threatened terrestrial vertebrate and plant species, biodiversity of terrestrial vertebrates and plants, habitat intactness, wetland habitat connectivity, number of migratory species, and vegetation resilience. These results are aggregated in a single summary map showing the pattern of relative ecological value.</p>
               <p>This report briefly describes the methods and datasets used to generate the maps for the specified area of interest. Further details on the modelling approach, datasets, and choice of ecological variables can be found in Willis et al. (2012; 2014; 2015), Seddon et al. (2016), and Long et al. (2016 – in press)</p>
               <p>Please note that this report was generated automatically. If you have any questions about LEFT or this output, please email support@left.zoo.ox.ac.uk.</p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-8">
-              <h2>Location</h2>
-              <hr/>
+              <h3>Location</h3>
+              <p><strong>Specified Area of Interest</strong><br/> Latitude:@Model.South to @Model.North Decimal Degrees. <br/>Longitude: @Model.West to @Model.East Decimal Degrees.</p>
               <svg id="pinpoint-map"></svg>
               <script>
                 $(function() {
                   drawGlobalPinpointMap("pinpoint-map", @Model.North, @Model.South, @Model.East, @Model.West)
                 });
               </script>
-              <p style='text-align: center'><strong>Specified Area of Interest</strong><br/> Latitude:@Model.South to @Model.North Decimal Degrees. <br/>Longitude: @Model.West to @Model.East Decimal Degrees.</p>
             </div>
-            <div class="col-md-4">
-                <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/static/geojson(%7B%0A%22type%22%3A%22Feature%22%2C%0A%22properties%22%3A%7B%22stroke%22:%22%23FF0000%22%2C%22fill-opacity%22:0.2%7D%2C%0A%22geometry%22%3A%7B%0A%22type%22%3A%22Polygon%22%2C%0A%22coordinates%22%3A%5B%5B%5B @Model.West%2C @Model.South%5D%2C%5B @Model.West%2C @Model.North%5D%2C%5B @Model.East%2C @Model.North%5D%2C%5B @Model.East%2C @Model.South%5D%2C%5B @Model.West%2C @Model.South%5D%5D%5D%0A%7D%0A%7D))/auto/450x450@2x?access_token=@siteConfig.Value.MapboxAccessToken&logo=false" style="width: 100%;"/>
+            <div class="col-sm-5">
+              <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/static/geojson(%7B%0A%22type%22%3A%22Feature%22%2C%0A%22properties%22%3A%7B%22stroke%22:%22%23FF0000%22%2C%22fill-opacity%22:0.2%7D%2C%0A%22geometry%22%3A%7B%0A%22type%22%3A%22Polygon%22%2C%0A%22coordinates%22%3A%5B%5B%5B @Model.West%2C @Model.South%5D%2C%5B @Model.West%2C @Model.North%5D%2C%5B @Model.East%2C @Model.North%5D%2C%5B @Model.East%2C @Model.South%5D%2C%5B @Model.West%2C @Model.South%5D%5D%5D%0A%7D%0A%7D))/auto/450x450@2x?access_token=@siteConfig.Value.MapboxAccessToken&logo=false" style="width: 100%;"/>
+              <p><br/><strong>Open Street Map</strong> in specified area of interest (red rectangle) in @DateTime.Now.Year.<br/>Ramm &amp; Topf (2011) http://planet.openstreetmap.org</p>
             </div>
           </div>
         </div>
 
         <div class="report-section" id="ecoregions-section">@{ MapPage("ecoregions"); }</div>
-        <div class="report-section" id="landcover-section">@{ MapPage("ecoregions"); }</div>
+        <div class="report-section" id="landcover-section">@{ MapPage("landcover"); }</div>
         <div class="report-section" id="intactness-section">@{ MapPage("intactness"); }</div>
 
         @* Section: Biodiversity Occrrences *@
@@ -296,7 +303,7 @@
 
                   var gbifCount = gbiflist.Data.Rows.FirstOrDefault(m => m["taxon"] == entry.Key);
                   if (gbifCount != null && landMetresSquared != 0) {
-                    localValue = double.Parse(gbifCount["species"]) / System.Math.Pow((oceanMetresSquared / 1000.0), 0.2);
+                    localValue = double.Parse(gbifCount["species"]) / System.Math.Pow((landMetresSquared / 1000.0), 0.2);
                     localString = Math.Round(localValue, 2).ToString();
                   }
                   if(densityResultsZonal != null) {
@@ -355,11 +362,11 @@
                       var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
                     }
                     @if (tableStatsResultsMean != null) {
-                      refmean = (Math.Round(tableStatsResultsMean.Data.Stats.Mean / scaleFactorsMean[result.Name], 3)).ToString();
+                      refmean = (Math.Round(tableStatsResultsMean.Data.Stats.Mean, 3)).ToString();
                       foundmean = true;
                     }
                     @if (tableStatsResultsStdev != null) {
-                      refstdev = (Math.Round(tableStatsResultsStdev.Data.Stats.Mean / scaleFactorsStdev[result.Name], 3)).ToString();
+                      refstdev = (Math.Round(tableStatsResultsStdev.Data.Stats.Mean, 3)).ToString();
                       foundstdev = true;
                     }
                     @if (foundmean) {
@@ -385,7 +392,7 @@
               $(function() { 
                 var data = [];
                 @foreach (var result in Model.RawResults) {
-                  @if (refMeanSd.ContainsKey(result.Name)) {
+                  if (result.Name != "landcover" && result.Name != "ecoregions") {
                     var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalmean");
                     var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
                     if(tableStatsResultsMean != null && tableStatsResultsStdev != null) {
@@ -476,7 +483,7 @@
               <p>The following migratory species identified in the Global register of Migratory Species (GROMS; Riede et al 2004) have migration routes which intersect the specified area of interest:</p>
               <ul id="migratory-species-list" class="list-group row appendix-list">
                 @{
-                  var migratory = Model.TableListResults.FirstOrDefault(m => m.Name == "migratory_species_names");
+                  var migratory = Model.TableListResults.FirstOrDefault(m => m.Name == "migratory_names");
                   if (migratory != null) {
                     @foreach (var r in migratory.Data.Rows) {
                       <li class="list-group-item col-xs-3"><em>@r["latin"]</em></li>
@@ -553,7 +560,7 @@
             var plot = new SpatialPlot("@executableResult.Name", {north:north, south:south, east:east, west:west});
             plot.setup();
             plot.addGraticule();
-            plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), @executableResult.Data.NoDataValue, "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name]);
+            plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), @executableResult.Data.NoDataValue, "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name].ToString().ToLower());
             plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
           });
         </script>
