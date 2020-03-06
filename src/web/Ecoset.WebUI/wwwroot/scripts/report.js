@@ -212,9 +212,10 @@ var SpatialPlot = function (id, extent) {
             var max = _.max(allData_dataOnly);
             var min = _.min(allData_dataOnly);
             var valueRange = max - min;
-            var arr_points = Array.apply(null, {
-                length: valueRange + 1
-            }).map(Number.call, Number);
+            var arr_points = []; // Qt breaks with Array.apply(null, ...) notation.
+            for (var i = 0; i < valueRange+1; i++) {
+                arr_points.push(i);
+            };
             var arr_points_d = arr_points.map(function (n) {
                 if (valueRange == 0) {
                     return 0.5;
@@ -333,9 +334,10 @@ var SpatialPlot = function (id, extent) {
     self.drawContinuousKey = function (min, max, maskValues) {
         var border = 50;
         var valueRange = max - min;
-        var arr_points = Array.apply(null, {
-            length: valueRange + 1
-        }).map(Number.call, Number);
+        var arr_points = []; // Qt breaks with Array.apply(null, ...) notation.
+        for (var i = 0; i < valueRange+1; i++) {
+            arr_points.push(i);
+        };
         var arr_points_d = arr_points.map(function (n) {
             if (valueRange == 0) {
                 return 0.5;
