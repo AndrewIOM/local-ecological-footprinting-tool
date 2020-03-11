@@ -1,14 +1,14 @@
-# MarineLEFT/gbif/python
-
 version: '3'
 
 services:
     gbif-python:
+        environment:
+            - COMPOSE_CONVERT_WINDOWS_PATHS=1
         build:
             context: .
             dockerfile: Dockerfile
         volumes:
-        - "/terrgbif/vol_files:/vol_files/"
+        - ./download/:/download/
         stdin_open: true
         tty: true
-        command: python "/vol_files/update.py" -p 1980-01-01 2019-10-20
+        command: python "/vol_files/update.py" -p 1980-01-01 2020-03-11

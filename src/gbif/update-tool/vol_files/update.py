@@ -2,6 +2,7 @@ import sys, os.path, json, time, argparse, ConfigParser, getpass, peewee
 import requests, progress, wget, zipfile
 import gdal, csv
 import glob
+from io import open
 from gdalconst import *
 from osgeo import osr
 from progress.spinner import Spinner
@@ -12,7 +13,7 @@ from subprocess import Popen, PIPE, call
 
 prompt = False
 
-print "\n-- GBIF MIRROR UPDATE TOOL --\n"
+print("\n-- GBIF MIRROR UPDATE TOOL --\n")
 
 # ==============================================================================
 # utility functions
@@ -185,13 +186,13 @@ while True:
 zip_file = ""
 if ask_stage("Download the zip file?"):
         stage("Downloading zip file")
-        if not os.path.exists('download'):
-                os.makedirs('download')
-        zip_file = wget.download(url,'download')
+        if not os.path.exists('/download'):
+                os.makedirs('/download')
+        zip_file = wget.download(url,'/download')
 
 if zip_file == "":
         zip_file = get_string("Please enter the location of the zip file",
-                "download/"+download_key + ".zip")
+                "/download/"+download_key + ".zip")
 
 # ==============================================================================
 # unzip the zip file
@@ -204,7 +205,7 @@ if ask_stage("Unzip the zip file?"):
                         # path traversal defense copied from
                         # http://hg.python.org/cpython/file/tip/Lib/http/server.py#l789
                         words = member.filename.split('/')
-                        path = "download/"+dest_dir
+                        path = "/download/"+dest_dir
                         for word in words[:-1]:
                                 drive, word = os.path.splitdrive(word)
                                 head, word = os.path.split(word)
@@ -221,7 +222,7 @@ if ask_stage("Strip any corrupt/non-species/land-based rows from the csv?"):
         stage("Stripping corrupt/non-species/land-based rows from " + dest_dir + "/" + dest_dir + ".csv")
 
         # check if the download was successful
-        if not os.path.isfile("download/"+dest_dir + "/" + dest_dir + ".csv"):
+        if not os.path.isfile("/download/"+dest_dir + "/" + dest_dir + ".csv"):
                 print "ERROR: no data downloaded - there may be no data for the range"
                 sys.exit()
 
@@ -257,22 +258,27 @@ if ask_stage("Strip any corrupt/non-species/land-based rows from the csv?"):
                         print "Record out of range: (lat, lon) = (" + str(lat) + ", " +  str(lon) + ")"
                         return None
 
-        outfile = "download/"+dest_dir + "/" + dest_dir + "_fix.csv"
-        with open(outfile, 'ab') as outcsvfile:
-                with open("download/"+dest_dir + "/" + dest_dir + ".csv") as incsvfile:
+        strippedCorrupt = 0
+        strippedLatLonEmpty = 0
+        strippedLatLonInvalid = 0
+        strippedGeo = 0
+        strippedRank = 0
+
+        outfile = "/download/"+dest_dir + "/" + dest_dir + "_fix.csv"
+        with open(outfile, 'a', encoding="utf-8") as outcsvfile:
+                with open("/download/"+dest_dir + "/" + dest_dir + ".csv", encoding="utf-8") as incsvfile:
                         first = True
                         for line in incsvfile:
                                 if(first):
                                         first = False
+                                        outcsvfile.write(line)
                                         continue
 
-                                try:
-                                        rows = csv.reader([line], delimiter="\t")
-                                        row = next(rows)
-                                except Exception:
-                                        continue
+                                rows = csv.reader([line.encode("utf-8")], delimiter="\t")
+                                row = next(rows)
                                 if(len(row) != 50):
                                         print str(row) + " is corrupt"
+                                        strippedCorrupt  += 1
                                         continue
 
                                 lat = 0.0
@@ -280,6 +286,7 @@ if ask_stage("Strip any corrupt/non-species/land-based rows from the csv?"):
 
                                 if(row[21] == "" or row[22] == ""):
                                         print str(row) + " is corrupt - lat/long empty"
+                                        strippedLatLonEmpty += 1
                                         continue
 
                                 try:
@@ -287,39 +294,45 @@ if ask_stage("Strip any corrupt/non-species/land-based rows from the csv?"):
                                         lon = float(row[22])
                                 except ValueError:
                                         print str(row) + " is corrupt - lat/long corrupt"
+                                        strippedLatLonInvalid += 1
                                         continue
 
                                 if get_value(lat, lon) != 0:
+                                        # 0 = land, 1 = sea
                                         # ocean record
+                                        strippedGeo += 1
                                         continue
 
                                 taxonRank = row[11]
                                 if taxonRank != "SPECIES":
                                         # non-species
+                                        strippedRank += 1
                                         continue
 
                                 # no errors
                                 outcsvfile.write(line)
+        
+        print("Summary of stripping: corrupt " + str(strippedCorrupt) + ", empty latlon " +  str(strippedLatLonEmpty) + ", invalid latlon " + str(strippedLatLonInvalid) + ", geo " + str(strippedGeo) + ", rank " + str(strippedRank))
 
 # ==============================================================================
 # process the data
 
 # https://stackoverflow.com/questions/36445193/splitting-one-csv-into-multiple-files-in-python
-def split(filehandler, delimiter=',', row_limit=50000,
+def split(reader, delimiter=',', row_limit=50000,
           output_name_template='chunked_%s.csv', output_path='.', keep_headers=True):
-    import csv
     csv.field_size_limit(100000000) # Avoid huge field problems
-    reader = csv.reader(filehandler, delimiter=delimiter, quoting=csv.QUOTE_MINIMAL)
+    #reader = csv.reader(filehandler, encoding='utf-8', delimiter=delimiter, quoting=csv.QUOTE_MINIMAL)
     current_piece = 1
     current_out_path = os.path.join(
         output_path,
         output_name_template % current_piece
     )
-    current_out_writer = csv.writer(open(current_out_path, 'w'), delimiter=delimiter)
+    current_out_writer = open(current_out_path, 'a', encoding="utf-8")
+    #current_out_writer = csv.writer(open(current_out_path, 'w', encoding="utf-8"), encoding='utf-8', delimiter=delimiter)
     current_limit = row_limit
     if keep_headers:
-        headers = reader.next()
-        current_out_writer.writerow(headers)
+        headers = next(reader)
+        current_out_writer.write(headers)
     for i, row in enumerate(reader):
         if i + 1 > current_limit:
             current_piece += 1
@@ -328,21 +341,21 @@ def split(filehandler, delimiter=',', row_limit=50000,
                 output_path,
                 output_name_template % current_piece
             )
-            current_out_writer = csv.writer(open(current_out_path, 'w'), delimiter=delimiter)
+            current_out_writer = open(current_out_path, 'w', encoding="utf-8")
             if keep_headers:
-                current_out_writer.writerow(headers)
-        current_out_writer.writerow(row)
+                current_out_writer.write(headers)
+        current_out_writer.write(row)
 
 if ask_stage("Chunk CSV?"):
         stage("Chunking CSV")
 
         # check if the download was successful
-        if not os.path.isfile("download/"+dest_dir+"/"+dest_dir + ".csv"):
+        if not os.path.isfile("/download/"+dest_dir+"/"+dest_dir + ".csv"):
                 print "ERROR: no data downloaded - there may be no data for the range"
                 sys.exit()
 
         print "Chunking CSV"
-        split(open("download/"+dest_dir+"/"+dest_dir + ".csv"), output_name_template= "download/"+dest_dir+"/"+dest_dir +'-chunked_%s.csv', delimiter="\t", keep_headers=True)
+        split(open("/download/"+dest_dir+"/"+dest_dir + "_fix.csv", encoding="utf-8"), output_name_template= "/download/"+dest_dir+"/"+dest_dir +'-chunked_%s.csv', delimiter="\t", keep_headers=True)
 
 
 # ==============================================================================
@@ -359,7 +372,7 @@ if ask_stage("Process the downloaded data?"):
         stage("Processing data")
 
         # check if the download was successful
-        if not os.path.isfile("download/"+dest_dir+"/"+dest_dir + ".csv"):
+        if not os.path.isfile("/download/"+dest_dir+"/"+dest_dir + ".csv"):
                 print "ERROR: no data downloaded - there may be no data for the range"
                 sys.exit()
 
@@ -369,10 +382,10 @@ if ask_stage("Process the downloaded data?"):
         # to specify which columns should be ignored
         columns = 0
 
-        for file in glob.glob('download/' + dest_dir + '/' + '*-chunked_*.csv'):
+        for file in sorted(glob.glob('/download/' + dest_dir + '/' + '*-chunked_*.csv')):
 
                 print "Opening CSV"
-                with open(file) as f:
+                with open(file, encoding="utf-8") as f:
                         for line in f:
                                 print line
                                 line = line.split("\t")
@@ -448,9 +461,9 @@ if ask_stage("Update the organisation key lookup table?"):
 
         new_keys = list(set(all_keys) - set(existing_keys))
 
-        with open("download/"+dest_dir+"/new_keys.csv", "w") as f:
+        with open("/download/"+dest_dir+"/new_keys.csv", "w", encoding="utf-8") as f:
                 for s in new_keys:
-                        f.write(str(s[0]) + "\n")
+                        f.write(s[0].encode('utf-8') + "\n")
 
         for key in new_keys:
                 # use the gbif api to get the title of the organisation

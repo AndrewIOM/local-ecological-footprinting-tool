@@ -6,7 +6,6 @@
         "predicate": {
                 "type":"and",
                 "predicates": [
-                        {"type":"within", "geometry":"POLYGON((-10 52,-12 52,-12 51,-10 51,-10 52))"},
                         {"type":"equals",              "key":"HAS_COORDINATE",       "value":"true"},
                         {"type":"equals",              "key":"HAS_GEOSPATIAL_ISSUE", "value":"false"},
                         {"type":"greaterThanOrEquals", "key":"YEAR",                 "value":"1980"},
