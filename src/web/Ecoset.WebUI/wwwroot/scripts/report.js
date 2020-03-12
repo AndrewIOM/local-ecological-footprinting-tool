@@ -205,14 +205,15 @@ var SpatialPlot = function (id, extent) {
         self.noDataValue = noDataValue;
 
         if (self.paletteUrl == "") {
-            var allData = _.union.apply(_, data.DataCube);
-            var allData_dataOnly = _.filter(allData, function (d) {
-                return d != self.noDataValue && !isNaN(d)
-            });
+            var allData_dataOnly = _.chain(data.DataCube)
+                .flatten()
+                .filter(function (d) {
+                    return d != self.noDataValue && !isNaN(d);                    
+                }).value();
             var max = _.max(allData_dataOnly);
             var min = _.min(allData_dataOnly);
             var valueRange = max - min;
-            var arr_points = []; // Qt breaks with Array.apply(null, ...) notation.
+            var arr_points = [];
             for (var i = 0; i < valueRange+1; i++) {
                 arr_points.push(i);
             };
@@ -333,21 +334,14 @@ var SpatialPlot = function (id, extent) {
 
     self.drawContinuousKey = function (min, max, maskValues) {
         var border = 50;
-        var valueRange = max - min;
-        var arr_points = []; // Qt breaks with Array.apply(null, ...) notation.
-        for (var i = 0; i < valueRange+1; i++) {
-            arr_points.push(i);
+        var tickSize = 200.00;
+        var arr_points = [];
+        for (var i = 1; i <= tickSize; i++) {
+            arr_points.push(i / tickSize);
         };
-        var arr_points_d = arr_points.map(function (n) {
-            if (valueRange == 0) {
-                return 0.5;
-            } else {
-                return n / valueRange;
-            }
-        });
-        var arr_values = arr_points_d.map(getColor);
+        var arr_values = arr_points.map(getColor);
         var cs_def = {
-            positions: arr_points_d,
+            positions: arr_points,
             colors: arr_values
         };
         var scaleWidth = 275;
