@@ -13,6 +13,27 @@ locations:
     cache: /Users/andrewmartin/Desktop/ecoset/cache
 
 variables:
+    - summary_ecological_value:
+        name: "Summary Ecological Value"
+        description: "A weighted mean of six ecological indicators"
+        unit: dimensionless
+        methods:
+            - default:
+                name: ""
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: Aggregate
+                depends_on: [ "vulnerability", "intactness", "resilience", "beta_diversity", "migratory_notbuffered", "wetland" ]
+                options:
+                    equation: "
+                        ((((vulnerability - vulnerability_mean) / vulnerability_stdev) * 1.0) + 
+                        (((intactness - intactness_mean) / intactness_stdev) * 1.0) +
+                        (((resilience - resilience_mean) / resilience_stdev) * 1.0) +
+                        (((beta_diversity - beta_diversity_mean) / beta_diversity_stdev) * 1.0) +
+                        (((migratory_notbuffered - migratory_notbuffered_mean) / migratory_notbuffered_stdev) * 0.5) +
+                        (((wetland - wetland_mean) / wetland_stdev) * 0.5)) / 5.0"
+
     - biodiversity_records:
         name: "Biodiversity Records"
         description: "Individual occurrence records for terrestrial species"
@@ -265,6 +286,20 @@ variables:
                     tiledir: /data/migratory
                     nodata: 255
 
+    - migratory_notbuffered:
+        name: "Migratory Species Count"
+        description: "..."
+        unit: number of species
+        methods:
+            - default:
+                name: Default
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/migratory
+                    nodata: 255
 
     - migratory_zonalmean:
         name: "Zonal mean: migratory"

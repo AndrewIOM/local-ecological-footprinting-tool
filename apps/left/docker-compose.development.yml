@@ -7,8 +7,6 @@ services:
         - ./test-data/ecoset-cache:/output
         - ./config/ecoset:/usr/src/app/config
         - ./test-data/ecoset-logs:/logs
-        environment:
-        - ES_CACHE_DIR=/output
         restart: always
 
     ecoset.cache:
