@@ -35,17 +35,7 @@ namespace Ecoset.GeoTemporal.Remote
         [JsonProperty("kind")]
         public string Kind { get; set; }
         [JsonProperty("date")]
-        public SimpleDate Date { get; set; }
-    }
-
-    public class SimpleDate
-    {
-        [JsonProperty("year")]
-        public int Year { get; set; }
-        [JsonProperty("month")]
-        public Nullable<int> Month { get; set; }
-        [JsonProperty("day")]
-        public Nullable<int> Day { get; set; }
+        public Date Date { get; set; }
     }
 
     public class JobPollRequest

@@ -23,31 +23,31 @@ namespace Ecoset.GeoTemporal.Remote
         public string Name { get; set; }
         public string License { get; set; }
         public string LicenseUrl { get; set; }
-        public TemporalDimension TemporalExtent { get; set; }
+        public TemporalExtent TemporalExtent { get; set; }
         //public SpatialDimension SpatialExtent { get; set; }
     }
 
-    public class TemporalDimension
+    public class TemporalExtent
     {
         [JsonProperty("slices")]
-        public SimpleDate[] Slices { get; set; }
+        public Date[] Slices { get; set; }
         [JsonProperty("minDate")]
         public Date MinDate { get; set; }
         [JsonProperty("maxDate")]
         public Date MaxDate { get; set; }
         
-        public TemporalDimension() {
-            Slices = Array.Empty<SimpleDate>();
+        public TemporalExtent() {
+            Slices = Array.Empty<Date>();
         }
     }
 
     public class Date
     {
-        [JsonProperty("day")]
+        [JsonProperty("Day")]
         public Nullable<int> Day { get; set; }
-        [JsonProperty("month")]
+        [JsonProperty("Month")]
         public Nullable<int> Month { get; set; }
-        [JsonProperty("year")]
+        [JsonProperty("Year")]
         public int Year { get; set; }
     }
 

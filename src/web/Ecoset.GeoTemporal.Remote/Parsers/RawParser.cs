@@ -11,7 +11,6 @@ namespace Ecoset.GeoTemporal.Remote
             {
                 Stats = parsed.Stats,
                 DataCube = parsed.Data.Data,
-                NoDataValue = parsed.Data.NoDataValue,
                 Columns = parsed.Data.Columns,
                 Rows = parsed.Data.Rows
             };
@@ -30,8 +29,6 @@ namespace Ecoset.GeoTemporal.Remote
         {
             [JsonProperty("raw")]
             public double[,] Data { get; set; }
-            [JsonProperty("nodata")]
-            public double NoDataValue { get; set; }
             [JsonProperty("ncols")]
             public double Columns { get; set; }
             [JsonProperty("nrows")]

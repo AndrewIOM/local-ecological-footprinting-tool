@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -53,17 +55,19 @@ namespace Ecoset.GeoTemporal.Remote
                 client.BaseAddress = new Uri(_endpoint);
                 var response = await client.GetAsync(endpoint);
                 if (response.IsSuccessStatusCode)
-                {
-                    string jsonMessage;
+                 {
                     using (Stream responseStream = await response.Content.ReadAsStreamAsync())
                     {
-                        jsonMessage = new StreamReader(responseStream).ReadToEnd();
-                    }
-                    try {
-                        T responseContent = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
-                        return responseContent;
-                    } catch {
-                        throw new Exception("Ecoset returned an unexpected response");
+                        var serialiser = JsonSerializer.Create();
+                        using (var sr = new StreamReader(responseStream))
+                        using (var jsonTextReader = new JsonTextReader(sr)) {
+                            try {
+                                T responseContent = serialiser.Deserialize<T>(jsonTextReader);
+                                return responseContent;
+                            } catch {
+                                throw new Exception("Ecoset returned an unexpected response");
+                            }
+                        }
                     }
                 }
                 else {
@@ -106,4 +110,20 @@ namespace Ecoset.GeoTemporal.Remote
             }
         }
     }
+
+    public static class JsonReaderExtensions
+    {
+        public static IEnumerable<T> SelectTokensWithRegex<T>(this JsonReader jsonReader, Regex regex)
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            while (jsonReader.Read())
+            {
+                if (regex.IsMatch(jsonReader.Path) && jsonReader.TokenType != JsonToken.PropertyName)
+                {
+                    yield return serializer.Deserialize<T>(jsonReader);
+                }
+            }
+        }
+    }
+
 }
