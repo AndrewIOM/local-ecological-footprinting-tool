@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-bionic AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-bionic AS build
 
 ENV ASPNETCORE_ENVIRONMENT=Development
 
@@ -39,5 +39,5 @@ RUN dotnet publish -c Release
 VOLUME /cache
 VOLUME /persistence
 
-WORKDIR /build/apps/left-marine/src/Oxlel.LeftMarine.WebUI/bin/Release/netcoreapp3.0/publish
+WORKDIR /build/apps/left-marine/src/Oxlel.LeftMarine.WebUI/bin/Release/netcoreapp3.1/publish
 ENTRYPOINT [ "dotnet", "Oxlel.LeftMarine.WebUI.dll" ]

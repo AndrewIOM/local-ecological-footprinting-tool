@@ -21,8 +21,8 @@ type Startup private () =
         this.Configuration <- configuration
 
     member this.ConfigureServices(services: IServiceCollection) =
-        services.AddControllersWithViews().AddRazorRuntimeCompilation() |> ignore
-        services.AddRazorPages() |> ignore
+        services.AddControllersWithViews().AddNewtonsoftJson().AddRazorRuntimeCompilation() |> ignore
+        services.AddRazorPages().AddNewtonsoftJson() |> ignore
         services.AddEcosetUI this.Configuration |> ignore
         services.AddEcosetDataPackageAPI this.Configuration |> ignore
 
