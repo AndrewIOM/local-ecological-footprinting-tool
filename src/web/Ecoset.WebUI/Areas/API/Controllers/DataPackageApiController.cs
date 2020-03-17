@@ -107,34 +107,33 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         /// Gets the details of a data package, including the status of any
         /// data generation processes.
         /// </summary>
-        /// <param name="model"></param>
         [HttpGet]
-        [Route("package")]
-        public async Task<IActionResult> DataPackage(Guid id) {
+        [Route("status")]
+        public async Task<IActionResult> Status(Guid id) {
             var dp = await _jobService.GetDataPackage(id);
             if (dp == null) return NotFound("The data package does not exist");
-            var userId = _userManager.GetUserId(HttpContext.User);
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             if (dp.CreatedBy.Id != userId) return NotFound("The data package does not exist");
-            return Json(dp); // TODO create a DTO for here.
+            return Json(dp);
         }
 
         /// <summary>
         /// Stream the contents of the data package.
         /// </summary>
-        /// <param name="model"></param>      
         [HttpGet]
         [Route("fetch")]
         public async Task<IActionResult> Fetch(Guid id) 
         {
-            var job = await _jobService.GetDataPackage(id);
-            if (job == null) return NotFound("The data package does not exist");
+            var dp = await _jobService.GetDataPackage(id);
+            if (dp == null) return NotFound("The data package does not exist");
 
-            var user = await _userManager.GetUserAsync(User);
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByNameAsync(userId.Value);
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-            if (!isAdmin && job.CreatedBy.Id != user.Id) return NotFound("The data package does not exist");
-            if (job.Status != JobStatus.Completed) return BadRequest("This analysis has not yet completed");
+            if (!isAdmin && dp.CreatedBy.Id != user.Id) return NotFound("The data package does not exist");
+            if (dp.Status != JobStatus.Completed) return BadRequest("This analysis has not yet completed");
 
-            var contents = _jobService.GetDataPackageData(id);
+            var contents = await _jobService.GetDataPackageData(id);
             return Json(contents);
         }
 
