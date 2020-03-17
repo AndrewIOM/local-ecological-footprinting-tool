@@ -541,3 +541,63 @@ variables:
                     tiledir: /data/speciesdensity/coral
                     nodata: -9999 
 
+    - species_density_fish:
+        name: "Species Density: Fish"
+        description: "Density of species"
+        unit: density
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/speciesdensity/marinefish
+                    nodata: -9999 
+
+    - species_density_marinemammal:
+        name: "Species Density: Marine Mammals"
+        description: "Density of species"
+        unit: density
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/speciesdensity/marinemammal
+                    nodata: -9999 
+
+    - species_density_seabird:
+        name: "Species Density: Seabirds"
+        description: "Density of species"
+        unit: density
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/speciesdensity/seabird
+                    nodata: -9999 
+
+    - species_density_turtle:
+        name: "Species Density: Turtles"
+        description: "Density of species"
+        unit: density
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/speciesdensity/turtle
+                    nodata: -9999 
+                

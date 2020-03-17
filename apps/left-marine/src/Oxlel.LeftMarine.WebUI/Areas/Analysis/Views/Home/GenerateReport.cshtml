@@ -423,7 +423,7 @@
                 </thead>
                 <tbody>
                   @foreach (KeyValuePair<string, string> entry in speciesCategories) {
-                    var densityResultsZonal = Model.TableStatsResults.FirstOrDefault(m => m.Name == "species_density_" + entry.Key);
+                    var densityResultsZonal = Model.TableStatsResults.FirstOrDefault(m => m.Name == "species_density_" + entry.Key.Replace(" ", ""));
                     var localString = "Unknown";
                     var zonalString = "Unknown";
                     double localValue = 1.0;
@@ -432,7 +432,7 @@
                     
                     var gbifCount = gbiflist.Data.Rows.FirstOrDefault(m => m["taxon"] == entry.Key);
                     if (gbifCount != null && oceanMetresSquared != 0) {
-                      localValue = double.Parse(gbifCount["species"]) / System.Math.Pow((oceanMetresSquared / 1000.0), 0.2);
+                      localValue = double.Parse(gbifCount["species"]) / System.Math.Pow((oceanMetresSquared * 0.000001), 0.2);
                       localString = Math.Round(localValue, 2).ToString();
                     }
                     if(densityResultsZonal != null) {
