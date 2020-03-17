@@ -81,7 +81,7 @@ namespace Ecoset.WebUI.Services.Concrete
                             LoadSettings = {
                                 JSDelay = 60000 * 3,
                                 StopSlowScript = false,
-                                DebugJavascript = true,
+                                DebugJavascript = true
                             }
                         },
                     }

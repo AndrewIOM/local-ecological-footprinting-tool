@@ -38,8 +38,11 @@ namespace Ecoset.WebUI.Services.Concrete
             var tableStatsParser = new DataTableStatsParser();
             var fileParser = new Base64Parser();
             var executableResults = new List<ExecutableResult>();
+            Console.WriteLine("Fetch is: " + fetchData);
+            Console.WriteLine("Executable results is: " + fetchData.Outputs);
             foreach (var output in fetchData.Outputs)
             {
+                Console.WriteLine("Executable result is: " + output.ToString());
                 var elem = new ExecutableResult();
                 elem.Name = output.Name;
                 elem.MethodUsed = output.MethodUsed;
@@ -136,18 +139,36 @@ namespace Ecoset.WebUI.Services.Concrete
             return ToLeftStatus(status);
         }
 
-        public async Task<string> StartDataPackage(JobSubmission job, List<string> variables)
+        public async Task<string> StartDataPackage(JobSubmission job, RequestedTime dateMode, int? year, int? month, int? day, List<string> variables)
         {
+            var time = new TimeMode();
+            if (dateMode == RequestedTime.Before) {
+                time.Kind = "before";
+                time.Date = new Date() { Year = year.Value, Month = month, Day = day };
+            } else if (dateMode == RequestedTime.Exact) {
+                time.Kind = "exact";
+                time.Date = new Date() { Year = year.Value, Month = month, Day = day };
+            } else {
+                time.Kind = "latest";
+            }
+
             var command = new JobSubmissionRequest()
             {
                 East = job.East,
                 West = job.West,
                 North = job.North,
                 South = job.South,
-                Variables = GetCustomRequest(variables)
+                Variables = GetCustomRequest(variables),
+                TimeMode = time
             };
-            var result = await _connection.SubmitJobAsync(command);
-            return result.Id.ToString();
+            try {
+                var result = await _connection.SubmitJobAsync(command);
+                return result.Id.ToString();
+            } catch (Exception e)
+            {
+                _logger.LogCritical("Job could not be submitted to the geotemporal engine. The error was: " + e.Message);
+                return null;
+            }
         }
 
         public async Task<string> StartJob(JobSubmission job)
@@ -167,7 +188,7 @@ namespace Ecoset.WebUI.Services.Concrete
                 return result.Id.ToString();
             } catch (Exception e)
             {
-                _logger.LogCritical("Job could not be submitted to EcoSet. The error was: " + e.Message);
+                _logger.LogCritical("Job could not be submitted to the geotemporal engine. The error was: " + e.Message);
                 return null;
             }
         }
@@ -204,7 +225,15 @@ namespace Ecoset.WebUI.Services.Concrete
             var exesList = _options.Value.ProReportSections;
             if(!isPro) {
                 exesList = _options.Value.FreeReportSections.Select(m => {
-                    if (!m.Options.ContainsKey("resolution")) m.Options.Add("resolution",_options.Value.MaxMapPixelSize.ToString());
+                    if (!m.Options.ContainsKey("maxresolution") && _options.Value.MaxMapPixelSize.HasValue) m.Options.Add("maxresolution",_options.Value.MaxMapPixelSize.ToString());
+                    if (!m.Options.ContainsKey("resolution") && _options.Value.MapPixelSize.HasValue) m.Options.Add("resolution",_options.Value.MapPixelSize.ToString());
+                    return m;
+                }).ToList();
+            }
+            else {
+                // Temporary limit on pro jobs / data packages
+                exesList = _options.Value.ProReportSections.Select(m => {
+                    if (!m.Options.ContainsKey("maxresolution")) m.Options.Add("maxresolution", 1000.ToString());
                     return m;
                 }).ToList();
             }
@@ -220,8 +249,7 @@ namespace Ecoset.WebUI.Services.Concrete
 
         private List<Ecoset.GeoTemporal.Remote.Variable> GetCustomRequest(List<string> customVariables) 
         {
-            var exesList = _options.Value.FreeReportSections;
-            var toProcess = exesList.Select(m => 
+            var toProcess = _options.Value.ProReportSections.Select(m => 
                 new Ecoset.GeoTemporal.Remote.Variable() {
                     Name = m.Name,
                     Method = m.Method,
@@ -240,32 +268,5 @@ namespace Ecoset.WebUI.Services.Concrete
             else return Models.JobStatus.Submitted;
         }
 
-        public async Task<List<Models.Variable>> ListVariables()
-        {
-            var available = await _connection.ListAvailableDatasets();
-            return available.Select(m => {
-                var methods = 
-                    m.Methods.Select(n => {
-                        return new Ecoset.WebUI.Models.VariableMethod() {
-                            Id = n.Id,
-                            Name = n.Name,
-                            License = n.License,
-                            LicenseUrl = n.LicenseUrl,
-                            TimesAvailable = new MethodTime() {
-                                TimeSlices = n.TemporalExtent.Slices.Select(s => { return new Models.SimpleDate() { Day = s.Day, Month = s.Month, Year = s.Year }; }).ToList(),
-                                ExtentMax = new Models.SimpleDate() { Day = n.TemporalExtent.MaxDate.Day, Month = n.TemporalExtent.MaxDate.Month, Year = n.TemporalExtent.MaxDate.Year },
-                                ExtentMin =  new Models.SimpleDate() { Day = n.TemporalExtent.MinDate.Day, Month = n.TemporalExtent.MinDate.Month, Year = n.TemporalExtent.MinDate.Year }
-                            } };
-                    }).ToList();
-                return new Ecoset.WebUI.Models.Variable() {
-                    Id = m.Id,
-                    Name = m.FriendlyName,
-                    Description = m.Description,
-                    Unit = m.Unit,
-                    Methods = methods
-                    };
-                }).ToList();
-            }
-        }
-
     }
+}

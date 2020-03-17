@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ecoset.WebUI.Models {
     public class Purchase {
@@ -7,8 +8,10 @@ namespace Ecoset.WebUI.Models {
         public ApplicationUser PurchasedBy { get; set; }
 
         //Order Details
+        [Column(TypeName = "decimal(6,2)")]
         public decimal Total {get; set; }
         public int NumberOfCredits {get; set; }
+        [Column(TypeName = "decimal(6,2)")]
         public decimal UnitPrice {get; set; }
         public string CurrencyCode {get; set; }
 

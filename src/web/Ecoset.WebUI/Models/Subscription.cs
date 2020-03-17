@@ -21,6 +21,7 @@ namespace Ecoset.WebUI.Models {
         public Guid GroupSubscriptionId { get; set; }
         public string GroupName { get; set; }
         public string EmailWildcard { get; set; }
+        public virtual Subscription Subscription { get; set; }
     }
 
 }

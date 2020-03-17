@@ -19,10 +19,16 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         private readonly UserManager<ApplicationUser> _userManager;
         private ReportContentOptions _reportOptions;
         private IJobProcessor _processor;
-        public VariableApiController (UserManager<ApplicationUser> userManager, IOptions<ReportContentOptions> reportOptions, IJobProcessor processor) {
+        private IDataRegistry _registry;
+
+        public VariableApiController (UserManager<ApplicationUser> userManager, 
+            IOptions<ReportContentOptions> reportOptions, 
+            IJobProcessor processor,
+            IDataRegistry registry) {
             _userManager = userManager;
             _reportOptions = reportOptions.Value;
             _processor = processor;
+            _registry = registry;
         }
 
         /// <summary>
@@ -31,7 +37,7 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         [HttpGet]
         [Route("list")]
         public async Task<IActionResult> List(GeotemporalContext context) {
-            var variables = await _processor.ListVariables();
+            var variables = await _registry.GetAvailableVariables();
             return Json(variables);
         }
 

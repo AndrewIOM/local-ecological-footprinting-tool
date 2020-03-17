@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ecoset.WebUI.Models {
 
@@ -40,6 +41,7 @@ namespace Ecoset.WebUI.Models {
     {
         public Nullable<int> Day { get; set; }
         public Nullable<int> Month { get; set; }
+        [Required]
         public int Year { get; set; }
     }
 
@@ -48,6 +50,18 @@ namespace Ecoset.WebUI.Models {
         public SimpleDate EndTime { get; set; }
         public double? LatitudeDD { get; set; }
         public double? LongitudeDD { get; set; }
+    }
+
+    /// Represents a variable and method that are available in the data registry.
+    public class AvailableVariable
+    {
+        public string Id { get; set; }
+        public string MethodId { get; set; }
+        public string DescriptiveName { get; set; }
+        public string Description { get; set; }
+        public string Unit { get; set; }
+        public string License { get; set; }
+        public string LicenseUrl { get; set; }
     }
 
 }

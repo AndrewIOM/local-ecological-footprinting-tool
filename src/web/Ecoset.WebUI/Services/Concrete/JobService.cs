@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Identity;
 using Hangfire;
 using Ecoset.WebUI.Options;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using Ecoset.WebUI.Models.JobViewModels;
 
 namespace Ecoset.WebUI.Services.Concrete
 {
@@ -25,6 +27,7 @@ namespace Ecoset.WebUI.Services.Concrete
         private IOutputPersistence _outputPersistence;
         private readonly EcosetAppOptions _appOptions;
         private readonly UserManager<ApplicationUser> _userManager;
+        private ILogger<JobService> _logger;
         public JobService(ApplicationDbContext context, 
             IJobProcessor processor, 
             INotificationService notifyService, 
@@ -32,7 +35,8 @@ namespace Ecoset.WebUI.Services.Concrete
             IReportGenerator reportGenerator,
             IOutputPersistence outputPersistence,
             UserManager<ApplicationUser> userManager,
-            IOptions<EcosetAppOptions> appOptions) {
+            IOptions<EcosetAppOptions> appOptions,
+            ILogger<JobService> logger) {
             _context = context;
             _processor = processor;
             _notifyService = notifyService;
@@ -41,6 +45,7 @@ namespace Ecoset.WebUI.Services.Concrete
             _reportGenerator = reportGenerator;
             _userManager = userManager;
             _appOptions = appOptions.Value;
+            _logger = logger;
         }
 
         public IEnumerable<Job> GetAll()
@@ -63,7 +68,7 @@ namespace Ecoset.WebUI.Services.Concrete
             if (user == null) return result;
 
             foreach (var job in user.Jobs) {
-                result.Add(job);
+                if (!job.Hidden) result.Add(job);
             }
 
             _context.SaveChanges();
@@ -88,6 +93,15 @@ namespace Ecoset.WebUI.Services.Concrete
 
             _processor.StopJob(job.JobProcessorReference);
             Hangfire.RecurringJob.RemoveIfExists("jobstatus_" + job.Id);
+            return true;
+        }
+
+        public bool HideJob(int jobId)
+        {
+            var job = _context.Jobs.FirstOrDefault(m => m.Id == jobId);
+            if (job == null) return false;
+            job.Hidden = true;
+            _context.Jobs.Update(job);
             return true;
         }
 
@@ -158,6 +172,30 @@ namespace Ecoset.WebUI.Services.Concrete
             }
         }
 
+        public async Task UpdatePackageStatusAsync(Guid id) {
+            _logger.LogInformation("Determining current status of data package: " + id);
+            var result = _context.DataPackages
+                .FirstOrDefault(m => m.Id == id);
+            if (result != null) {
+                await UpdatePackageStatusAsync(result);
+            }
+        }
+
+        private async Task UpdatePackageStatusAsync(DataPackage package) {
+            var newStatus = await _processor.GetStatus(package.JobProcessorReference, package.Status);
+            if (newStatus != package.Status) {
+                package.Status = newStatus;
+                if (package.Status == JobStatus.Completed || package.Status == JobStatus.Failed) {
+                    package.TimeCompleted = DateTime.Now;
+                }
+                _context.Update(package);
+                _context.SaveChanges();
+            }
+            if (package.Status == JobStatus.Failed || package.Status == JobStatus.Completed) {
+                Hangfire.RecurringJob.RemoveIfExists("prostatus_" + package.Id);
+            }
+        }
+
         private async Task UpdateJobStatusAsync(Job job) {
             
             if (job.Status == JobStatus.GeneratingOutput) {
@@ -221,14 +259,16 @@ namespace Ecoset.WebUI.Services.Concrete
                     job.ProActivation.ProcessingStatus = JobStatus.Completed;
                     _context.Update(job);
                     _context.SaveChanges();
-                } catch {
-                    job.ProActivation.ProcessingStatus = JobStatus.Failed;
-                    _context.Update(job);
-                    _context.SaveChanges();
+                } catch (Exception e) {
+                    _logger.LogError("Could not persist data download. " + e.Message);
+                    throw e;
+                    //job.ProActivation.ProcessingStatus = JobStatus.Failed;
+                    //_context.Update(job);
+                   // _context.SaveChanges();
                 }
             } else {
-                if (job.Status != newStatus) {
-                    job.Status = newStatus;
+                if (job.ProActivation.ProcessingStatus != newStatus) {
+                    job.ProActivation.ProcessingStatus = newStatus;
                     _context.Update(job);
                     _context.SaveChanges();
                 }
@@ -293,8 +333,6 @@ namespace Ecoset.WebUI.Services.Concrete
                 JobProcessorReference = processorReference
             };
             job.ProActivation = activation;
-            // _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            // _context.Entry(job).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             _context.Update(job);
             _context.Update(user);
             _context.SaveChanges();
@@ -328,10 +366,10 @@ namespace Ecoset.WebUI.Services.Concrete
             return data;
         }
 
-        public async Task<Guid> SubmitDataPackage(DataPackage package, List<string> variables)
+        public async Task<Guid?> SubmitDataPackage(DataPackage package, List<AvailableVariable> variables)
         {
             var request = new JobSubmission() {
-                Title = package.Name,
+                Title = "Data Package API Request",
             	Description = "",
             	UserName = package.CreatedBy.UserName,
                 East = package.LongitudeEast,
@@ -340,14 +378,20 @@ namespace Ecoset.WebUI.Services.Concrete
                 South = package.LatitudeSouth,
                 Priority = 2
             };
-            var processorReference = await _processor.StartDataPackage(request, variables);
+
+            var processorReference = await _processor.StartDataPackage(request, package.DataRequestedTime, package.Year, package.Month, package.Day, variables.Select(v => v.Id).ToList());
+            if (String.IsNullOrEmpty(processorReference)) {
+                return null;
+            }
             package.JobProcessorReference = processorReference;
 
             _context.DataPackages.Add(package);
             _context.SaveChanges();
 
             var savedPackage = _context.DataPackages.First(j => j.JobProcessorReference == package.JobProcessorReference);
-            // _notifyService.AddUserNotification(NotificationLevel.Success, package, "Requested a data package using the API: {0}.", new[] { package.Name });
+            Hangfire.RecurringJob.AddOrUpdate("pkgstatus" + savedPackage.Id, () => UpdatePackageStatusAsync(package.Id), Cron.Minutely);
+
+            _notifyService.AddUserNotification(NotificationLevel.Success, package.CreatedBy.Id, "Requested a data package using the API: {0}.", new[] { package.Id.ToString() });
             return savedPackage.Id;
         }
 
@@ -379,7 +423,6 @@ namespace Ecoset.WebUI.Services.Concrete
             var package = _context.DataPackages.Include(m => m.CreatedBy).FirstOrDefault(m => m.Id == dataPackageId);
             if (package == null) throw new Exception("Data package does not exist");
             var data = await _processor.GetReportData(package.JobProcessorReference);
-            data.Title = package.Name;
             return data;
         }
 

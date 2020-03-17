@@ -7,6 +7,7 @@ namespace Ecoset.WebUI.Models {
         public string JobProcessorReference { get; set; }
         public string Name {get;set;}
         public string Description { get; set;}
+        public bool Hidden {get;set;}
         public JobStatus Status { get; set;}
         public double LatitudeSouth {get; set;}
         public double LatitudeNorth {get;set;}

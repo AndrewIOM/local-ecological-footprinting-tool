@@ -10,6 +10,9 @@ using Ecoset.WebUI.Services.Abstract;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using Ecoset.WebUI.Options;
+using System.Security.Claims;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace Ecoset.WebUI.Areas.API.Controllers {
 
@@ -22,16 +25,26 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         private readonly UserManager<ApplicationUser> _userManager;
         private IOutputPersistence _persistence;
         private ReportContentOptions _reportOptions;
+        private ISubscriptionService _subService;
+        private ILogger<DataPackageApiController> _logger;
+        private IDataRegistry _dataRegistry;
+
         public DataPackageApiController (
             IJobService jobService, 
             UserManager<ApplicationUser> userManager, 
             IOptions<ReportContentOptions> reportOptions,
             IOutputPersistence persistence,
-            INotificationService notifyService) {
+            INotificationService notifyService,
+            ILogger<DataPackageApiController> logger,
+            IDataRegistry dataRegistry,
+            ISubscriptionService subService) {
             _jobService = jobService;
             _userManager = userManager;
             _persistence = persistence;
             _reportOptions = reportOptions.Value;
+            _subService = subService;
+            _logger = logger;
+            _dataRegistry = dataRegistry;
         }
 
         /// <summary>
@@ -40,34 +53,53 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         /// <param name="model"></param>        
         [HttpPost]
         [Route("submit")]
-        public async Task<IActionResult> Submit(DataRequest request) {
-
+        public async Task<IActionResult> Submit([FromBody] DataRequest request) {
+            var variablesToRun = new List<AvailableVariable>();
             foreach (var variable in request.Variables) {
-                if (_reportOptions.ProReportSections.FirstOrDefault(m => m.Name == variable) == null) {
-                    ModelState.AddModelError("Variables", "The variable " + variable + " is not available");
+                var available = await _dataRegistry.IsAvailable(variable.Name, variable.Method);
+                if (available == null) {
+                    ModelState.AddModelError("Variables", "The variable " + variable.Name + " is not available");
+                } else {
+                    variablesToRun.Add(available);
                 }
             }
-
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
 
-            var user = await GetCurrentUserAsync();
-            var activePackages = _jobService.GetAllDataPackagesForUser(user.Id).ToList();
-            if (activePackages.Count > 0) {
-                return BadRequest("Your account is limited to one data package computation at a time");
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByNameAsync(userId.Value);
+            var allPackages = _jobService.GetAllDataPackagesForUser(user.Id).ToList();
+            var activeSub = _subService.GetActiveForUser(user.Id);
+            if (activeSub.RateLimit.HasValue) {
+                var runningCount = allPackages.Where(p => p.Status != JobStatus.Completed && p.Status != JobStatus.Failed).Count();
+                if (runningCount >= activeSub.RateLimit.Value) {
+                    return BadRequest("Your account is limited to " + activeSub.RateLimit.Value + " data package computation(s) at a time. You are currently running: " + runningCount);
+                }
+            }
+            if (activeSub.AnalysisCap.HasValue) {
+                var submittedTodayCount = allPackages.Where(p => p.TimeRequested < (DateTime.Now - TimeSpan.FromDays(1))).Count();
+                if (submittedTodayCount > activeSub.AnalysisCap.Value) {
+                    return BadRequest("You have reached your 24h limit of " + activeSub.AnalysisCap.Value + " data packages.");
+                }
             }
 
             var businessModel = new DataPackage() {
-                        Name = request.Name,
                         LatitudeSouth = request.LatitudeSouth.Value,
                         LatitudeNorth = request.LatitudeNorth.Value,
                         LongitudeEast = request.LongitudeEast.Value,
                         LongitudeWest = request.LongitudeWest.Value,
                         CreatedBy = user,
-                        TimeRequested = DateTime.UtcNow
+                        TimeRequested = DateTime.UtcNow,
+                        DataRequestedTime = request.DateMode,
+                        Year = request.Date == null ? null : new Nullable<int>(request.Date.Year),
+                        Month = request.Date == null ? null : request.Date.Month,
+                        Day = request.Date == null ? null : request.Date.Month
             };
-            var packageId = await _jobService.SubmitDataPackage(businessModel, request.Variables);
+            var packageId = await _jobService.SubmitDataPackage(businessModel, variablesToRun);
+            if (!packageId.HasValue) {
+                return StatusCode(500);
+            }
             return CreatedAtAction(nameof(DataPackage), new { id =  packageId });
         }
 
@@ -91,13 +123,13 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         /// </summary>
         /// <param name="model"></param>      
         [HttpGet]
-        [Route("retrieve")]
-        public async Task<IActionResult> Retrieve(Guid id) 
+        [Route("fetch")]
+        public async Task<IActionResult> Fetch(Guid id) 
         {
             var job = await _jobService.GetDataPackage(id);
             if (job == null) return NotFound("The data package does not exist");
 
-            var user = await GetCurrentUserAsync();
+            var user = await _userManager.GetUserAsync(User);
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
             if (!isAdmin && job.CreatedBy.Id != user.Id) return NotFound("The data package does not exist");
             if (job.Status != JobStatus.Completed) return BadRequest("This analysis has not yet completed");
@@ -105,30 +137,6 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
             var contents = _jobService.GetDataPackageData(id);
             return Json(contents);
         }
-
-        /// <summary>
-        /// Retrieve a zipped archive of the data package.
-        /// </summary>
-        /// <param name="id">A Data Package identifier</param>      
-        [HttpGet]
-        [Route("download")]
-        public IActionResult Download(Guid id) 
-        {
-            return BadRequest("This function has not been implemented in the preview");
-            // var job = _jobService.GetById(id);
-            // if (job == null) return BadRequest();
-            // if (job.Status != JobStatus.Completed) return BadRequest();
-
-            // var user = await GetCurrentUserAsync();
-            // var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-            // if (!isAdmin && job.CreatedBy.Id != user.Id) return BadRequest();
-
-            // var file = _persistence.GetProData(id);
-            // if (string.IsNullOrEmpty(file)) return NotFound();
-            // return PhysicalFile(file, "application/zip");
-        }
-
-        private async Task<ApplicationUser> GetCurrentUserAsync() => await _userManager.GetUserAsync(HttpContext.User);   
 
     }
 

@@ -15,8 +15,6 @@ namespace Ecoset.WebUI.Services.Abstract
         void StopJob(string processorJobId);
         Task<ReportData> GetReportData(string processorJobId);
         Task<List<Tuple<string,string,string>>> GetReportFiles(string processorJobId);
-
-        Task<List<Variable>> ListVariables();
-        Task<string> StartDataPackage(JobSubmission job, List<string> customVariables);
+        Task<string> StartDataPackage(JobSubmission job, RequestedTime dateMode, int? year, int? month, int? day, List<string> customVariables);
     }
 }

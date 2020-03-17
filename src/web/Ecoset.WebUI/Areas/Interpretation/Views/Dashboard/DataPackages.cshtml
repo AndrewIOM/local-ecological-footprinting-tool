@@ -10,7 +10,6 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Name</th>
                     <th>Status</th>
                     <th>Requested</th>
                     <th>Completed</th>
@@ -19,7 +18,6 @@
             <tbody>
             @foreach (var package in Model) {
                 <tr>
-                    <td>@package.Name</td>
                     <td>@package.Status</td>
                     <td>@package.TimeRequested</td>
                     <td>@package.TimeCompleted</td>

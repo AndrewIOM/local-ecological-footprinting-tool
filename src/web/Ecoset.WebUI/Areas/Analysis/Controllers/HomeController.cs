@@ -80,6 +80,18 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
         }
 
         [HttpPost]
+        public IActionResult Hide(int id)
+        {
+            var job = _jobService.GetById(id);
+            if (job == null) return BadRequest();
+
+            var userId = _userManager.GetUserId(HttpContext.User);
+            if (job.CreatedBy.Id != userId) return BadRequest();
+            var success = _jobService.HideJob(job.Id);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> ActivateProData(int id)
         {
             var job = _jobService.GetById(id);

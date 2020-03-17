@@ -75,6 +75,8 @@ namespace Ecoset.WebUI {
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<IJobService, JobService>();
             services.AddTransient<IJobProcessor, EcoSetJobProcessor>();
+            services.AddSingleton<IDataRegistry, EcosetDataRegistry>();
+            services.AddTransient<ISubscriptionService, SubscriptionService>();
             services.AddTransient<IPaymentService, WorldPayPaymentService>();
             services.AddTransient<INotificationService, NotificationService>(); 
             services.AddTransient<IDataFormatter, TiffDataFormatter>(); 
