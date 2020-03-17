@@ -299,10 +299,12 @@
                     var zonalValue = 1.0;
                     var representationString = "Unknown";
 
-                    var gbifCount = gbiflist.Data.Rows.FirstOrDefault(m => m["taxon"] == entry.Key);
-                    if (gbifCount != null && landMetresSquared != 0) {
-                      localValue = double.Parse(gbifCount["species"]) / System.Math.Pow((landMetresSquared * 0.000001), 0.2);
-                      localString = Math.Round(localValue, 2).ToString();
+                    if (gbiflist != null) {
+                      var gbifCount = gbiflist.Data.Rows.FirstOrDefault(m => m["taxon"] == entry.Key);
+                      if (gbifCount != null && landMetresSquared != 0) {
+                        localValue = double.Parse(gbifCount["species"]) / System.Math.Pow((landMetresSquared * 0.000001), 0.2);
+                        localString = Math.Round(localValue, 2).ToString();
+                      }
                     }
                     if(densityResultsZonal != null) {
                       zonalValue = densityResultsZonal.Data.Stats.Mean;
