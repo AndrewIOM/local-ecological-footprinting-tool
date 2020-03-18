@@ -63,15 +63,11 @@ namespace Ecoset.WebUI.Services.Concrete
         public IEnumerable<Job> GetAllForUser(string userId)
         {
             var user = _context.Users.Include(m => m.Jobs).ThenInclude(n => n.CreatedBy).FirstOrDefault(m => m.Id == userId);
-
             var result = new List<Job>();
             if (user == null) return result;
-
             foreach (var job in user.Jobs) {
                 if (!job.Hidden) result.Add(job);
             }
-
-            _context.SaveChanges();
             return result;
         }
 
@@ -102,6 +98,7 @@ namespace Ecoset.WebUI.Services.Concrete
             if (job == null) return false;
             job.Hidden = true;
             _context.Jobs.Update(job);
+            _context.SaveChanges();
             return true;
         }
 

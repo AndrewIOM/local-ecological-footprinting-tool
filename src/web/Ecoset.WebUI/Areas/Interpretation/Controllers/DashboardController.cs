@@ -5,6 +5,7 @@ using Ecoset.WebUI.Models;
 using Ecoset.WebUI.Models.DashboardViewModels;
 using Ecoset.WebUI.Services.Abstract;
 using System.Linq;
+using System;
 
 namespace Ecoset.WebUI.Areas.Interpretation.Controllers
 {
@@ -14,10 +15,12 @@ namespace Ecoset.WebUI.Areas.Interpretation.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private IJobService _jobService;
+        private ISubscriptionService _subService;
 
-        public DashboardController(UserManager<ApplicationUser> userManager, IJobService jobService) {
+        public DashboardController(UserManager<ApplicationUser> userManager, IJobService jobService, ISubscriptionService subService) {
             _userManager = userManager;
             _jobService = jobService;
+            _subService = subService;
         }
 
         public IActionResult Index()
@@ -26,6 +29,8 @@ namespace Ecoset.WebUI.Areas.Interpretation.Controllers
             var user = GetCurrentUserAsync();
             if (user == null) return BadRequest();
             model.UserName = user.FirstName + " " + user.Surname;
+            model.Subscription = _subService.GetActiveForUser(user.Id);
+            model.DataPackageCount = _jobService.GetAllDataPackagesForUser(user.Id).Where(d => DateTime.Now - d.TimeRequested < TimeSpan.FromDays(7)).Count();
             return View(model);
         }
         

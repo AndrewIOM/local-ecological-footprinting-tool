@@ -69,19 +69,8 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
 
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByNameAsync(userId.Value);
-            var allPackages = _jobService.GetAllDataPackagesForUser(user.Id).ToList();
-            var activeSub = _subService.GetActiveForUser(user.Id);
-            if (activeSub.RateLimit.HasValue) {
-                var runningCount = allPackages.Where(p => p.Status != JobStatus.Completed && p.Status != JobStatus.Failed).Count();
-                if (runningCount >= activeSub.RateLimit.Value) {
-                    return BadRequest("Your account is limited to " + activeSub.RateLimit.Value + " data package computation(s) at a time. You are currently running: " + runningCount);
-                }
-            }
-            if (activeSub.AnalysisCap.HasValue) {
-                var submittedTodayCount = allPackages.Where(p => p.TimeRequested < (DateTime.Now - TimeSpan.FromDays(1))).Count();
-                if (submittedTodayCount > activeSub.AnalysisCap.Value) {
-                    return BadRequest("You have reached your 24h limit of " + activeSub.AnalysisCap.Value + " data packages.");
-                }
+            if (!_subService.HasProcessingCapacity(user.Id)) {
+                return BadRequest("You have reache the limited of your current subscription");
             }
 
             var businessModel = new DataPackage() {

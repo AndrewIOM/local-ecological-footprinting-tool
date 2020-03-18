@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Ecoset.WebUI.Data;
@@ -17,10 +16,12 @@ namespace Ecoset.WebUI.Services.Concrete
         private readonly ApplicationDbContext _context;
         private readonly EcosetAppOptions _appOptions;
         private ILogger<SubscriptionService> _logger;
+        private TimeSpan _limitTime;
         public SubscriptionService(ILogger<SubscriptionService> logger, ApplicationDbContext context, IOptions<EcosetAppOptions> appOptions) {
             _logger = logger;
             _context = context;
             _appOptions = appOptions.Value;
+            _limitTime = TimeSpan.FromDays(1);
         }
 
         public ActiveSubscription GetActiveForUser(string userId) {
@@ -34,6 +35,40 @@ namespace Ecoset.WebUI.Services.Concrete
                 .AsEnumerable()
                 .FirstOrDefault(m => Regex.IsMatch(user.Email, m.EmailWildcard) && IsActiveSubscription(m.Subscription));
             return ConvertGroup(glob);
+        }
+
+        /// Determines whether the subscription allows a new analysis / data package, given
+        /// the user's analysis and data package history.
+        public bool HasProcessingCapacity(string userId)
+        {
+            var sub = GetActiveForUser(userId);
+            if (sub == null) return false;
+            
+            var recentAnalyses = _context.Jobs.Include(j => j.CreatedBy)
+                .Where(j => j.CreatedBy.Id == userId && j.Status != JobStatus.Failed)
+                .AsEnumerable().Where(j => (DateTime.Now - j.DateAdded) < _limitTime);
+            var recentPackages = _context.DataPackages.Include(j => j.CreatedBy)
+                .Where(j => j.CreatedBy.Id == userId && j.Status != JobStatus.Failed)
+                .AsEnumerable().Where(j => (DateTime.Now - j.TimeRequested) < _limitTime);
+
+            if (sub.RateLimit.HasValue) {
+                var concurrentAnalyses = _context.Jobs.Include(j => j.CreatedBy)
+                    .Where(j => j.CreatedBy.Id == userId && j.Status != JobStatus.Failed && j.Status != JobStatus.Completed);
+                var concurrentPackages = _context.DataPackages.Include(j => j.CreatedBy)
+                    .Where(j => j.CreatedBy.Id == userId && j.Status != JobStatus.Failed && j.Status != JobStatus.Completed);
+                if (concurrentAnalyses.Count() + concurrentPackages.Count() >= sub.RateLimit.Value) {
+                    return false;
+                }
+                if (sub.AnalysisCap.HasValue) {
+                    if (recentAnalyses.Count() + recentPackages.Count() >= sub.AnalysisCap.Value) return false;
+                }
+                return true;
+            } else {
+                if (sub.AnalysisCap.HasValue) {
+                    if (recentAnalyses.Count() + recentPackages.Count() >= sub.AnalysisCap.Value) return false;
+                }
+                return true;
+            }
         }
 
         public void Revoke(Guid subscriptionId) {

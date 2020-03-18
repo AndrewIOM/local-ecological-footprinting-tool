@@ -23,19 +23,23 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
         private IOutputPersistence _persistence;
         private IReportGenerator _reportGenerator;
         private EcosetAppOptions _options;
+        private ISubscriptionService _subService;
+
         public HomeController(
             IJobService jobService, 
             UserManager<ApplicationUser> userManager, 
             IReportGenerator reportGenerator,
             IOutputPersistence persistence,
             IOptions<EcosetAppOptions> options,
-            INotificationService notifyService) {
+            INotificationService notifyService,
+            ISubscriptionService subService) {
             _jobService = jobService;
             _userManager = userManager;
             _notifyService = notifyService;
             _persistence = persistence;
             _reportGenerator = reportGenerator;
             _options = options.Value;
+            _subService = subService;
         }
 
         public IActionResult Index()
@@ -102,7 +106,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
                 return BadRequest("The analysis specified has already been activated with pro data.");
             }
 
-            var user = GetCurrentUserAsync();
+            var user = await GetCurrentUserAsync();
             if (job.CreatedBy.Id != user.Id) return BadRequest();
 
             var success = await _jobService.ActivateProFeatures(id, user.Id);
@@ -128,6 +132,12 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
                 return View(result);
             }
 
+            var user = await GetCurrentUserAsync();
+            if (!_subService.HasProcessingCapacity(user.Id)) {
+                ModelState.AddModelError("subscription", "You have reached the llimits of your current subscription");
+                return View(result);
+            }
+
             var businessModel = new Job() {
                         Name = result.Name,
                         Description = result.Description,
@@ -135,7 +145,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
                         LatitudeNorth = result.LatitudeNorth.Value,
                         LongitudeEast = result.LongitudeEast.Value,
                         LongitudeWest = result.LongitudeWest.Value,
-                        CreatedBy = GetCurrentUserAsync(),
+                        CreatedBy = user,
                         DateAdded = DateTime.Now
             };
             var jobSuccess = await _jobService.SubmitJob(businessModel);
@@ -149,8 +159,9 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
             return RedirectToAction("Index");
         }
 
-        public IEnumerable<JobListItemViewModel> MyJobs() {
-            var result = _jobService.GetAllForUser(GetCurrentUserAsync().Id)
+        public async Task<IEnumerable<JobListItemViewModel>> MyJobs() {
+            var user = await GetCurrentUserAsync();
+            var result = _jobService.GetAllForUser(user.Id)
                 .Select(m => new JobListItemViewModel() {
                     Name = m.Name,
                     LatitudeNorth = m.LatitudeNorth,
@@ -178,7 +189,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
             if (job == null) return BadRequest();
             if (job.Status != JobStatus.Completed && job.Status != JobStatus.GeneratingOutput) return BadRequest();
 
-            var user = GetCurrentUserAsync();
+            var user = await GetCurrentUserAsync();
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
             if (!isAdmin && job.CreatedBy.Id != user.Id) return BadRequest();
 
@@ -193,7 +204,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
             if (job == null) return BadRequest();
             if (job.Status != JobStatus.Completed) return BadRequest();
 
-            var user = GetCurrentUserAsync();
+            var user = await GetCurrentUserAsync();
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
             if (!isAdmin && job.CreatedBy.Id != user.Id) return BadRequest();
 
@@ -202,6 +213,6 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
             return PhysicalFile(file, "application/zip");
         }
 
-        private ApplicationUser GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User).Result; //TODO Assess blocking       
+        private async Task<ApplicationUser> GetCurrentUserAsync() => await _userManager.GetUserAsync(HttpContext.User);
     }
 }

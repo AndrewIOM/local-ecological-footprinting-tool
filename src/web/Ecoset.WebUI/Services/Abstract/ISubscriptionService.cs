@@ -7,6 +7,7 @@ namespace Ecoset.WebUI.Services.Abstract
     {
         ActiveSubscription GetActiveForUser(string userId);
         void Revoke(System.Guid subsciptionId);
+        bool HasProcessingCapacity(string userId);
     }
 
     public class ActiveSubscription 
