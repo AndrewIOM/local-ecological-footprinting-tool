@@ -281,7 +281,6 @@
           <div class="row">
             <div class="col-sm-12">
               <h2>Introduction</h2>
-              <hr/>
             </div>
           </div>
           <div class="row">
@@ -512,107 +511,41 @@
             <div class="col-md-12">
               <h2>DATA ASSURANCE: <small>Comparison to Other Regions (COAM)</small></h2>
               <p>To appreciate the importance of the ecological values obtained for the specified area of interest relative to other regions, a 'compared to other areas metric' (COAM) was calculated. This metric used the polygons of the WWF Terrestrial Ecoregion Classification (Olson et al, 2001) to identify zones ecologically similar to the area of interest. Zonal statistics were then used to assess the importance of each LEFT layer relative to the same measure over the entire ecoregion. For each layer, the difference in standard scores between the area of interest and the broader ecoregions is presented in the following chart. This shows whether a study area is relatively more or less ecologically valuable than other regions with similar biogeographic characterisitics.</p>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Layer</th>
-                    <th>Min</th>
-                    <th>Max</th>
-                    <th>Mean</th>
-                    <th>SD</th>
-                    <th>Ref. Mean</th>
-                    <th>Ref. SD</th>
-                  </tr>
-                </thead>
-                @foreach (var result in Model.RawResults.Where(m => !m.Name.Contains("species_density_"))) {
-                  <tr>
-                    <td>@prettyTitles[result.Name]</td>
-                    <td>@result.Data.Stats.Min</td>
-                    <td>@result.Data.Stats.Max</td>
-                    <td>@result.Data.Stats.Mean</td>
-                    <td>@result.Data.Stats.StdDev</td>
-                    @{
-                      var foundmean = false;
-                      var foundstdev = false;
-                      var refmean = "";
-                      var refstdev = "";
-                      var prefix = result.Name;
-                      var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == prefix + "_zonalmean");
-                      var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == prefix + "_zonalstdev");
-                    }
-                    @if (tableStatsResultsMean != null) {
-                      refmean = (Math.Round(tableStatsResultsMean.Data.Stats.Mean / 1, 3)).ToString();
-                      foundmean = true;
-                    }
-
-                    @if (tableStatsResultsStdev != null) {
-                      refstdev = (Math.Round(tableStatsResultsStdev.Data.Stats.Mean / 1, 3)).ToString();
-                      foundstdev = true;
-                    }
-                    @if (foundmean) {
-                      <td>@refmean</td>
-                    } else {
-                      <td>Unknown</td>
-                    }
-                    @if (foundstdev) {
-                      <td>@refstdev</td>
-                    } else {
-                      <td>Unknown</td> 
-                    }
-                  </tr>
-                }
-              </table>
-            </div>
-          </div>
-
-        @{
-          var coamContext = new List<string>() { "", "" };
-          var coamBiodiversity = new List<string>() { "", "" };
-          var coamCompetingUses = new List<string>() { "", "" };
-          var coamProcesses = new List<string>() { "", "" };
-          var coamThreats = new List<string>() { "", "" };
-        }
-
-          <div class="row justify-content-center">
-            <div class="col-md-8">
-              <svg id="coam-graph" width="800" height="300"></svg>
-              <script>
-                $(function() { 
-                  var data = [];
-                  @foreach (var result in Model.RawResults) {
-                      var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalmean");
-                      var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
-                      if(tableStatsResultsMean != null && tableStatsResultsStdev != null) {
-                        var localMean = result.Data.Stats.Mean;
-                        var localStdev = result.Data.Stats.StdDev;
-                        var zonalMeanScaled = tableStatsResultsMean.Data.Stats.Mean / 1;
-                        var zonalStdevScaled = tableStatsResultsStdev.Data.Stats.Mean / 1;
-                        var z = (localMean - zonalMeanScaled) / zonalStdevScaled;
-                        var sd = localStdev / zonalStdevScaled;
-                        <text>
-                        data.push({
-                          "name": "@prettyTitles[result.Name]",
-                          "value": @z,
-                          "sd": @sd
-                        });
-                        </text>
-                      }
-                  }
-                  drawCoamGraph(data);
-                });
-              </script>
-              <p>Table and chart indicating the importance of the area of interest relative to the reference region for each layer (standard scores +/- uncertainty in standard scores). If a layer has a positive standard score then the area of interest is more important than the reference region; a layer with a negative standard score is less important in the study area than in the reference region.</p>
+              @{
+                var coamContext = new List<string>() { "sea_depth", "benthic_roughness", "protected_areas" };
+                var coamBiodiversity = new List<string>() { "vulnerability", "migratory_count" };
+                var coamCompetingUses = new List<string>() { "shipping_density", "fish_catches", "windpower_potential", "wavepower_potential", "aquaculture_potential" };
+                var coamProcesses = new List<string>() { "sst", "sst_fronts", "salinity", "npp", "sea_ice", "currents", "tides", "sea_state" };
+                var coamThreats = new List<string>() { "sst_trend", "coral_bleaching", "acidification", "sea_level_rise", "invasive_species" };
+              }
+              <h3>Context compared to other areas</h3>
+              @{ CoamGraph(coamContext); }
             </div>
           </div>
         </div>
-
+        <div class="report-section">
+            <h3>Biodiversity compared to other areas</h3>
+            @{ CoamGraph(coamBiodiversity); }
+        </div>
+        <div class="report-section">
+            <h3>Competing uses compared to other areas</h3>
+            @{ CoamGraph(coamCompetingUses); }
+        </div>
+        <div class="report-section">
+            <h3>Processes compared to other areas</h3>
+            @{ CoamGraph(coamProcesses); }
+        </div>
+        <div class="report-section">
+            <h3>Threats compared to other areas</h3>
+            @{ CoamGraph(coamThreats); }
+        </div>
 
         @* Section 9. References *@
         <div class="report-section">
           <div class="row">
             <div class="col-sm-12">
               
-              <h3>References</h3>
+              <h2>References</h2>
               <ul class="reference-list">
                 <li>
                   Brasnett B (2008) The impact of satellite retrievals in a global sea-surface-temperature analysis. Quarterly Journal of the Royal Meteorological Society 134: 1745-1760.                </li>
@@ -719,7 +652,6 @@
             <div class="col-sm-12">
               <div id="vulnerable-species" class="appendix">
                 <h2>Appendix 2 - Vulnerable species</h2>
-                <hr/>
                 <p>The IUCN Redlist of Threatened Species (IUCN 2018) includes the following species of corals, fish, turtles, sea birds and marine mammals that have been modelled to be potentially present in the specified area of interest (NT = Near Threatened, VU = Vulnerable, EN = Endangered, CR = Critically Endangered)</p>
                 <ul id="vulnerable_species_names" class="list-group row appendix-list">
                   @{
@@ -784,6 +716,89 @@
 
 
 @{
+    void CoamGraph(List<string> variables) {
+      var graphId = "coam-" + Guid.NewGuid().ToString();
+      var variablesToDraw = Model.RawResults.Where(r => variables.Contains(r.Name));
+      var height = 75 * variablesToDraw.Count();
+      <svg id="@graphId" width="800" height="@height"></svg>
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Min</th>
+            <th>Max</th>
+            <th>Mean</th>
+            <th>SD</th>
+            <th>Ref. Mean</th>
+            <th>Ref. SD</th>
+          </tr>
+        </thead>
+        @foreach (var result in variablesToDraw) {
+          <tr>
+            <td>@prettyTitles[result.Name]</td>
+            <td>@result.Data.Stats.Min</td>
+            <td>@result.Data.Stats.Max</td>
+            <td>@result.Data.Stats.Mean</td>
+            <td>@result.Data.Stats.StdDev</td>
+            @{
+              var foundmean = false;
+              var foundstdev = false;
+              var refmean = "";
+              var refstdev = "";
+              var prefix = result.Name;
+              var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == prefix + "_zonalmean");
+              var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == prefix + "_zonalstdev");
+            }
+            @if (tableStatsResultsMean != null) {
+              refmean = (Math.Round(tableStatsResultsMean.Data.Stats.Mean / 1, 3)).ToString();
+              foundmean = true;
+            }
+
+            @if (tableStatsResultsStdev != null) {
+              refstdev = (Math.Round(tableStatsResultsStdev.Data.Stats.Mean / 1, 3)).ToString();
+              foundstdev = true;
+            }
+            @if (foundmean) {
+              <td>@refmean</td>
+            } else {
+              <td>Unknown</td>
+            }
+            @if (foundstdev) {
+              <td>@refstdev</td>
+            } else {
+              <td>Unknown</td> 
+            }
+          </tr>
+        }
+      </table>
+      <script>
+        $(function() { 
+          var data = [];
+          @foreach (var result in variablesToDraw) {
+              var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalmean");
+              var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
+              if(tableStatsResultsMean != null && tableStatsResultsStdev != null) {
+                var localMean = result.Data.Stats.Mean;
+                var localStdev = result.Data.Stats.StdDev;
+                var zonalMeanScaled = tableStatsResultsMean.Data.Stats.Mean / 1;
+                var zonalStdevScaled = tableStatsResultsStdev.Data.Stats.Mean / 1;
+                var z = (localMean - zonalMeanScaled) / zonalStdevScaled;
+                var sd = localStdev / zonalStdevScaled;
+                <text>
+                data.push({
+                  "name": "@prettyTitles[result.Name]",
+                  "value": @z,
+                  "sd": @sd
+                });
+                </text>
+              }
+          }
+          drawCoamGraph('@graphId', data);
+        });
+      </script>
+      <p>Table and chart indicating the importance of the area of interest relative to the reference region for each layer (standard scores +/- uncertainty in standard scores). If a layer has a positive standard score then the area of interest is more important than the reference region; a layer with a negative standard score is less important in the study area than in the reference region.</p>
+    }
+
     void MapPage(string variableId)
     {
       var paletteUrl = hasPalette[variableId] ? "/palettes/" + variableId + ".json" : null;
@@ -811,7 +826,7 @@
         </div>
         <div class="col-sm-7">
         <div id="@variableId-map" class="section-map"></div>
-        <p>@mapLegend[variableId]</p>
+        <p class="map-caption">@mapLegend[variableId]</p>
         </div>
       </div>
       <div class="create-script">
@@ -832,7 +847,7 @@
             var plot = new SpatialPlot("@executableResult.Name", {north:north, south:south, east:east, west:west});
             plot.setup();
             plot.addGraticule();
-            plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), @executableResult.Data.NoDataValue, "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name]);
+            plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), NaN, "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name]);
             plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
           });
         </script>

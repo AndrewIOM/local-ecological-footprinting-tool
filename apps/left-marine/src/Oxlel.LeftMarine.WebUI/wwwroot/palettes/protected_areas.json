@@ -1,5 +1,5 @@
 [ 
 {"value": 0,"R": 194,"G": 194,"B": 194,"class": "Land"}, 
-{"value": 1,"R": 250,"G": 231,"B": 36,"class": "Marine protected area"}, 
-{"value": 2,"R": 68,"G": 2,"B": 86,"class": "Not marine protected area"}
+{"value": 1,"R": 244,"G": 255,"B": 122,"class": "Marine protected area"}, 
+{"value": 2,"R": 13,"G": 17,"B": 120,"class": "Not marine protected area"}
 ] 

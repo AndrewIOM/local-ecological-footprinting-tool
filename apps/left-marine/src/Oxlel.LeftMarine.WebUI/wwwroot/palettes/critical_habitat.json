@@ -1,5 +1,5 @@
 [ 
     {"value": 255,"R": 194,"G": 194,"B": 194,"class": "Land"}, 
-    {"value": 1,"R": 250,"G": 231,"B": 36,"class": "Critical habitat"}, 
-    {"value": 0,"R": 68,"G": 2,"B": 86,"class": "Not critical habitat"}
-] 
+    {"value": 1,"R": 201,"G": 30,"B": 30,"class": "Critical habitat"}, 
+    {"value": 0,"R": 43,"G": 107,"B": 171,"class": "Not critical habitat"}
+]

@@ -213,20 +213,18 @@ var SpatialPlot = function (id, extent) {
             var max = _.max(allData_dataOnly);
             var min = _.min(allData_dataOnly);
             var valueRange = max - min;
+            var tickSize = 1000.00;
             var arr_points = [];
-            for (var i = 0; i < valueRange+1; i++) {
-                arr_points.push(i);
-            };
-            var arr_points_d = arr_points.map(function (n) {
+            for (var i = 1; i <= tickSize; i++) {
                 if (valueRange == 0) {
-                    return 0.5;
+                    arr_points.push((tickSize / 2.0) / tickSize);
                 } else {
-                    return n / valueRange;
+                    arr_points.push(i / tickSize);
                 }
-            });
-            var arr_values = arr_points_d.map(getColor);
+            };
+            var arr_values = arr_points.map(getColor);
             var domain = _.map(arr_points, function (x) {
-                return x + min;
+                return (x * valueRange) + min;
             });
             var scale = null;
             if (arr_points.length == 1) { scale = (function(n) { return d3.color(arr_values[0]).toString(); }) } 
@@ -337,7 +335,11 @@ var SpatialPlot = function (id, extent) {
         var tickSize = 200.00;
         var arr_points = [];
         for (var i = 1; i <= tickSize; i++) {
-            arr_points.push(i / tickSize);
+            if (max - min == 0) {
+                arr_points.push((tickSize / 2.0) / tickSize);
+            } else {
+                arr_points.push(i / tickSize);
+            }
         };
         var arr_values = arr_points.map(getColor);
         var cs_def = {
@@ -533,9 +535,9 @@ var drawGlobalPinpointMap = function (svgId, n, s, e, w) {
     });
 }
 
-var drawCoamGraph = function (data) {
+var drawCoamGraph = function (coamSvgId, data) {
 
-    var svg = d3.select("#coam-graph"),
+    var svg = d3.select("#" + coamSvgId),
         margin = {
             top: 20,
             right: 100,
