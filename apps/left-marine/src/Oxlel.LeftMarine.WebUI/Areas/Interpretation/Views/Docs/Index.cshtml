@@ -1,3 +1,7 @@
+@using Ecoset.WebUI
+@using Ecoset.WebUI.Options
+@using Microsoft.Extensions.Options
+@inject IOptions<EcosetAppOptions> siteConfig
 @{
     ViewData["Title"] = "Documentation";
 }
@@ -111,11 +115,10 @@
         <p>LEFT can optionally generate an archive of the underlying data shown in your report. You may request the archive on the analysis page of interest within your dashboard.</p>
         <br/>
 
-
         <h3 id="api-overview">Custom Data Packages</h3>
         <hr/>
         <p>You can query LEFT programatically to obtain one or many of LEFT's data sources along custom spatial-temporal dimensions. </p>
-        <div class="alert alert-info" role="alert">Please note that Data Packages are size- and rate-limited. You may only request two packages concurrently; the maximum area is ten decimal degrees squared.</div>
+        <div class="alert alert-info" role="alert">Please note that Data Packages are size- and rate-limited. You may only request @siteConfig.Value.GlobalRateLimit packages concurrently, up to @siteConfig.Value.GlobalAnalysisCap per day. The maximum area is ten decimal degrees squared.</div>
 
         <h4 id="api-docs">API Documentation</h4>
         <div class="row">

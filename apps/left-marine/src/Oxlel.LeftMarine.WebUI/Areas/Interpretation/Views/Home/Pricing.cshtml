@@ -1,3 +1,7 @@
+@using Ecoset.WebUI
+@using Ecoset.WebUI.Options
+@using Microsoft.Extensions.Options
+@inject IOptions<EcosetAppOptions> siteConfig
 @{
     ViewData["Title"] = "Pricing";
 }
@@ -6,7 +10,6 @@
 <br/>
 <h2>Marine LEFT is free of charge</h2>
 
-
 <div class="row">
     <div class="col-md-3 col-md-push-3">
         <div class="panel panel-primary pricing-panel" style="border-color: lightgrey;">
@@ -14,28 +17,29 @@
                 <h3 class="panel-title"><h3>Free</h3></h3>
             </div>
             <div class="panel-body">
-            <p>Analyse a seascape up to ten decimal degrees squared. Each analysis includes:</p>
-            
-            <ul>
-            <li style="line-height: 2em;">One Marine LEFT Report</li><li style="line-height: 2em;">Download of Underlying Data</li>
-            </ul><p>Programmatic access to data products using the LEFT API.</p>
-            <a class="btn btn-default btn-lg" asp-action="Index" asp-controller="Dashboard">Get Started</a>
+                <p>Analyse a seascape up to ten decimal degrees squared. Each analysis includes:</p>    
+                <ul>
+                    <li style="line-height: 2em;">One Marine LEFT Report</li><li style="line-height: 2em;">Download of Underlying Data</li>
+                    <li style="line-height: 2em;">API for custom data packages</li>
+                </ul>
+                <p style="/*! color: red; */font-size: 0.75em;">Note. Free accounts are limited to processing @siteConfig.Value.GlobalRateLimit analyses at a time, up to @siteConfig.Value.GlobalAnalysisCap per day.</p>
+                <a class="btn btn-default btn-lg" asp-action="Index" asp-controller="Dashboard">Get Started</a>
             </div>
         </div>
     </div>
-</div>
-<div class="col-md-3 col-md-push-3">
+    
+    <div class="col-md-3 col-md-push-3">
         <div class="panel panel-primary pricing-panel" style="border-color: lightgrey;">
             <div class="panel-heading" style="background-color: #03326883;border-color:lightgray;color:black;height:6em;">
-                <h3 class="panel-title"></h3><h3>Backer</h3>
+                <h3 class="panel-title"></h3><h3>Subscriber<p style="font-size: 0.75em;margin-top: 0.25em;">Personal or Organisation</p></h3>
             </div>
             <div class="panel-body">
-            <p>Analyse a seascape up to ten decimal degrees squared. Each analysis includes:</p>
-            
-            <ul>
-            <li style="line-height: 2em;">One Marine LEFT Report</li><li style="line-height: 2em;">Download of Underlying Data</li>
-            </ul><p>Programmatic access to data products using the LEFT API.</p>
-            <a class="btn btn-default btn-lg" asp-action="Index" asp-controller="Dashboard">Inquire</a>
+                <p>Analyse a seascape up to ten decimal degrees squared. Each analysis includes:</p>   
+                <ul>
+                    <li style="line-height: 2em;">One Marine LEFT Report</li><li style="line-height: 2em;">Download of Underlying Data</li>
+                    <li style="line-height: 2em;">API for custom data packages</li><li style="line-height: 1.35em;">Greater concurrency to suit your organisation</li>
+                </ul>
+                <a class="btn btn-default btn-lg" asp-action="Contact" asp-controller="Home">Inquire</a>
             </div>
         </div>
     </div>

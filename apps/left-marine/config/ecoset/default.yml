@@ -102,6 +102,36 @@ variables:
                     tiledir: /data/marineprotectedareas
                     nodata: -9999
 
+    - protected_areas_zonalmean:
+        name: "Zonal Mean: Marine Protected Areas"
+        description: ""
+        unit: area name
+        methods:
+            - default:
+                name: "World Database of Protected Areas (WDPA)"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/marineprotectedareas/zonal
+                    nodata: -9999
+
+    - protected_areas_zonalstdev:
+        name: "Zonal Stdev: Marine Protected Areas"
+        description: ""
+        unit: area name
+        methods:
+            - default:
+                name: "World Database of Protected Areas (WDPA)"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/marineprotectedareas/zonalsd
+                    nodata: -9999
+
     - sea_depth:
         name: "Sea Depth"
         description: "A global map of sea depth in metres."
@@ -117,6 +147,36 @@ variables:
                     tiledir: /data/seadepth
                     nodata: 0
 
+    - sea_depth_zonalmean:
+        name: "Sea Depth: Zonal mean"
+        description: "Zonal mean"
+        unit: metres below sea level
+        methods:
+            - default:
+                name: "General Bathymetric Chart of the Oceans (GEBCO)"
+                description: "Weatherall et al 2015"
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/seadepth/zonal
+                    nodata: 0
+
+    - sea_depth_zonalstdev:
+        name: "Sea Depth: Zonal standard deviation"
+        description: "Zonal mean"
+        unit: metres below sea level
+        methods:
+            - default:
+                name: "General Bathymetric Chart of the Oceans (GEBCO)"
+                description: "Weatherall et al 2015"
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/seadepth/zonalsd
+                    nodata: 0
+
     - sea_state:
         name: "Sea State"
         description: ""
@@ -130,6 +190,38 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/seastate
+                    nodata: -9999
+                    scalefactor: 0.01
+
+    - sea_state_zonalmean:
+        name: "Zonal Mean: Sea State"
+        description: ""
+        unit: metres
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/seastate/zonal
+                    nodata: -9999
+                    scalefactor: 0.01
+
+    - sea_state_zonalsd:
+        name: "Zonal Stdev: Sea State"
+        description: ""
+        unit: metres
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/seastate/zonalsd
                     nodata: -9999
                     scalefactor: 0.01
 
@@ -163,6 +255,36 @@ variables:
                     tiledir: /data/vulnerability
                     nodata: -999
 
+    - vulnerability_zonalmean:
+        name: "Zonal Mean: Vulnerable Species"
+        description: "Globally threatened species"
+        unit: number of distinct species
+        methods:
+            - default:
+                name: "IUCN Red List"
+                description: "The IUCN Red List of Threatened Species (IUCN 2018) was used to findthe names and threat categories of species in the specified area ofinterest. All corals, fish, sea birds, marine mammals and turtlesdetermined by the IUCN to be Critically Endangered (CR), Endangered(EN), Vulnerable (VU) or Near Threatened (NT) were extracted"
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/vulnerability/zonal
+                    nodata: -999
+
+    - vulnerability_zonalstdev:
+        name: "Zonal Stdev: Vulnerable Species"
+        description: "Globally threatened species"
+        unit: number of distinct species
+        methods:
+            - default:
+                name: "IUCN Red List"
+                description: "The IUCN Red List of Threatened Species (IUCN 2018) was used to findthe names and threat categories of species in the specified area ofinterest. All corals, fish, sea birds, marine mammals and turtlesdetermined by the IUCN to be Critically Endangered (CR), Endangered(EN), Vulnerable (VU) or Near Threatened (NT) were extracted"
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/vulnerability/zonalsd
+                    nodata: -999
+
     - migratory_count:
         name: "Number of Migratory Species"
         description: ""
@@ -176,6 +298,36 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/migratory_count
+                    nodata: -999
+
+    - migratory_count_zonalmean:
+        name: "Zonal Mean: Number of Migratory Species"
+        description: ""
+        unit: number of migratory species
+        methods:
+            - default:
+                name: "GROMS"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/migratory_count/zonal
+                    nodata: -999
+
+    - migratory_count_zonalstdev:
+        name: "Zonal Stdev: Number of Migratory Species"
+        description: ""
+        unit: number of migratory species
+        methods:
+            - default:
+                name: "GROMS"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/migratory_count/zonalsd
                     nodata: -999
 
     - critical_habitat:
@@ -208,6 +360,36 @@ variables:
                     tiledir: /data/shippingdensity
                     nodata: 255
 
+    - shipping_density_zonalmean:
+        name: "Zonal Mean: Shipping Density"
+        description: ""
+        unit: ships per hectare
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/shippingdensity/zonal
+                    nodata: 255
+
+    - shipping_density_zonalstdev:
+        name: "Zonal Stdev: Shipping Density"
+        description: ""
+        unit: ships per hectare
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/shippingdensity/zonalsd
+                    nodata: 255
+
     - fish_catches:
         name: "Fish Catches"
         description: ""
@@ -221,6 +403,36 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/fishcatches
+                    nodata: -999
+
+    - fish_catches_zonalmean:
+        name: "Zonal Mean: Fish Catches"
+        description: ""
+        unit: tonnes per hectare
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/fishcatches/zonal
+                    nodata: -999
+
+    - fish_catches_zonalstdev:
+        name: "Zonal Stdev: Fish Catches"
+        description: ""
+        unit: tonnes per hectare
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/fishcatches/zonalsd
                     nodata: -999
 
     - aquaculture_potential:
@@ -238,6 +450,36 @@ variables:
                     tiledir: /data/aquaculture
                     nodata: 255
 
+    - aquaculture_potential_zonalmean:
+        name: "Zonal Mean: Aquaculture potential"
+        description: ""
+        unit: potential score
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/aquaculture/zonal
+                    nodata: 255
+
+    - aquaculture_potential_zonalstdev:
+        name: "Zonal Stdev: Aquaculture potential"
+        description: ""
+        unit: potential score
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/aquaculture/zonalsd
+                    nodata: 255
+
     - windpower_potential:
         name: "Windpower potential"
         description: ""
@@ -251,6 +493,38 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/windpower
+                    nodata: 255
+
+
+    - windpower_potential_zonalmean:
+        name: "Zonal Mean: Windpower potential"
+        description: ""
+        unit: potential score
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/windpower/zonal
+                    nodata: 255
+
+
+    - windpower_potential_zonalstdev:
+        name: "Zonal Stdev: Windpower potential"
+        description: ""
+        unit: potential score
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/windpower/zonalsd
                     nodata: 255
 
     - wavepower_potential:
@@ -268,6 +542,36 @@ variables:
                     tiledir: /data/wavepower
                     nodata: 255
 
+    - wavepower_potential_zonalmean:
+        name: "Zonal Mean: Wavepower potential"
+        description: ""
+        unit: potential score
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/wavepower/zonal
+                    nodata: 255
+
+    - wavepower_potential_zonalstdev:
+        name: "Zonal Stdev: Wavepower potential"
+        description: ""
+        unit: potential score
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/wavepower/zonalsd
+                    nodata: 255
+
     - sea_ice:
         name: "Sea Ice"
         description: ""
@@ -281,6 +585,38 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/seaice
+                    nodata: 255
+                    scalefactor: 0.01
+
+    - sea_ice_zonalmean:
+        name: "Zonal Mean: Sea Ice"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/seaice/zonal
+                    nodata: 255
+                    scalefactor: 0.01
+
+    - sea_ice_zonalstdev:
+        name: "Zonal Stdev: Sea Ice"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/seaice/zonalsd
                     nodata: 255
                     scalefactor: 0.01
 
@@ -300,6 +636,38 @@ variables:
                     nodata: -9999
                     scalefactor: 0.001
 
+    - tides_zonalmean:
+        name: "Zonal Mean: Tides"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/tides/zonal
+                    nodata: -9999
+                    scalefactor: 0.001
+
+    - tides_zonalstdev:
+        name: "Zonal Stdev: Tides"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/tides/zonalsd
+                    nodata: -9999
+                    scalefactor: 0.001
+
     - npp:
         name: "Net Primary Productivity"
         description: ""
@@ -313,6 +681,38 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/npp
+                    nodata: 255
+                    scalefactor: 0.001
+
+    - npp_zonalmean:
+        name: "Zonal Mean: Net Primary Productivity"
+        description: ""
+        unit: unknown
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/npp/zonal
+                    nodata: 255
+                    scalefactor: 0.001
+
+    - npp_zonalstdev:
+        name: "Zonal Stdev: Net Primary Productivity"
+        description: ""
+        unit: unknown
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/npp/zonalsd
                     nodata: 255
                     scalefactor: 0.001
 
@@ -331,6 +731,36 @@ variables:
                     tiledir: /data/sst
                     nodata: 255
 
+    - sst_zonalmean:
+        name: "Zonal Mean: Sea Surface Temperature"
+        description: ""
+        unit: degrees Celsius
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/sst/zonal
+                    nodata: 255
+
+    - sst_zonalstdev:
+        name: "Zonal Stdev: Sea Surface Temperature"
+        description: ""
+        unit: degrees Celsius
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/sst/zonalsd
+                    nodata: 255
+
     - sst_trend:
         name: "Sea Surface Temperature Trend"
         description: ""
@@ -344,6 +774,36 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/ssttrend
+                    nodata: -9999
+
+    - sst_trend_zonalmean:
+        name: "Zonal Mean: Sea Surface Temperature Trend"
+        description: ""
+        unit: degrees Celsius per year
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/ssttrend/zonal
+                    nodata: -9999
+
+    - sst_trend_zonalstdev:
+        name: "Zonal Stdev: Sea Surface Temperature Trend"
+        description: ""
+        unit: degrees Celsius per year
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/ssttrend/zonalsd
                     nodata: -9999
 
     - sst_fronts:
@@ -361,6 +821,36 @@ variables:
                     tiledir: /data/sstfronts
                     nodata: 255  
 
+    - sst_fronts_zonalmean:
+        name: "Zonal Mean: Sea Surface Temperature Fronts"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/sstfronts/zonal
+                    nodata: 255  
+
+    - sst_fronts_zonalstdev:
+        name: "Zonal Stdev: Sea Surface Temperature Fronts"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/sstfronts/zonalsd
+                    nodata: 255
+
     - salinity:
         name: "Sea Surface Salinity"
         description: ""
@@ -374,6 +864,38 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/salinity
+                    nodata: -9999
+                    scalefactor: 0.01
+
+    - salinity_zonalmean:
+        name: "Zonal Mean: Sea Surface Salinity"
+        description: ""
+        unit: effective salinity units
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/salinity/zonal
+                    nodata: -9999
+                    scalefactor: 0.01
+
+    - salinity_zonalstdev:
+        name: "Zonal Stdev: Sea Surface Salinity"
+        description: ""
+        unit: effective salinity units
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/salinity/zonalsd
                     nodata: -9999
                     scalefactor: 0.01
 
@@ -393,6 +915,38 @@ variables:
                     nodata: -9999
                     scalefactor: 0.001
 
+    - currents_zonalmean:
+        name: "Ocean Currents"
+        description: ""
+        unit: unknown
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/currents/zonal
+                    nodata: -9999
+                    scalefactor: 0.001
+
+    - currents_zonalstdev:
+        name: "Ocean Currents"
+        description: ""
+        unit: unknown
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/currents/zonalsd
+                    nodata: -9999
+                    scalefactor: 0.001
+
     - benthic_roughness:
         name: "Benthic Roughness"
         description: ""
@@ -408,6 +962,37 @@ variables:
                     tiledir: /data/benthicroughness
                     nodata: -9999
 
+    - benthic_roughness_zonalmean:
+        name: "Zonal Mean: Benthic Roughness"
+        description: ""
+        unit: dimensionless
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/benthicroughness/zonal
+                    nodata: -9999
+
+    - benthic_roughness_zonalstdev:
+        name: "Zonal Mean: Benthic Roughness"
+        description: ""
+        unit: dimensionless
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/benthicroughness/zonalsd
+                    nodata: -9999
+
+
     - coral_bleaching:
         name: "Coral Bleaching"
         description: ""
@@ -421,6 +1006,36 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/coralbleaching
+                    nodata: -9999
+
+    - coral_bleaching_zonalmean:
+        name: "Zonal Mean: Coral Bleaching"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/coralbleaching/zonal
+                    nodata: -9999
+
+    - coral_bleaching_zonalstdev:
+        name: "Zonal Stdev: Coral Bleaching"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/coralbleaching/zonalsd
                     nodata: -9999
 
     - acidification:
@@ -439,6 +1054,38 @@ variables:
                     nodata: -9999
                     scalefactor: 0.001
 
+    - acidification_zonalmean:
+        name: "Zonal Mean: Ocean Acidification"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/ph/zonal
+                    nodata: -9999
+                    scalefactor: 0.001
+
+    - acidification_zonalstdev:
+        name: "Zonal Stdev: Ocean Acidification"
+        description: ""
+        unit: proportion
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/ph/zonalsd
+                    nodata: -9999
+                    scalefactor: 0.001
+
     - sea_level_rise:
         name: "Sea Level Rise"
         description: ""
@@ -454,6 +1101,36 @@ variables:
                     tiledir: /data/sealevelrise
                     nodata: -9999 
 
+    - sea_level_rise_zonalmean:
+        name: "Zonal Mean: Sea Level Rise"
+        description: ""
+        unit: metres
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/sealevelrise/zonal
+                    nodata: -9999 
+
+    - sea_level_rise_zonalstdev:
+        name: "Zonal Stdev: Sea Level Rise"
+        description: ""
+        unit: metres
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/sealevelrise/zonalsd
+                    nodata: -9999 
+
     - invasive_species:
         name: "Invasive Species"
         description: ""
@@ -467,6 +1144,36 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/invasivespecies
+                    nodata: -9999 
+
+    - invasive_species_zonalmean:
+        name: "Zonal Mean: Invasive Species"
+        description: ""
+        unit: count
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/invasivespecies/zonal
+                    nodata: -9999 
+
+    - invasive_species_zonalstdev:
+        name: "Zonal Stdev: Invasive Species"
+        description: ""
+        unit: count
+        methods:
+            - default:
+                name: "default"
+                description: ""
+                license: ""
+                licenseUrl: ""
+                implementation: IntersectTiffs
+                options:
+                    tiledir: /data/invasivespecies/zonalsd
                     nodata: -9999 
 
     - protected_area_list:
