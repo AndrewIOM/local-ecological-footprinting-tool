@@ -1,62 +1,92 @@
 @{
     Layout = "_DashboardLayout";
     ViewData["Title"] = "Administration";
-    ViewData["SubTitle"] = "Admin interface";
+    ViewData["SubTitle"] = "";
 }
 
-<p>Welcome to the administration panel for LEFT.</p>
-
 <div>
-
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#analyses" aria-controls="profile" role="tab" data-toggle="tab">Analyses</a></li>
-    <li role="presentation"><a href="#users" aria-controls="messages" role="tab" data-toggle="tab">Users</a></li>
+    <li role="presentation" class="active"><a href="#summary" role="tab" data-toggle="tab">Summary</a></li>
+    <li role="presentation"><a href="#analyses" role="tab" data-toggle="tab">All Analyses</a></li>
+    <li role="presentation"><a href="#data-packages" role="tab" data-toggle="tab">Data Packages</a></li>
+    <li role="presentation"><a href="#users" role="tab" data-toggle="tab">Users</a></li>
   </ul>
 
   <!-- Tab panes -->
   <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="analyses">
-      <table class="table">
+
+    @* Tab Panel: Summary *@
+    <div role="tabpanel" class="tab-pane active" id="summary">
+      @* Summary panels *@
+      <h4>At a Glance</h4>
+      <hr/>
+      <div class="row">
+        <div class="col-md-4">
+          <div data-bind="css: { 'panel-error': problemCount() > 0, 'panel-info': problemCount() == 0 }" class="panel">
+            <div class="panel-body">
+              <a href="#summary-problems">
+                <span class="glyphicon glyphicon-fire" aria-hidden="true" style="font-size:1.2em"></span>
+                <span data-bind="text: problemCount"></span> Problem(s)
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div data-bind="css: { 'panel-inprogress': inProgressCount() > 0, 'panel-info': inProgressCount() == 0 }" class="panel">
+            <div class="panel-body">
+              <span class="glyphicon glyphicon-time" aria-hidden="true" style="font-size:1.2em"></span>
+              <span data-bind="text: inProgressCount"></span> In Progress
+            </div>
+          </div>
+        </div>
+      </div>
+
+      @* In progress summary *@
+      <h4>In Progress</h4>
+      <hr/>
+      <ul class="list-group" data-bind="template: { name: 'analysis-summary-template', foreach: inProgress }"></ul>
+
+      @* Problems summary *@
+      <h4 id="#summary-problems">Current Problems</h4>
+      <hr/>
+      <ul class="list-group" data-bind="template: { name: 'analysis-summary-template', foreach: problems }"></ul>
+
+      @* Subscription Actions *@
+      <h4>Subscriptions</h4>
+      <hr/>
+      <p>Subscriptions elevate or completely remove constraints on analysis concurrency and daily caps. Subscriptions may be defined for individuals or organisations.</p>
+      <a class="btn btn-default" asp-action="Subscriptions" role="button">Manage subscriptions</a>
+      <a class="btn btn-default" asp-action="AddSubscription" role="button">Register a newly agreed subscription</a>
+    </div>
+
+    @* Tab Panel: Analyses *@
+    <div role="tabpanel" class="tab-pane" id="analyses">
+      <table class="table table-hover">
         <thead>
           <tr>
             <th>Analysis ID</th>
             <th>Name</th>
             <th>Description</th>
             <th>Report</th>
-            <th>ProData</th>
+            <th>Dataset</th>
             <th>Submitted By</th>
             <th>Created</th>
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody data-bind="foreach: analyses">
-            <tr>
-                <td><p data-bind="text: id"></p></td>
-                <td><p data-bind="text: name"></p></td>
-                <td><p data-bind="text: description"></p></td>
-                <td><span data-bind="text: status, attr:{ 'class': 'label label-' + status}"></span></td>
-                <td><span data-bind="text: proStatus, attr:{ 'class': 'label label-' + proStatus}"></span></td>
-                <td><p data-bind="text: submittedBy"></p></td>
-                <td><p data-bind="text: dateAdded"></p></td>
-                <td>
-                  <div data-bind="visible: status == 'Completed'">
-                    <a target="_blank" class="btn btn-default" data-bind="attr: { href: '/Analysis/Home/Report/' + id }">Download Report</a>
-                  </div>
-                  <div data-bind="visible: proStatus == 'Completed'">
-                    <a target="_blank" class="btn btn-default" data-bind="attr: { href: '/Analysis/Home/ProData/' + id }">Download Pro Data</a>
-                  </div>
-                  <br/>
-                  <!-- <button data-bind="visible: status == 'Cascading' || status == 'Processing', click: $parent.stopAnalysis" class="btn btn-default">Stop</button> -->
-                  <button data-bind="visible: status == 'Failed' || status == 'Completed' || status == 'Queued' || status == 'Processing' || status == 'GeneratingOutput', click: $parent.restartAnalysis" class="btn btn-default">Rerun Free Report</button>
-                  <button data-bind="visible: proStatus == 'Failed' || proStatus == 'Completed' || proStatus == 'Submitted' || proStatus == 'Queued' || proStatus == 'Processing' || proStatus == 'GeneratingOutput', click: $parent.restartPro" class="btn btn-default">Recreate Pro Data</button>
-                </td>
-            </tr>
-        </tbody>
-</table>
+        <tbody data-bind="template: { name: 'analysis-template', foreach: analyses }"></tbody>
+      </table>
     </div>
+
+    @* Tab Panel: Analyses *@
+    <div role="tabpanel" class="tab-pane" id="data-packages">
+      <ul class="list-group" data-bind="template: { name: 'data-package-summary-template', foreach: dataPackages }"></ul>
+    </div>
+
+    @* Tab Panel: Users *@
     <div role="tabpanel" class="tab-pane" id="users">
-            <table class="table">
+      <table class="table table-hover">
         <thead>
           <tr>
             <th>Name</th>
@@ -75,9 +105,11 @@
                 <td><p data-bind="text: organisation"></p></td>
                 <td><span data-bind="text: activeJobs"></span> active. <span data-bind="text: completeJobs"></span> complete.</td>
                 <td>
-                  <p data-bind="text: credits"></p>
-                  <a class="btn btn-default" data-bind="click: $parent.addCredits.bind($data, 1)">+1</a>
-                  <a class="btn btn-default" data-bind="click: $parent.addCredits.bind($data, 10)">+10</a>
+                  @if (siteConfig.Value.PaymentsEnabled) {
+                    <p data-bind="text: credits"></p>
+                    <a class="btn btn-default" data-bind="click: $parent.addCredits.bind($data, 1)">+1</a>
+                    <a class="btn btn-default" data-bind="click: $parent.addCredits.bind($data, 10)">+10</a>
+                  }
                 </td>
                 <td><p data-bind="text: registrationDate"></p></td>
                 <td>
@@ -91,113 +123,61 @@
 
 </div>
 
-<script type="text/javascript">
-
-function AdminViewModel(users, analyses) {
-    var self = this;
-    self.analyses = ko.observableArray([]);
-    self.users = ko.observableArray([]);
-
-    self.restartAnalysis = function(analysis) {
-      if (confirm('Restart analysis?')) {
-        console.log('restarting analysis #' + analysis.id);
-        $.ajax({
-          url: '/Administration/Home/RestartJob?jobId=' + analysis.id,
-          cache: false,
-          success: function(updatedJob) {
-            console.log('Job was restarted');
-            self.updateAnalyses;
-          }
-        })
-      }
-    }
-
-    self.restartPro = function(analysis) {
-      if (confirm('Restart pro data generation?')) {
-        console.log('restarting pro data for #' + analysis.id);
-        $.ajax({
-          url: '/Administration/Home/RestartPro?jobId=' + analysis.id,
-          cache: false,
-          success: function(updatedJob) {
-            console.log('Job was restarted');
-            self.updateAnalyses;
-          }
-        })
-      }
-    }
-
-    self.stopAnalysis = function(analysis) {
-      console.log('stopping analysis #' + analysis.id);
-      $.ajax({
-        url: '/Administration/Home/StopJob?jobId=' + analysis.id,
-        cache: false,
-        success: function(updatedJob) {
-          console.log('Job was stopped');
-          self.updateAnalyses;
-        }
-      })
-    }
-
-    self.updateAnalyses = function() {
-      $.ajax({
-        url: "/Administration/Home/GetJobs",
-        cache: false,
-        success: function(serverAnalyses)
-        {
-          self.analyses(serverAnalyses);
-        }
-      });
-    }
-
-    self.updateUsers = function() {
-      $.ajax({
-          url: "/Administration/Home/GetUsers",
-          cache: false,
-          success: function(users){
-            self.users(users);
-          }
-      });
-    }
-
-    self.addCredits = function (credits, user) {
-      if (confirm('Give ' + credits + ' *free* credits to ' + user.userName + '?')) {
-        $.ajax({
-            url: '/Administration/Home/AddCredits?userId=' + user.id + '&credits=' + credits,
-            cache: false,
-            success: function(updatedUser) {
-              console.log('Gave ' + credits + ' free credit(s) to ' + user.userName);
-              self.updateUsers;
-            }
-        })
-      }
-    }
-
-    self.makeAdmin = function (user) {
-      if (confirm('are you sure you want to make ' + user.userName + ' a LEFT administrator?')) {
-          $.ajax({
-            url: '/Administration/Home/UserAdmin?id=' + user.id + '&userIsAdmin=true',
-            cache: false,
-            success: function(updatedUser) {
-              console.log('User was made admin: ' + updatedUser.userName);
-              self.updateUsers;
-            }
-          })
-      }
-    }
-
-}
-
-$(document).ready(function() {
-  var vm = new AdminViewModel();
-  window.setInterval(vm.updateAnalyses,5000);
-  window.setInterval(vm.updateUsers,60000);
-  vm.updateUsers();
-  vm.updateAnalyses();
-  ko.applyBindings(vm);
-});
+@* Knockout template: analysis table row *@
+<script type="text/html" id="analysis-template">
+  <tr>
+      <td><p data-bind="text: id"></p></td>
+      <td><p data-bind="text: name"></p></td>
+      <td><p data-bind="text: description"></p></td>
+      <td><span data-bind="text: status, attr:{ 'class': 'label label-' + status}"></span></td>
+      <td><span data-bind="text: proStatus, attr:{ 'class': 'label label-' + proStatus}"></span></td>
+      <td><p data-bind="text: submittedBy"></p></td>
+      <td><p data-bind="text: dateAdded"></p></td>
+      <td>
+        <div data-bind="visible: status == 'Completed'">
+          <a target="_blank" class="btn btn-default" data-bind="attr: { href: '/Analysis/Home/Report/' + id }">Download Report</a>
+        </div>
+        <div data-bind="visible: proStatus == 'Completed'">
+          <a target="_blank" class="btn btn-default" data-bind="attr: { href: '/Analysis/Home/ProData/' + id }">Download Data Archive</a>
+        </div>
+        <br/>
+        <button data-bind="visible: status == 'Failed' || status == 'Completed' || status == 'Queued' || status == 'Processing' || status == 'GeneratingOutput', click: $parent.restartAnalysis" class="btn btn-default">Rerun Free Report</button>
+        <button data-bind="visible: proStatus == 'Failed' || proStatus == 'Completed' || proStatus == 'Submitted' || proStatus == 'Queued' || proStatus == 'Processing' || proStatus == 'GeneratingOutput', click: $parent.restartPro" class="btn btn-default">Recreate Pro Data</button>
+        <button data-bind="visible: status == 'Failed' || proStatus == 'Failed', click: $parent.hide" class="btn btn-default">Hide</button>
+      </td>
+  </tr>
 </script>
 
+<script type="text/html" id="analysis-summary-template">
+  <li class="list-group-item">
+    <p>
+      <span aria-hidden="true" class="glyphicon glyphicon-console"></span> <span data-bind="text: name"></span> <span data-bind="text: status, attr:{ 'class': 'label label-' + status}"></span>
+    </p>
+    Submitted by <span data-bind="text: submittedBy"></span> at <span data-bind="text: dateAdded"></span>.
+    <button data-bind="visible: status == 'Failed' || status == 'Completed' || status == 'Queued' || status == 'Processing' || status == 'GeneratingOutput', click: $parent.restartAnalysis" class="btn btn-default">Rerun Free Report</button>
+  </li>
+</script>
+
+<script type="text/html" id="data-package-summary-template">
+  <li class="list-group-item">
+    <p>
+      <span aria-hidden="true" class="glyphicon glyphicon-console"></span> <span data-bind="text: id"></span> <span data-bind="text: status, attr:{ 'class': 'label label-' + status}"></span>
+    </p>
+    Submitted by <span data-bind="text: submittedBy"></span> at <span data-bind="text: dateAdded"></span>.
+    <a data-bind="attr: { href: '#dp-' + $index() }" data-toggle="collapse"" aria-expanded="false" aria-controls="collapseExample">
+      See contents.
+    </a>
+    <div class="collapse" data-bind="attr: { id: 'dp-' + $index() }">
+      <div class="well">
+        <span data-bind="text: query"></span>
+      </div>
+    </div>
+  </li>
+</script>
+
+
 @section Scripts {
+    <script src="/scripts/admin-app.js"></script>
     <environment names="Development">
         <script src="~/lib/knockout/knockout-min.js"></script>
     </environment>

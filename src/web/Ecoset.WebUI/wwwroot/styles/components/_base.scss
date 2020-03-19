@@ -170,6 +170,36 @@ dt {
     }
 }
 
+.panel-error {
+    font-size: 1.5em;
+    background-color: #bf1c1cba;
+    color: #fff;
+    border-radius: 0;
+
+    a {
+        color: #fff;
+    }
+}
+
+.panel-info {
+    font-size: 1.5em;
+    background-color: #a8a799e3;
+    color: #fff;
+    border-radius: 0;
+    border-color: #fff;
+
+    a {
+        color: #fff;
+    }
+}
+
+.panel-inprogress {
+    background-color: #eeee47;
+    border-radius: 0;
+    font-size: 1.5em;
+    color: #686666;
+}
+
 .cc_logo
 {
     display: none !important;

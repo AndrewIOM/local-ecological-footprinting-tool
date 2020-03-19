@@ -6,17 +6,24 @@
     ViewData["SubTitle"] = "Register a new subscription";
 }
 
+@section Scripts {
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+    $('.datepicker').datepicker({ minDate: new Date() });  
+    </script>
+}
+
 <p>Subscriptions remove rate limits on user accounts. Subscriptions must be assigned to an individual.</p>
 <p>An organisation may hold a subscription that applies to all of its staff. To do this, add a group subscription email wildcard to the new subscription here.</p>
 
-<form asp-action="Submit" asp-anti-forgery="true" onsubmit="" id="map-form">
+<form asp-action="AddSubscription" asp-anti-forgery="true">
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="form-group">
         <label asp-for="MasterUserId" class="col-md-4 control-label"></label>
         <div class="col-md-8">
             <select asp-for="MasterUserId" class="form-control">
-            @foreach(var user in ViewBag.Users) {
+            @foreach(var user in (List<Ecoset.WebUI.Models.AdminViewModels.UserDropdownItemViewModel>)ViewBag.Users) {
                 <option value="@user.Id">@user.Name</option>
             }
             </select>
@@ -28,7 +35,7 @@
     <div class="form-group">
         <label asp-for="StartTime" class="col-md-4 control-label"></label>
         <div class="col-md-8">
-            <input asp-for="StartTime" class="form-control" />
+            <input asp-for="StartTime" class="datepicker" data-val="true" type="date" />
             <span asp-validation-for="StartTime" class="text-danger"></span>
         </div>
         <p>If you do not set a start time, the subscription will be active immediately.</p>
@@ -37,7 +44,7 @@
     <div class="form-group">
         <label asp-for="ExpiryTime" class="col-md-4 control-label"></label>
         <div class="col-md-8">
-            <input asp-for="ExpiryTime" class="form-control" />
+            <input asp-for="ExpiryTime" class="datepicker" data-val="true" type="date" />
             <span asp-validation-for="ExpiryTime" class="text-danger"></span>
         </div>
         <p>If you do not set an end time, the subscription will become perpetual. Note that you may still revoke this subcription at any time.</p>
@@ -60,6 +67,22 @@
         </div>
         <p>If set, lifts the per week total analysis cap for the subscription beyond the global cap for individual users. If not set, the subscription will be unlimited.
     </div>
+
+    <h4>Group Subscriptions</h4>
+    <hr/>
+    <table class="table table-striped">
+        <tr>
+            <th>Organisation name (shown to users)</th>
+            <th>Email wildcard (regex)</th>
+        </tr>
+        @for (var i = 0; i < 5; i++)
+        {
+            <tr>
+                <td><input type="text" name="Groups[@i].GroupName" /></td>
+                <td><input type="text" name="Groups[@i].EmailWildcard" /></td>
+            </tr>
+        }
+    </table>
 
     <div class="row">
         <div class="col-md-12">

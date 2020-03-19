@@ -50,7 +50,7 @@ namespace Ecoset.WebUI.Services.Concrete
 
         public IEnumerable<Job> GetAll()
         {
-            var jobs = _context.Jobs.Include(m => m.CreatedBy).Include(m => m.ProActivation).ToList();
+            var jobs = _context.Jobs.Include(m => m.CreatedBy).Include(m => m.ProActivation).Where(m => !m.Hidden).ToList();
             var result = new List<Job>();
             foreach (var job in jobs) {
                 result.Add(job);
@@ -381,7 +381,7 @@ namespace Ecoset.WebUI.Services.Concrete
                 return null;
             }
             package.JobProcessorReference = processorReference;
-
+            package.RequestComponents = System.Text.Json.JsonSerializer.Serialize(variables);
             _context.DataPackages.Add(package);
             _context.SaveChanges();
 

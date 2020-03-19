@@ -29,6 +29,8 @@ namespace Ecoset.WebUI.Services.Concrete
             if (user == null) return null;
             var personalSub = user.Subscriptions.AsEnumerable().FirstOrDefault(s => IsActiveSubscription(s));
             if (personalSub != null) {
+                var matchingGroup = personalSub.GroupSubscriptions.FirstOrDefault(g => Regex.IsMatch(user.Email, g.EmailWildcard));
+                if (matchingGroup != null) return ConvertGroup(matchingGroup);
                 return ConvertPersonal(personalSub);
             }
             var glob = _context.GroupSubscriptions.Include(s => s.Subscription)
@@ -81,8 +83,8 @@ namespace Ecoset.WebUI.Services.Concrete
         }
 
         private bool IsActiveSubscription(Subscription s) {
-            return s.StartDate >= DateTime.Now 
-                && (s.Expires.HasValue ? s.Expires.Value < DateTime.Now : true)
+            return s.StartDate <= DateTime.Now 
+                && (s.Expires.HasValue ? s.Expires.Value > DateTime.Now : false)
                 && (!s.Revoked);
         }
 

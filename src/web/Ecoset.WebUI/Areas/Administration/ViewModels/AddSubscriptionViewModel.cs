@@ -13,16 +13,28 @@ namespace Ecoset.WebUI.Models.AdminViewModels {
         public DateTime? ExpiryTime { get; set; }
         public int? RateLimit { get; set; }
         public int? AnalysisCap { get; set; }
-        public List<AddGroupSubsciptionViewModel> Groups { get; set; }
+        public List<GroupSubsciptionViewModel> Groups { get; set; }
     
         public AddSubscriptionViewModel() {
-            Groups = new List<AddGroupSubsciptionViewModel>();
+            Groups = new List<GroupSubsciptionViewModel>();
         }
     }
 
-    public class AddGroupSubsciptionViewModel
+    public class GroupSubsciptionViewModel
     {
         public string GroupName { get; set; }
         public string EmailWildcard { get; set; }
+    }
+
+    public class SubscriptionListItemViewModel 
+    {
+        public Guid Id { get; set; }
+        public string ContactUserName { get; set; }
+        public List<GroupSubsciptionViewModel> Groups { get; set; }
+        public int? RateLimit { get; set; }
+        public int? AnalysisCap { get; set; }
+        public bool Revoked { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime? Expires { get; set; }
     }
 }

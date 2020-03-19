@@ -48,12 +48,42 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
 
         [HttpGet]
         public IActionResult AddSubscription() {
+            var users = _context.Users.Select(u => new UserDropdownItemViewModel() { Name = u.UserName, Id = u.Id }).ToList();
+            ViewBag.Users = users;
             return View();
+        }
+
+        [HttpGet]
+        public ViewResult Subscriptions() {
+            var subs = _context.Subscriptions
+                .Include(s => s.PrimaryContact)
+                .Include(s => s.GroupSubscriptions)
+                .ToList()
+                .Select(m => {
+                return new SubscriptionListItemViewModel() {
+                    Id = m.Id,
+                    ContactUserName = m.PrimaryContact.UserName,
+                    Groups = m.GroupSubscriptions.Select(g => {
+                        return new GroupSubsciptionViewModel() {
+                            GroupName = g.GroupName,
+                            EmailWildcard = g.EmailWildcard
+                        };
+                    }).ToList(),
+                    RateLimit = m.RateLimit,
+                    AnalysisCap = m.AnalysisCap,
+                    Revoked = m.Revoked,
+                    Start = m.StartDate,
+                    Expires = m.Expires
+                };
+            });
+            return View(subs);
         }
 
         [HttpPost]
         public IActionResult AddSubscription(AddSubscriptionViewModel vm) {
             if (!ModelState.IsValid) {
+                var users = _context.Users.Select(u => new UserDropdownItemViewModel() { Name = u.UserName, Id = u.Id }).ToList();
+                ViewBag.Users = users;
                 return View(vm);
             }
 
@@ -70,13 +100,30 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
                 RateLimit = vm.RateLimit,
                 AnalysisCap = vm.AnalysisCap,
                 PrimaryContact = user,
-                GroupSubscriptions = new List<GroupSubscription>()
+                GroupSubscriptions = vm.Groups.Select(g => new GroupSubscription() {
+                    GroupName = g.GroupName,
+                    EmailWildcard = g.EmailWildcard
+                }).ToList()
             };
 
-            // Add subscription
             _context.Subscriptions.Add(subscription);
             _context.SaveChanges();
+
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult RevokeSubscription(Guid subId) {
+            var sub = _context.Subscriptions.FirstOrDefault(x => x.Id == subId);
+            if (sub == null) return View(ModelState);
+            if (sub.Revoked) {
+                ModelState.AddModelError("id", "Subscription is already revoked");
+                return View(ModelState);
+            }
+            sub.Revoked = true;
+            _context.Update(sub);
+            _context.SaveChanges();
+            return RedirectToAction("Subscriptions");
         }
 
         public IActionResult AddCredits(string userId, int credits) {
@@ -107,6 +154,19 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
                     DateCompleted = m.DateCompleted
                 }).OrderByDescending(m => m.DateAdded);
             return model;
+        }
+
+        public IEnumerable<DataPackageViewModel> GetPackages() {
+            var packages = _context.DataPackages.AsEnumerable().Select(d => {
+                return new DataPackageViewModel() {
+                    Id = d.Id,
+                    Status = d.Status.ToString(),
+                    DateAdded = d.TimeRequested,
+                    DateCompleted = d.TimeCompleted,
+                    Query = d.RequestComponents
+                };
+            }).OrderByDescending(m => m.DateAdded);
+            return packages;
         }
 
         /// <summary>
@@ -162,6 +222,15 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
             });
 
             return BadRequest();
+        }
+
+        [HttpPost]
+        public IActionResult HideAnalysis(int id)
+        {
+            var job = _jobService.GetById(id);
+            if (job == null) return BadRequest();
+            var success = _jobService.HideJob(job.Id);
+            return Ok();
         }
 
         private ApplicationUser GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User).Result; //TODO Assess blocking       
@@ -248,10 +317,6 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
                 var result = _userManager.RemoveFromRoleAsync(user, "Admin").Result;
             }
             _context.SaveChanges();
-            return Ok();
-        }
-
-        public IActionResult Subscriptions() {
             return Ok();
         }
 

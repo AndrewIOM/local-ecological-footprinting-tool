@@ -103,7 +103,7 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
             if (dp == null) return NotFound("The data package does not exist");
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             if (dp.CreatedBy.Id != userId) return NotFound("The data package does not exist");
-            return Json(dp);
+            return Json(dp.Status);
         }
 
         /// <summary>
