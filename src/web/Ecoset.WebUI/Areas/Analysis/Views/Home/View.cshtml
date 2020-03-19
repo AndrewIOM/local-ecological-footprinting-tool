@@ -22,6 +22,10 @@
         <p><label>Description:</label> @Model.Description</p>
         <p><label>Longitude:</label> @Model.LongitudeWest - @Model.LongitudeEast Decimal Degrees</p>
         <p><label>Latitude:</label> @Model.LatitudeSouth - @Model.LatitudeNorth Decimal Degrees</p>
+        <form asp-action="Hide" asp-anti-forgery="true" asp-controller="Home" asp-area="Analysis" id="hide-analysis-form">
+            @Html.Hidden("Id", Model.Id)
+            <input id="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you wish to remove this analysis from your account?')" type="submit" value="Remove from account"/>
+        </form>
     </div>
 </div>
 <br/>
@@ -92,11 +96,6 @@
     </div>
     <br/>
 }
-
-<form asp-action="Hide" asp-anti-forgery="true" asp-controller="Home" asp-area="Analysis" id="hide-analysis-form">
-    @Html.Hidden("Id", Model.Id)
-    <input id="submit" class="btn btn-default" onclick="return confirm('Are you sure you wish to remove this analysis from your account?')" type="submit" value="Remove from account"/>
-</form>
 
 <h4><span class="glyphicon glyphicon-list-alt"></span> Activity Log</h4>
 <hr/>
