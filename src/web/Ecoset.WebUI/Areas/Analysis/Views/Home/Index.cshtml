@@ -71,10 +71,6 @@
         </div>
 </div>
 
-<hr/>
-<h4>Sample Analyses</h4>
-
-
 @*<script type="text/html" id="grid-template">
     <div class="row">
     </div>
@@ -148,7 +144,7 @@ function AnalysisViewModel() {
         } else {
             return ko.utils.arrayFilter(self.analyses(), function(a) {
                 return a.name.toLowerCase().indexOf(self.currentSearch().toLowerCase()) > -1 ||
-                    a.description.toLowerCase().indexOf(self.currentSearch().toLowerCase()) > -1
+                    (a.description == null ? false : a.description.toLowerCase().indexOf(self.currentSearch().toLowerCase()) > -1)
             });
         }
     });
