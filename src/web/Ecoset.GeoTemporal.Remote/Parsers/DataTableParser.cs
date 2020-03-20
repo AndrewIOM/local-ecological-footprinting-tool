@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Ecoset.GeoTemporal.Remote
 {
     public class DataTableParser : IParser<DataTableListResult>
     {
-        public DataTableListResult TryParse(string raw)
+        public DataTableListResult TryParse(JToken token)
         {
-            var parsed = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(raw);
+            var parsed = token.ToObject<List<Dictionary<string,string>>>();
             var model = new DataTableListResult();
             model.Rows = parsed;
             return model;
@@ -17,14 +18,13 @@ namespace Ecoset.GeoTemporal.Remote
 
     public class DataTableStatsParser : IParser<DataTableStatsResult>
     {
-        public DataTableStatsResult TryParse(string raw)
+        public DataTableStatsResult TryParse(JToken token)
         {
-            var parsed = (RawEcosetSummaryData)JsonConvert.DeserializeObject(raw, typeof(RawEcosetSummaryData));
-            var result = new DataTableStatsResult() 
+            var parsed = token.ToObject<RawEcosetSummaryData>();
+            return new DataTableStatsResult() 
             {
                 Stats = parsed.Stats
             };
-            return result;
         }
 
         private class RawEcosetSummaryData
@@ -36,7 +36,7 @@ namespace Ecoset.GeoTemporal.Remote
 
     public class CsvParser : IParser<CsvFileResult>
     {
-        public CsvFileResult TryParse(string raw)
+        public CsvFileResult TryParse(JToken raw)
         {
             var parser = new DataTableParser();
             var ob = parser.TryParse(raw);

@@ -30,7 +30,7 @@ namespace Ecoset.GeoTemporal.Remote
         public float West { get; set; }
 
         [JsonProperty("output")]
-        public List<EcosetOutput> Outputs { get; set; }
+        public IEnumerable<EcosetOutput> Outputs { get; set; }
 
         public JobFetchResponse() {
             Outputs = new List<EcosetOutput>();

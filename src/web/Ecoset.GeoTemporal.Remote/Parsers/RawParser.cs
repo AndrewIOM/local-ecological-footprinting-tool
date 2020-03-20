@@ -1,12 +1,13 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Ecoset.GeoTemporal.Remote
 {
     public class RawParser : IParser<RawDataResult>
     {
-        public RawDataResult TryParse(string raw)
+        public RawDataResult TryParse(JToken token)
         {
-            var parsed = (RawEcosetData)JsonConvert.DeserializeObject(raw, typeof(RawEcosetData));
+            var parsed = token.ToObject<RawEcosetData>();
             var result = new RawDataResult() 
             {
                 Stats = parsed.Stats,

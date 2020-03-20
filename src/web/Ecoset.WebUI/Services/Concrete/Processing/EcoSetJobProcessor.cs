@@ -37,35 +37,6 @@ namespace Ecoset.WebUI.Services.Concrete
             var tableParser = new DataTableParser();
             var tableStatsParser = new DataTableStatsParser();
             var fileParser = new Base64Parser();
-            var executableResults = new List<ExecutableResult>();
-            Console.WriteLine("Fetch is: " + fetchData);
-            Console.WriteLine("Executable results is: " + fetchData.Outputs);
-            foreach (var output in fetchData.Outputs)
-            {
-                Console.WriteLine("Executable result is: " + output.ToString());
-                var elem = new ExecutableResult();
-                elem.Name = output.Name;
-                elem.MethodUsed = output.MethodUsed;
-
-                try {
-                    elem.RawData = rawParser.TryParse(output.Data.ToString(Formatting.None));
-                    executableResults.Add(elem);
-                } catch (Exception) { }
-
-                try {
-                    if (elem.RawData == null) {
-                        elem.RawData = tableParser.TryParse(output.Data.ToString(Formatting.None));
-                        executableResults.Add(elem);
-                    }   
-                } catch (Exception) { }       
-
-                try {
-                    if (elem.RawData == null) {
-                        elem.RawData = tableStatsParser.TryParse(output.Data.ToString(Formatting.None));
-                        executableResults.Add(elem);
-                    }
-                } catch (Exception) { }         
-            }
 
             var reportData = new ReportData();
             reportData.North = fetchData.North;
@@ -76,25 +47,36 @@ namespace Ecoset.WebUI.Services.Concrete
             reportData.TableStatsResults = new List<TableStats>();
             reportData.RawResults = new List<RawData>();
 
-            foreach (var res in executableResults) {
-                if (res.RawData is RawDataResult rdr) 
-                {
+            foreach (var output in fetchData.Outputs)
+            {
+                var elem = new ExecutableResult();
+                elem.Name = output.Name;
+                elem.MethodUsed = output.MethodUsed;
+                _logger.LogInformation("Retrieved output from " + output.Name + " / " + output.MethodUsed);
+
+                try {
                     reportData.RawResults.Add(new RawData() {
-                        Name = res.Name,
-                        Data = rdr
+                        Name = elem.Name,
+                        Data = rawParser.TryParse(output.Data)
                     });
-                } else if (res.RawData is DataTableListResult tbl) {
+                    continue;
+                } catch (Exception) { }
+
+                try {
                     reportData.TableListResults.Add(new TableList() {
-                        Name = res.Name,
-                        Data = tbl
+                        Name = elem.Name,
+                        Data = tableParser.TryParse(output.Data)
                     });
-                } else if (res.RawData is DataTableStatsResult stbl) {
+                    continue;
+                } catch (Exception) { }
+
+                try {
                     reportData.TableStatsResults.Add(new TableStats() {
-                        Name = res.Name,
-                        Data = stbl
+                        Name = elem.Name,
+                        Data = tableStatsParser.TryParse(output.Data)
                     });
-                }
-                // Others are unknown and discarded
+                    continue;
+                } catch (Exception) { }       
             }
 
             return reportData;
