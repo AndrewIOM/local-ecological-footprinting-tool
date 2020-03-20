@@ -100,7 +100,8 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
                 RateLimit = vm.RateLimit,
                 AnalysisCap = vm.AnalysisCap,
                 PrimaryContact = user,
-                GroupSubscriptions = vm.Groups.Select(g => new GroupSubscription() {
+                GroupSubscriptions = vm.Groups.Where(g => !String.IsNullOrEmpty(g.EmailWildcard) && !String.IsNullOrEmpty(g.GroupName))
+                .Select(g => new GroupSubscription() {
                     GroupName = g.GroupName,
                     EmailWildcard = g.EmailWildcard
                 }).ToList()
