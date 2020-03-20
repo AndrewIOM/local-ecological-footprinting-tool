@@ -217,6 +217,7 @@ namespace Ecoset.WebUI.Services.Concrete
                     job.Status = newStatus;
                     _context.Update(job);
                     _context.SaveChanges();
+                    _notifyService.AddJobNotification(NotificationLevel.Information, job.Id, "Analysis {0} is now {1}", new[] { job.Name, job.Status.ToString() });
                 }
             }
 
@@ -224,7 +225,6 @@ namespace Ecoset.WebUI.Services.Concrete
                 Hangfire.RecurringJob.RemoveIfExists("jobstatus_" + job.Id);
             }
 
-            _notifyService.AddJobNotification(NotificationLevel.Information, job.Id, "Analysis {0} is now {1}", new[] { job.Name, job.Status.ToString() });
             if (newStatus == JobStatus.Completed) 
             {
                 var user = _context.Users.FirstOrDefault(u => u.Id == job.CreatedBy.Id);
