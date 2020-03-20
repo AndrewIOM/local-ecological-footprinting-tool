@@ -16,9 +16,8 @@ var SpatialPlot = function (id, extent) {
     var self = this;
     self.id = id;
     self.svgSize = 650;
-    self.mapSize = 550;
-    self.graticuleBuffer = (self.svgSize - self.mapSize) / 2;
-    self.bufferDD = 0;
+    self.mapSize = 600;
+    self.graticuleBuffer = self.svgSize - self.mapSize; //Only buffer on one side
     self.paletteUrl = null;
     self.north = extent.north;
     self.south = extent.south;
@@ -41,13 +40,13 @@ var SpatialPlot = function (id, extent) {
             .attr("width", self.mapSize)
             .attr("height", self.mapSize)
             .attr("x", self.graticuleBuffer)
-            .attr("y", self.graticuleBuffer);
+            .attr("y", 0);
 
         self.innerMap = self.svg.append("svg")
             .attr("width", self.mapSize)
             .attr("height", self.mapSize)
             .attr("x", self.graticuleBuffer)
-            .attr("y", self.graticuleBuffer);
+            .attr("y", 0);
 
         var extentGeoJson = {
             "type": "Feature",
@@ -79,7 +78,7 @@ var SpatialPlot = function (id, extent) {
             .attr("width", focusBoxProjBr[0] - focusBoxProjTl[0])
             .attr("height", focusBoxProjBr[1] - focusBoxProjTl[1])
             .attr("x", focusBoxProjTl[0] + self.graticuleBuffer)
-            .attr("y", focusBoxProjTl[1] + self.graticuleBuffer);
+            .attr("y", focusBoxProjTl[1] + 0);
     }
 
     self.addWireframe = function () {
@@ -126,7 +125,7 @@ var SpatialPlot = function (id, extent) {
                     return to2dp(c[0][1]);
                 }
             })
-            .attr("class", "label")
+            .attr("class", "axis-label")
             .attr("style", function (d) {
                 var c = d.coordinates;
                 return (c[0][1] == c[1][1]) ? "text-anchor: end" : "text-anchor: middle";
@@ -137,7 +136,7 @@ var SpatialPlot = function (id, extent) {
             })
             .attr("dy", function (d) {
                 var c = d.coordinates;
-                return (c[0][1] == c[1][1]) ? graticuleBuffer + extentBuffer + 4 : graticuleBuffer + extentBuffer + 15;
+                return (c[0][1] == c[1][1]) ? extentBuffer + 4 : extentBuffer + 15;
             })
             .attr('transform', function (d) {
                 return ('translate(' + self.projection(d.coordinates[0]) + ')');
@@ -162,10 +161,10 @@ var SpatialPlot = function (id, extent) {
                 var c = d.coordinates;
                 if (c[0][1] == c[1][1]) {
                     // y-axis
-                    return graticuleBuffer + extentBuffer + self.projection(c[0])[1];
+                    return extentBuffer + self.projection(c[0])[1];
                 } else {
                     // x-axis
-                    return graticuleBuffer + extentBuffer + self.projection(c[0])[1];
+                    return extentBuffer + self.projection(c[0])[1];
                 }
             })
             .attr("x2", function (d) {
@@ -182,18 +181,18 @@ var SpatialPlot = function (id, extent) {
                 var c = d.coordinates;
                 if (c[0][1] == c[1][1]) {
                     // y-axis
-                    return graticuleBuffer + extentBuffer + self.projection(c[0])[1];
+                    return extentBuffer + self.projection(c[0])[1];
                 } else {
                     // x-axis
-                    return graticuleBuffer + extentBuffer + self.projection(c[0])[1] + tickLength;
+                    return extentBuffer + self.projection(c[0])[1] + tickLength;
                 }
             });
     }
 
     self.addImageLayer = function (imageUrl) {
         self.svg.append("svg:image")
-            .attr('x', (self.svgSize - self.mapSize) / 2)
-            .attr('y', (self.svgSize - self.mapSize) / 2)
+            .attr('x', self.graticuleBuffer)
+            .attr('y', 0)
             .attr('width', self.mapSize)
             .attr('height', self.mapSize)
             .attr('preserveAspectRatio', 'none')
@@ -235,6 +234,7 @@ var SpatialPlot = function (id, extent) {
             }
             self.drawRasterImage(data, scale);
             self.drawContinuousKey(min, max, maskValues);
+            self.drawScalebar();
         } else {
             // Discrete scale
             d3.json(self.paletteUrl, function (rawPalette) {
@@ -262,8 +262,21 @@ var SpatialPlot = function (id, extent) {
                 } else {
                     self.drawContinuousKey(data.Stats.Min, data.Stats.Max, maskValues);
                 }
+                self.drawScalebar();
             });
         }
+    }
+
+    self.drawScalebar = function() {                
+        var scaleBar = d3.geoScaleBar()
+            .projection(this.projection)
+            .size([self.mapSize, self.mapSize])
+            .left(0.05)
+            .top(0.05)
+            .label("Kilometres");
+        this.innerMap
+            .append("g")
+            .call(scaleBar);
     }
 
     self.drawRasterImage = function (data, scale) {
@@ -428,6 +441,7 @@ var SpatialPlot = function (id, extent) {
             .attr('height', self.mapSize)
             .attr('preserveAspectRatio', 'none')
             .attr("xlink:href", document.getElementById(id + "_pointdata").toDataURL());
+        self.drawScalebar();
     }
 };
 

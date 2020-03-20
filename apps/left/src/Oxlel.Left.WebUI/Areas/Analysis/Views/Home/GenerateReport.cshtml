@@ -124,6 +124,7 @@
     <script src="/lib/underscore/underscore.js"></script>
     <script src="/lib/d3/d3.js"></script>
     <script src="/lib/topojson-client/dist/topojson.js"></script>
+    <script src="/lib/d3-geo-scale-bar/build/d3-geo-scale-bar.js"></script>
     <script src="/scripts/report.js"></script>
   </head>
   
@@ -134,11 +135,11 @@
       <div class="report-title-page">
         <div class="row">
           <div class="six columns">
-            <img src="/images/logo-black.png" style="width:25em;margin:10em auto 5em auto" />
+            <img src="/images/logo-black.png" class="left-logo" />
             <h1>@siteConfig.Value.InstanceName</h1>
-            <h1>@Model.Title</h1>
+            <p class="analysis-title">@Model.Title</p>
             @if (!string.IsNullOrEmpty(@Model.Description)) {
-              <h2>@Model.Description</h2>
+              <p class="analysis-subtitle">@Model.Description</p>
             }
             <p>
               A concise report indicating spatial patterns of ecological value within a landscape. Your report includes a summary ecological value. 
@@ -155,7 +156,6 @@
           <div class="row">
             <div class="col-sm-12">
               <h2>Introduction</h2>
-              <hr/>
             </div>
           </div>
           <div class="row">
@@ -180,7 +180,14 @@
           </div>
         </div>
 
-        <div class="report-section" id="ecoregions-section">@{ MapPage("ecoregions"); }</div>
+        <div class="report-section" id="ecoregions-section">
+          <div class="row">
+            <div class="col-sm-12">
+              <h2>Ecological Indicators</h2>
+            </div>
+          </div>
+          @{ MapPage("ecoregions"); }
+        </div>
         <div class="report-section" id="landcover-section">@{ MapPage("landcover"); }</div>
         <div class="report-section" id="intactness-section">@{ MapPage("intactness"); }</div>
 
@@ -188,7 +195,7 @@
         <div class="report-section" id="species_occurrence-section">
           <div class="row">
             <div class="col-md-12">
-              <h2>Species Occurrence</h2>
+              <h3>Species Occurrence</h3>
               <hr/>
             </div>
           </div>
@@ -221,8 +228,8 @@
                         <tr>
                           <td><svg height="20" width="20"><circle r="4" cx="10" cy="10" stroke="@colour" fill="none"></circle></svg></td>
                           <td>@prettyTaxon</td>
-                          <td>0</td>
-                          <td>0</td>
+                          <td>Unknown</td>
+                          <td>Unknown</td>
                         </tr>
                       }
                     }
@@ -256,7 +263,6 @@
                       plot.addWireframe();
                       plot.addPointLayer(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)), @Html.Raw(JsonConvert.SerializeObject(occurrenceColours)));
                       plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
-
                       populateDataSources(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)));
                     });
                   </script>
@@ -271,14 +277,20 @@
         <div class="report-section" id="wetland-section">@{ MapPage("wetland"); }</div>
         <div class="report-section" id="beta_diversity-section">@{ MapPage("beta_diversity"); }</div>
         <div class="report-section" id="resilience-section">@{ MapPage("resilience"); }</div>
-        <div class="report-section" id="summary_ecological_value-section">@{ MapPage("summary_ecological_value"); }</div>
+        <div class="report-section" id="summary_ecological_value-section">
+          <div class="row">
+            <div class="col-sm-12">
+              <h2>Synthesis</h2>
+            </div>
+          </div>
+          @{ MapPage("summary_ecological_value"); }
+        </div>
 
         @* Section: Biodiversity Assurance *@
         <div class="report-section">
           <div class="row">
             <div class="col-md-12">
               <h2>Data Assurance Information: <small>Data Assurance Metric (DAM)</small></h2>
-              <hr/>
               <p>The output and validity of results will be significantly influenced by the availability or, conversely, the paucity, of data available in the databases for the selected region. The most critical data in this respect are the species occurrence records contained in GBIF. Due to sampling bias, GBIF coverage for some regions of the world is better than others (Gaiji et al., 2012). In order to provide a first estimate of the confidence that can be placed in the output from a region, a metric to assess the density of species occurrence records was devised. In this, the number of species records was obtained from GBIF for each taxonomic group (amphibians, reptiles, birds, mammals, plants) in the user-specified area of interest, as well as in a much larger reference area comprising the WWF ecoregions that intersect the area of interest. Species density was then calculated by dividing the number of different species in an area by the size of the area raised to an exponent of 0.2. Exponentiation is necessary in order to consistently control for the logarithmic form of species-area relationships and allow species densities from areas of different sizes to be directly comparable (Rosenweig 2012). The density of local species occurrence records for a taxonomic group can be compared to the density of records for the same group in the much larger reference area. This gives a first approximation of the degree to which the GBIF records available for a specified area of interest provide a good representation of the species expected in that area, based on wider biogeographical patterns and species-area relationships.</p>
               <p>The table below shows species densities for the area of interest and the broader reference area, and the ratio of those densities. A representation score above 1.0 means that the number of species records retrieved was higher than expected, so the data are more reliable. Representation below 1.0 indicates poorer GBIF coverage and less reliable species data.</p>
               <table class="table">
@@ -425,7 +437,7 @@
         <div class="report-section">
           <div class="row">
             <div class="col-md-12">
-              <h3>References</h3>
+              <h2>References</h2>
               <ul class="reference-list">
                 <li>Ferrier S, Drielsma M et al (2002) Extended statistical approaches to modelling spatial pattern in biodiversity in northeast New South Wales.  II.  Community-level modelling.  Biodiversity and Conservation.  11: 2309-2338 </li>
                 <li>Hijmans RJ, Cameron SE et al (2005) Very high resolution interpolated climate surfaces for global land areas.  International Journal of Climatology.  25: 1965-1978</li>
@@ -442,7 +454,7 @@
               </ul>
 
               <hr/>
-              <h3>Credits</h3>
+              <p><strong>Credits</strong></p>
               <p>LEFT was funded by Statoil ASA. The project was conceived by Kathy Willis and Elizabeth Jeffers of the Zoology Department, University of Oxford and Randi Hagemann, Tone Karin Frost, Mathijs Smit, Christian Collin-Hansen, and Jurgen Weissenberger from Statoil. The algorithms in LEFT were elaborated by Peter Long, David Benz, Marc Macias Fauria, and Alistair Seddon of the Zoology Department, University of Oxford. LEFT's software architecture was developed by Andrew Martin and Philip Holland of the Zoology Department, University of Oxford.</p>
               <hr/>
               <small>
@@ -461,7 +473,6 @@
           <div class="row">
             <div class="col-md-12">
               <h2>Appendices</h2>
-              <hr/>
               <div id="vulnerable-species" class="appendix">
                 <h4>Appendix 1. Vulnerable Species</h4>
                 <p>The IUCN Redlist of Threatened Species (IUCN 2014) includes the following species of terrestrial mam- mals, birds, reptiles, and amphibians that have been modelled to be potentially present in the specified area of interest (NT = Near Threatened, VU = Vulnerable, EN = Endangered, CR = Critically Endangered):</p>

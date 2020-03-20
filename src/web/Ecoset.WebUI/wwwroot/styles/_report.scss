@@ -7,6 +7,10 @@
     text-align: right;
 }
 
+.report-title-page {
+    text-align: center;
+}
+
 @media (max-width: 991px) {
     .section-map {
     text-align: center;
@@ -20,7 +24,6 @@
 
     .report-title-page {
     page-break-after: always;
-    text-align: center;
     }
 }
 
@@ -32,6 +35,10 @@
     }
 }
 
+h1 {
+  font-weight: bold;
+}
+
 h2 {
   font-size: 30px;
   border-bottom: 2px solid #bb1a1a;
@@ -41,6 +48,21 @@ h2 {
 
 .report-section p {
     font-size: 13.5px;
+}
+
+.analysis-title {
+  text-align: center;
+  font-size: 2em;
+}
+
+.analysis-subtitle {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+.left-logo {
+  width: 22em;
+  margin: 8em auto 5em auto;
 }
 
 /* Maps */
@@ -75,16 +97,20 @@ h2 {
     stroke-width: 1px;
 }
 
-.label {
+.axis-label {
     font: 300 12px "Droid Sans Mono", Courier, monospace;
     text-anchor: end;
+    color: #000;
+}
+
+.label {
+  color: #000;
 }
 
 .map-caption {
     font-weight: 600;
     font-size: 12px;
-    margin-left: 50px;
-    margin-right: 50px;
+    padding-left: 50px;
 }
 
 .panel {
