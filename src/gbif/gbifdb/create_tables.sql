@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS master
-(gbif_gbifid BIGINT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS gbif2020
+(gbif_gbifid UNSIGNED INT,
 gbif_eventdate VARCHAR(255),
 gbif_kingdom VARCHAR(255),
 gbif_phylum VARCHAR(255),
@@ -18,15 +18,18 @@ gbif_coordinateuncertaintyinmeters VARCHAR(255),
 gbif_decimallatitude FLOAT NOT NULL,
 gbif_decimallongitude FLOAT NOT NULL,
 taxonomicgroup VARCHAR(255)
-);
+)
+CHARACTER SET utf8mb4;
 
-CREATE TABLE IF NOT EXISTS gbif_coordinate
-(gbif_gbifid BIGINT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS gbif2020_coordinate
+(gbif_gbifid UNSIGNED INT,
 coordinate POINT NOT NULL SRID 0,
 SPATIAL INDEX idx_coord (coordinate)
-);
+)
+CHARACTER SET utf8mb4;
 
-CREATE TABLE IF NOT EXISTS gbif_org_lookup
+CREATE TABLE IF NOT EXISTS gbif2020_org_lookup
 (gbif_publishingorgkey VARCHAR(255) PRIMARY KEY,
 title VARCHAR(255)
-);
+)
+CHARACTER SET utf8mb4;

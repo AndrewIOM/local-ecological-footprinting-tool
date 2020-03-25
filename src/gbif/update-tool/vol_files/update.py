@@ -350,7 +350,7 @@ if ask_stage("Chunk CSV?"):
         stage("Chunking CSV")
 
         # check if the download was successful
-        if not os.path.isfile("/download/"+dest_dir+"/"+dest_dir + ".csv"):
+        if not os.path.isfile("/download/"+dest_dir+"/"+dest_dir + "_fix.csv"):
                 print "ERROR: no data downloaded - there may be no data for the range"
                 sys.exit()
 
@@ -362,17 +362,12 @@ if ask_stage("Chunk CSV?"):
 # connect to mysql
 db = MySQLDatabase(database_name, user=database_user, host=database_host,
         port=database_port, passwd=database_password, local_infile=1)
-db.connect()
-
-print "Successfully connected to the MySQL database as '" + database_user + "'"
-
-
 
 if ask_stage("Process the downloaded data?"):
         stage("Processing data")
 
         # check if the download was successful
-        if not os.path.isfile("/download/"+dest_dir+"/"+dest_dir + ".csv"):
+        if not os.path.isfile("/download/"+dest_dir+"/"+dest_dir + "_fix.csv"):
                 print "ERROR: no data downloaded - there may be no data for the range"
                 sys.exit()
 
@@ -382,7 +377,12 @@ if ask_stage("Process the downloaded data?"):
         # to specify which columns should be ignored
         columns = 0
 
-        for file in sorted(glob.glob('/download/' + dest_dir + '/' + '*-chunked_*.csv')):
+        files = sorted(glob.glob('/download/' + dest_dir + '/' + '*-chunked_*.csv'))
+
+        db.connect()
+        print "Successfully connected to the MySQL database as '" + database_user + "'"
+
+        for file in files:
 
                 print "Opening CSV"
                 with open(file, encoding="utf-8") as f:
@@ -425,6 +425,7 @@ if ask_stage("Process the downloaded data?"):
                 sql = ("LOAD DATA LOCAL INFILE '" + os.path.abspath(
                         file).replace("\\", "\\\\") + "' "
                                 "REPLACE INTO TABLE `{table_name}` "
+                                "CHARACTER SET utf8mb4 "
                                 "FIELDS TERMINATED BY '\\t' "
                                 "LINES TERMINATED BY '\\n' "
                         "" + column_info + " " + set_info + ";").format(table_name=gbif_table)
@@ -460,10 +461,6 @@ if ask_stage("Update the organisation key lookup table?"):
         existing_keys = existing_keys_sql.fetchall()
 
         new_keys = list(set(all_keys) - set(existing_keys))
-
-        with open("/download/"+dest_dir+"/new_keys.csv", "w", encoding="utf-8") as f:
-                for s in new_keys:
-                        f.write(s[0].encode('utf-8') + "\n")
 
         for key in new_keys:
                 # use the gbif api to get the title of the organisation
