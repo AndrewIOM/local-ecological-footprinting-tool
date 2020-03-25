@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Ecoset.WebUI.Models;
 using Ecoset.WebUI.Models.JobProcessor;
 using Ecoset.WebUI.Options;
@@ -33,11 +32,6 @@ namespace Ecoset.WebUI.Services.Concrete
             var jobId = new JobId(guidId);
             var fetchData = await _connection.FetchResultAsync(jobId);
 
-            var rawParser = new RawParser();
-            var tableParser = new DataTableParser();
-            var tableStatsParser = new DataTableStatsParser();
-            var fileParser = new Base64Parser();
-
             var reportData = new ReportData();
             reportData.North = fetchData.North;
             reportData.South = fetchData.South;
@@ -49,63 +43,29 @@ namespace Ecoset.WebUI.Services.Concrete
 
             foreach (var output in fetchData.Outputs)
             {
-                var elem = new ExecutableResult();
-                elem.Name = output.Name;
-                elem.MethodUsed = output.MethodUsed;
                 _logger.LogInformation("Retrieved output from " + output.Name + " / " + output.MethodUsed);
 
-                try {
+                if (output.Data is RawDataResult rdr) 
+                {
                     reportData.RawResults.Add(new RawData() {
-                        Name = elem.Name,
-                        Data = rawParser.TryParse(output.Data)
+                        Name = output.Name,
+                        Data = rdr
                     });
-                    continue;
-                } catch (Exception) { }
-
-                try {
+                } else if (output.Data is DataTableListResult tbl) {
                     reportData.TableListResults.Add(new TableList() {
-                        Name = elem.Name,
-                        Data = tableParser.TryParse(output.Data)
+                        Name = output.Name,
+                        Data = tbl
                     });
-                    continue;
-                } catch (Exception) { }
-
-                try {
+                } else if (output.Data is DataTableStatsResult stbl) {
                     reportData.TableStatsResults.Add(new TableStats() {
-                        Name = elem.Name,
-                        Data = tableStatsParser.TryParse(output.Data)
+                        Name = output.Name,
+                        Data = stbl
                     });
-                    continue;
-                } catch (Exception) { }       
+                }
+                // Others are unknown and discarded
             }
 
             return reportData;
-        }
-
-        public async Task<List<Tuple<string,string,string>>> GetReportFiles(string processorJobId)
-        {
-            Guid guidId;
-            Guid.TryParse(processorJobId, out guidId);
-            if (guidId == null) throw new Exception("ID was not valid");
-            var jobId = new JobId(guidId);
-            var fetchData = await _connection.FetchResultAsync(jobId);
-            var base64Parser = new Base64Parser();
-            var csvParser = new CsvParser();
-            var results = new List<Tuple<string,string,string>>();
-
-            foreach (var output in fetchData.Outputs)
-            {
-                try {
-                    var data = base64Parser.TryParse(output.Data.ToString(Formatting.None));
-                    results.Add(Tuple.Create(output.Name,data.Base64Data, "tif")); //TODO pass through correctly from ecoset
-                } catch (JsonSerializationException) { }
-
-                try {
-                    var data = csvParser.TryParse(output.Data.ToString(Formatting.None));
-                    results.Add(Tuple.Create(output.Name, data.CsvData, "csv"));
-                } catch (JsonSerializationException) { }
-            }
-            return results;
         }
 
         public async Task<Models.JobStatus> GetStatus(string processorJobId, Models.JobStatus localStatus)

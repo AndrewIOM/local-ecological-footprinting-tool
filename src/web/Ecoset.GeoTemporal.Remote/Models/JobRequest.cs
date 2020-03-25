@@ -1,52 +1,52 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Ecoset.GeoTemporal.Remote
 {
     public class JobSubmissionRequest
     {
-        [JsonProperty("LatitudeNorth")]
+        [JsonPropertyName("LatitudeNorth")]
         public double North { get; set; }
-        [JsonProperty("LatitudeSouth")]
+        [JsonPropertyName("LatitudeSouth")]
         public double South { get; set; }
-        [JsonProperty("LongitudeEast")]
+        [JsonPropertyName("LongitudeEast")]
         public double East { get; set; }
-        [JsonProperty("LongitudeWest")]
+        [JsonPropertyName("LongitudeWest")]
         public double West { get; set; }
-        [JsonProperty("TimeMode")]
+        [JsonPropertyName("TimeMode")]
         public TimeMode TimeMode { get; set; }
-        [JsonProperty("Variables")]
+        [JsonPropertyName("Variables")]
         public List<Variable> Variables { get; set; }
     }
 
     public class Variable
     {
-        [JsonProperty("Name")]
+        [JsonPropertyName("Name")]
         public string Name { get; set; }
-        [JsonProperty("Method")]
+        [JsonPropertyName("Method")]
         public string Method { get; set; }
-        [JsonProperty("Options")]
+        [JsonPropertyName("Options")]
         public object Options { get; set; }
     }
 
     public class TimeMode 
     {
-        [JsonProperty("kind")]
+        [JsonPropertyName("kind")]
         public string Kind { get; set; }
-        [JsonProperty("date")]
+        [JsonPropertyName("date")]
         public Date Date { get; set; }
     }
 
     public class JobPollRequest
     {
-        [JsonProperty("jobId")]
+        [JsonPropertyName("jobId")]
         public Guid JobId { get; set; }
     }
 
     public class JobFetchRequest
     {
-        [JsonProperty("jobId")]
+        [JsonPropertyName("jobId")]
         public Guid JobId { get; set; }
     }
 }

@@ -1,35 +1,34 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Serialization;
 
 namespace Ecoset.GeoTemporal.Remote
 {
     public class JobPollResponse
     {
-        [JsonProperty("success")]
+        [JsonPropertyName("success")]
         public bool Success { get; set; }
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public string Message { get; set; }
-        [JsonProperty("jobState")]
+        [JsonPropertyName("jobState")]
         public JobStatus JobStatus { get; set; }
     }
 
     public class JobFetchResponse
     {
-        [JsonProperty("north")]
+        [JsonPropertyName("north")]
         public float North { get; set; }
 
-        [JsonProperty("south")]
+        [JsonPropertyName("south")]
         public float South { get; set; }
 
-        [JsonProperty("east")]
+        [JsonPropertyName("east")]
         public float East { get; set; }
 
-        [JsonProperty("west")]
+        [JsonPropertyName("west")]
         public float West { get; set; }
 
-        [JsonProperty("output")]
+        [JsonPropertyName("output")]
         public IEnumerable<EcosetOutput> Outputs { get; set; }
 
         public JobFetchResponse() {
@@ -39,34 +38,36 @@ namespace Ecoset.GeoTemporal.Remote
 
     public class JobSubmissionResponse
     {
-        [JsonProperty("success")]
+        [JsonPropertyName("success")]
         public bool Success { get; set; }
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public string Message { get; set; }
-        [JsonProperty("jobId")]
+        [JsonPropertyName("jobId")]
         public Guid JobId { get; set; }
     }
 
     public class EcosetOutput
     {
+        [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonProperty("method_used")]
+        [JsonPropertyName("method_used")]
         public string MethodUsed { get; set; }
-        [JsonProperty("output_format")]
+        [JsonPropertyName("output_format")]
         public string OutputFormat { get; set; }
-        [JsonProperty("data")]
-        public JToken Data { get; set; }
+        [JsonPropertyName("data")]
+        [JsonConverter(typeof(DataFieldTypeConverter))]
+        public IDataResult Data { get; set; }
     }
 
     public class Statistics
     {
-        [JsonProperty("Minimum")]
+        [JsonPropertyName("Minimum")]
         public float Min { get; set; }
-        [JsonProperty("Maximum")]
+        [JsonPropertyName("Maximum")]
         public float Max { get; set; }
-        [JsonProperty("Mean")]
+        [JsonPropertyName("Mean")]
         public float Mean { get; set; }
-        [JsonProperty("StDev")]
+        [JsonPropertyName("StDev")]
         public float StdDev { get; set; }
     }
 
@@ -83,10 +84,10 @@ namespace Ecoset.GeoTemporal.Remote
     public class RawDataResult : IDataResult
     {
         public Statistics Stats { get; set; }
-        public double[,] DataCube { get; set; }
-        public double NoDataValue { get; set; }
-        public double Columns { get; set; }
-        public double Rows { get; set; }
+        [JsonConverter(typeof(DataCubeTypeConverter))]
+        public double?[,] DataCube { get; set; }
+        public int Columns { get; set; }
+        public int Rows { get; set; }
     }
 
     public class DataTableListResult : IDataResult
@@ -99,12 +100,4 @@ namespace Ecoset.GeoTemporal.Remote
         public Statistics Stats { get; set; }
     }
 
-    public class Base64FileResult : IDataResult {
-        public string Base64Data { get; set; }
-        public string FileFormat { get; set; }
-    }
-
-    public class CsvFileResult : IDataResult {
-        public string CsvData { get; set; }
-    }
 }

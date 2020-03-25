@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Ecoset.GeoTemporal.Remote
 {
@@ -29,11 +29,11 @@ namespace Ecoset.GeoTemporal.Remote
 
     public class TemporalExtent
     {
-        [JsonProperty("slices")]
+        [JsonPropertyName("slices")]
         public Date[] Slices { get; set; }
-        [JsonProperty("minDate")]
+        [JsonPropertyName("minDate")]
         public Date MinDate { get; set; }
-        [JsonProperty("maxDate")]
+        [JsonPropertyName("maxDate")]
         public Date MaxDate { get; set; }
         
         public TemporalExtent() {
@@ -43,11 +43,11 @@ namespace Ecoset.GeoTemporal.Remote
 
     public class Date
     {
-        [JsonProperty("Day")]
+        [JsonPropertyName("Day")]
         public Nullable<int> Day { get; set; }
-        [JsonProperty("Month")]
+        [JsonPropertyName("Month")]
         public Nullable<int> Month { get; set; }
-        [JsonProperty("Year")]
+        [JsonPropertyName("Year")]
         public int Year { get; set; }
     }
 

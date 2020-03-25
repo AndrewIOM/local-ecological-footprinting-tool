@@ -18,10 +18,10 @@ namespace Ecoset.WebUI.Services.Concrete
 
         public string SpatialData(RawDataResult spatialData) {
 
-            var maxValue = spatialData.DataCube.Cast<double>().Where(m => m != spatialData.NoDataValue).Max();
-            var minValue = spatialData.DataCube.Cast<double>().Where(m => m != spatialData.NoDataValue).Min();
+            var maxValue = spatialData.DataCube.Cast<double?>().Where(m => m != null).Max();
+            var minValue = spatialData.DataCube.Cast<double?>().Where(m => m != null).Min();
             Console.WriteLine("[Making TIFF] Max = " + maxValue + " and Min = " + minValue);
-
+ 
             Tiff.SetTagExtender(TagExtender);
             var tempFile = System.IO.Path.Combine(_options.ScratchDirectory, Guid.NewGuid().ToString() + ".tif");
             using (var output = Tiff.Open(tempFile, "w"))

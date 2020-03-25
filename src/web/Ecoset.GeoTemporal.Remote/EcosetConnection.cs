@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.RegularExpressions;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Ecoset.GeoTemporal.Remote
 {
     public class EcosetConnection : IGeoSpatialConnection
     {
         private string _endpoint;
+        private readonly JsonSerializerOptions _options = new JsonSerializerOptions();
 
         public EcosetConnection(string endpoint)
         {
@@ -56,17 +55,13 @@ namespace Ecoset.GeoTemporal.Remote
                 var response = await client.GetAsync(endpoint);
                 if (response.IsSuccessStatusCode)
                  {
-                    using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                    using (Stream contentStream = await response.Content.ReadAsStreamAsync())
                     {
-                        var serialiser = JsonSerializer.Create();
-                        using (var sr = new StreamReader(responseStream))
-                        using (var jsonTextReader = new JsonTextReader(sr)) {
-                            try {
-                                T responseContent = serialiser.Deserialize<T>(jsonTextReader);
-                                return responseContent;
-                            } catch {
-                                throw new Exception("Ecoset returned an unexpected response");
-                            }
+                        try {
+                            var result = await JsonSerializer.DeserializeAsync<T>(contentStream, _options);
+                            return result;
+                        } catch {
+                            throw new Exception("Ecoset returned an unexpected response");
                         }
                     }
                 }
@@ -84,7 +79,7 @@ namespace Ecoset.GeoTemporal.Remote
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var json = JsonConvert.SerializeObject(request);
+                var json = JsonSerializer.Serialize(request);
                 var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var req = new HttpRequestMessage(HttpMethod.Post, endpoint);
@@ -95,14 +90,11 @@ namespace Ecoset.GeoTemporal.Remote
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string jsonMessage;
                     using (Stream responseStream = await response.Content.ReadAsStreamAsync())
                     {
-                        jsonMessage = new StreamReader(responseStream).ReadToEnd();
+                        T responseContent = await JsonSerializer.DeserializeAsync<T>(responseStream);
+                        return responseContent;
                     }
-
-                    T responseContent = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
-                    return responseContent;
                 }
                 else {
                     throw new HttpRequestException("The request was not successful: " + response.StatusCode);
@@ -110,20 +102,4 @@ namespace Ecoset.GeoTemporal.Remote
             }
         }
     }
-
-    public static class JsonReaderExtensions
-    {
-        public static IEnumerable<T> SelectTokensWithRegex<T>(this JsonReader jsonReader, Regex regex)
-        {
-            JsonSerializer serializer = new JsonSerializer();
-            while (jsonReader.Read())
-            {
-                if (regex.IsMatch(jsonReader.Path) && jsonReader.TokenType != JsonToken.PropertyName)
-                {
-                    yield return serializer.Deserialize<T>(jsonReader);
-                }
-            }
-        }
-    }
-
 }
