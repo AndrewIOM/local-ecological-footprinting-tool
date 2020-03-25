@@ -14,6 +14,7 @@ open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Options
 open Ecoset.WebUI
 open Hangfire
+open System.Text.Json.Serialization
 
 type Startup private () =
     new (configuration: IConfiguration) as this =
@@ -21,7 +22,11 @@ type Startup private () =
         this.Configuration <- configuration
 
     member this.ConfigureServices(services: IServiceCollection) =
-        services.AddControllersWithViews().AddNewtonsoftJson().AddRazorRuntimeCompilation() |> ignore
+        services.AddControllersWithViews()
+            .AddNewtonsoftJson()
+            .AddRazorRuntimeCompilation()
+            .AddJsonOptions(fun opt ->
+                opt.JsonSerializerOptions.Converters.Add(JsonStringEnumConverter()) ) |> ignore
         services.AddRazorPages().AddNewtonsoftJson() |> ignore
         services.AddEcosetUI this.Configuration |> ignore
         services.AddEcosetDataPackageAPI this.Configuration |> ignore

@@ -18,6 +18,7 @@ services:
         - "./test-data/webui-scratch/:/cache/"
         - "./test-data/webui-persistence/:/persistence/"
         environment:
+        - Port=5100
         - ASPNETCORE_ENVIRONMENT=Development
         - Account__Admin__DefaultAdminUserName=${ADMINUSER}
         - Account__Admin__DefaultAdminPassword=${ADMINPASSWORD}

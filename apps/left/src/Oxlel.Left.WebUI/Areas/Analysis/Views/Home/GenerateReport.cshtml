@@ -1,10 +1,10 @@
-@using System.Globalization
-@using System.Linq
 @model Ecoset.WebUI.Models.ReportData
 @using Ecoset.GeoTemporal.Remote
-@using Newtonsoft.Json
-@using Microsoft.Extensions.Options
 @using Ecoset.WebUI.Options
+@using Microsoft.Extensions.Options
+@using System.Globalization
+@using System.Linq
+@using System.Text.Json
 @inject IOptions<EcosetAppOptions> siteConfig
 
 @{
@@ -239,6 +239,7 @@
             </div>
             <div class="col-sm-7">
               <div id="gbif_list-map" class="section-map"></div>
+              <p class="map-caption"><strong>Biodiversity Records</strong> from the Global Biodiversity Information Facility (GBIF) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer in 2019.  Land is shown in grey. </p>
             </div>
           </div>
           <div class="create-script">
@@ -261,9 +262,9 @@
                       plot.setup();
                       plot.addGraticule();
                       plot.addWireframe();
-                      plot.addPointLayer(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)), @Html.Raw(JsonConvert.SerializeObject(occurrenceColours)));
+                      plot.addPointLayer(@Html.Raw(JsonSerializer.Serialize(occurrence.Data.Rows)), @Html.Raw(JsonSerializer.Serialize(occurrenceColours)));
                       plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
-                      populateDataSources(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)));
+                      populateDataSources(@Html.Raw(JsonSerializer.Serialize(occurrence.Data.Rows)));
                     });
                   </script>
                 }
@@ -572,7 +573,7 @@
             var plot = new SpatialPlot("@executableResult.Name", {north:north, south:south, east:east, west:west});
             plot.setup();
             plot.addGraticule();
-            plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), NaN, "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name].ToString().ToLower());
+            plot.addRasterLayer(@Html.Raw(JsonSerializer.Serialize(executableResult.Data)), null, "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name].ToString().ToLower());
             plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
           });
         </script>

@@ -1,8 +1,8 @@
+@model Ecoset.WebUI.Models.ReportData
 @using System.Globalization
 @using System.Linq
-@model Ecoset.WebUI.Models.ReportData
 @using Ecoset.GeoTemporal.Remote
-@using Newtonsoft.Json
+@using System.Text.Json
 @using Microsoft.Extensions.Options
 @using Ecoset.WebUI.Options
 @inject IOptions<EcosetAppOptions> siteConfig
@@ -251,6 +251,7 @@
     <script src="/lib/underscore/underscore.js"></script>
     <script src="/lib/d3/d3.js"></script>
     <script src="/lib/topojson-client/dist/topojson.js"></script>
+    <script src="/lib/d3-geo-scale-bar/build/d3-geo-scale-bar.js"></script>
     <script src="/scripts/report.js"></script>
   </head>
   
@@ -394,10 +395,10 @@
                       plot.setup();
                       plot.addGraticule();
                       plot.addWireframe();
-                      plot.addPointLayer(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)), @Html.Raw(JsonConvert.SerializeObject(occurrenceColours)));
+                      plot.addPointLayer(@Html.Raw(JsonSerializer.Serialize(occurrence.Data.Rows)), @Html.Raw(JsonSerializer.Serialize(occurrenceColours)));
                       plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
 
-                      populateDataSources(@Html.Raw(JsonConvert.SerializeObject(occurrence.Data.Rows)));
+                      populateDataSources(@Html.Raw(JsonSerializer.Serialize(occurrence.Data.Rows)));
                     });
                   </script>
                 }
@@ -700,11 +701,6 @@
                 <h2>Appendix 4 - Data Sources</h2>
                 <p>Georeferenced species records obtained from the GBIF occurrence API (http://www.gbif.org/occurrence) are shared according to the GBIF Data Use Agreement, which includes the provision that users of any data accessed through or retrieved via the GBIF Portal will always give credit to the original data publishers. The following list identifies the data sources for all occurrence records which have been used in this analysis.</p>
                 <ul id="data-source-list" class="list-group row appendix-list"></ul>
-                <script>
-                  $(function() { 
-                    populateDataSources();
-                  });
-                </script>
               </div>
             </div>
           </div>
@@ -847,7 +843,7 @@
             var plot = new SpatialPlot("@executableResult.Name", {north:north, south:south, east:east, west:west});
             plot.setup();
             plot.addGraticule();
-            plot.addRasterLayer(@Html.Raw(JsonConvert.SerializeObject(executableResult.Data)), NaN, "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name]);
+            plot.addRasterLayer(@Html.Raw(JsonSerializer.Serialize(executableResult.Data)), null, "@paletteUrl", @maskValues[executableResult.Name], @isCategorical[executableResult.Name]);
             plot.addBox(@Model.North,@Model.South,@Model.East,@Model.West);
           });
         </script>
