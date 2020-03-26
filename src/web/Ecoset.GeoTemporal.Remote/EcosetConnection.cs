@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Ecoset.GeoTemporal.Remote
@@ -11,11 +12,13 @@ namespace Ecoset.GeoTemporal.Remote
     public class EcosetConnection : IGeoSpatialConnection
     {
         private string _endpoint;
-        private readonly JsonSerializerOptions _options = new JsonSerializerOptions();
+        private readonly JsonSerializerOptions _options;
 
         public EcosetConnection(string endpoint)
         {
             _endpoint = endpoint;
+            _options = new JsonSerializerOptions();
+            _options.Converters.Add(new JsonStringEnumConverter());
         }
 
         public async Task<JobFetchResponse> FetchResultAsync(JobId id)
@@ -60,8 +63,8 @@ namespace Ecoset.GeoTemporal.Remote
                         try {
                             var result = await JsonSerializer.DeserializeAsync<T>(contentStream, _options);
                             return result;
-                        } catch {
-                            throw new Exception("Ecoset returned an unexpected response");
+                        } catch (Exception e) {
+                            throw new Exception("Ecoset returned an unexpected response: " + e.Message);
                         }
                     }
                 }

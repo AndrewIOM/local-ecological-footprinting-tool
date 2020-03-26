@@ -24,32 +24,41 @@ namespace Ecoset.GeoTemporal.Remote
             using var jsonDocument = JsonDocument.ParseValue(ref reader);
             var jsonObject = jsonDocument.RootElement;
 
-            // 1. Raster data result
-            if (jsonObject.TryGetProperty("data", out var raw)) {
-                var parsed = JsonSerializer.Deserialize<RawEcosetData>(ref readerAtStart, options);
-                return new RawDataResult() 
-                {
-                    Stats = parsed.Stats,
-                    DataCube = To2D(parsed.Data.Data, parsed.Data.Columns, parsed.Data.Rows),
-                    Columns = parsed.Data.Columns,
-                    Rows = parsed.Data.Rows
-                } as IDataResult;
-            }
-
-            // 2. Summary result
-            if (jsonObject.TryGetProperty("summary", out var stats)) {
-                var parsed = JsonSerializer.Deserialize<RawEcosetSummaryData>(ref readerAtStart, options);
-                return new DataTableStatsResult() {
-                    Stats = parsed.Stats
-                } as IDataResult;
-            }
-
-            // 3. Data table result
+            // 1. Data table result
             if (jsonObject.ValueKind == JsonValueKind.Array) {
-                var list = JsonSerializer.Deserialize<List<Dictionary<string,string>>>(ref readerAtStart, options);
+                var list = JsonSerializer.Deserialize<List<Dictionary<string,object>>>(ref readerAtStart, options);
                 return new DataTableListResult() {
-                    Rows = list
+                    Rows = list.Select(d => d.ToDictionary(k => k.Key, k => k.Value == null ? null : k.Value.ToString())).ToList()
                 } as IDataResult;
+            }
+
+            if (jsonObject.ValueKind == JsonValueKind.Object) {
+
+                // 2. Raster data result
+                if (jsonObject.TryGetProperty("data", out var raw)) {
+                    if (raw.ValueKind == JsonValueKind.Object) {
+                        if (raw.TryGetProperty("raw", out var rawData)) {
+                            if (rawData.ValueKind == JsonValueKind.Array) {
+                                var parsed = JsonSerializer.Deserialize<RawEcosetData>(ref readerAtStart, options);
+                                return new RawDataResult() 
+                                {
+                                    Stats = parsed.Stats,
+                                    DataCube = To2D(parsed.Data.Data, parsed.Data.Columns, parsed.Data.Rows),
+                                    Columns = parsed.Data.Columns,
+                                    Rows = parsed.Data.Rows
+                                } as IDataResult;
+                            }
+                        }
+                    }
+                }
+
+                // 3. Summary result
+                if (jsonObject.TryGetProperty("summary", out var stats)) {
+                    var parsed = JsonSerializer.Deserialize<RawEcosetSummaryData>(ref readerAtStart, options);
+                    return new DataTableStatsResult() {
+                        Stats = parsed.Stats
+                    } as IDataResult;
+                }
             }
 
             // 4. Unknown result type not yet implemented
