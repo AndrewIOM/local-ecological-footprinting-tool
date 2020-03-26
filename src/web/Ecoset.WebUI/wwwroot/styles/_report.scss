@@ -197,6 +197,20 @@ li.key {
     stroke: black;
 }
 
+.coam-heading {
+  margin: 0;
+  font-size: 1em;
+  font-weight: bold;
+  border-bottom: 1px solid #007cb9;
+  padding-bottom: 2px;
+}
+
+.coam-legend {
+  font-size: 11px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
 @media print {
     .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
       float: left;

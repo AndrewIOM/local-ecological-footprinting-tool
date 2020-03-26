@@ -1,22 +1,5 @@
 @import '../_palette';
 //File mainly deals with customisations over Bootstrap 3.3.6
-//Fixes for anchor tags with navbar top offset
-h2:before,
-h3:before {
-    display: block;
-    content: " ";
-    margin-top: -4em;
-    height: 4em;
-    visibility: hidden;
-}
-
-h4:before {
-    display: block;
-    content: " ";
-    margin-top: -5em;
-    height: 5em;
-    visibility: hidden;
-}
 
 a {
     color: $primary-color;
@@ -136,6 +119,7 @@ dt {
 // Pricing primary box
 .panel-primary.pricing-panel
 {
+    text-align: center;
     margin: 3em 0;
     border-radius: 0;
     border: 1px solid $primary-color;

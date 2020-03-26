@@ -256,8 +256,9 @@
   </head>
   
   <body>
+    <style> h2 { border-bottom: 2px solid #007cb9 !important; }</style>
     <div class="container">
-      
+
       @* Section 1. Title Page *@
       <div class="report-title-page">
         <div class="row">
@@ -519,26 +520,46 @@
                 var coamProcesses = new List<string>() { "sst", "sst_fronts", "salinity", "npp", "sea_ice", "currents", "tides", "sea_state" };
                 var coamThreats = new List<string>() { "sst_trend", "coral_bleaching", "acidification", "sea_level_rise", "invasive_species" };
               }
-              <h3>Context compared to other areas</h3>
-              @{ CoamGraph(coamContext); }
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <p class="coam-heading">Context</p>
+              @{ CoamGraph(coamBiodiversity); }
+              <p class="coam-heading">Biodiversity</p>
+              @{ CoamGraph(coamBiodiversity); }
+              <p class="coam-heading">Competing Uses</p>
+              @{ CoamGraph(coamCompetingUses); }
+            </div>
+            <div class="col-sm-6">
+              <p class="coam-heading">Processes</p>
+              @{ CoamGraph(coamProcesses); }
+              <p class="coam-heading">Threats</p>
+              @{ CoamGraph(coamThreats); }
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <p class="coam-legend">Charts indicating the importance of the area of interest relative to the reference region for each layer (standard scores +/- uncertainty in standard scores). If a layer has a positive standard score then the area of interest is more important than the reference region; a layer with a negative standard score is less important in the study area than in the reference region.</p>
             </div>
           </div>
         </div>
+
         <div class="report-section">
-            <h3>Biodiversity compared to other areas</h3>
-            @{ CoamGraph(coamBiodiversity); }
-        </div>
-        <div class="report-section">
-            <h3>Competing uses compared to other areas</h3>
-            @{ CoamGraph(coamCompetingUses); }
-        </div>
-        <div class="report-section">
-            <h3>Processes compared to other areas</h3>
-            @{ CoamGraph(coamProcesses); }
-        </div>
-        <div class="report-section">
-            <h3>Threats compared to other areas</h3>
-            @{ CoamGraph(coamThreats); }
+            <div class="col-sm-12">
+              <h3>Dataset Statistics (COAM)</h3>
+              <hr/>
+              <p class="coam-heading">Context</p>
+              @{ CoamTable(coamBiodiversity); }
+              <p class="coam-heading">Biodiversity</p>
+              @{ CoamTable(coamBiodiversity); }
+              <p class="coam-heading">Competing Uses</p>
+              @{ CoamTable(coamCompetingUses); }
+              <p class="coam-heading">Processes</p>
+              @{ CoamTable(coamProcesses); }
+              <p class="coam-heading">Threats</p>
+              @{ CoamTable(coamThreats); }
+            </div>
         </div>
 
         @* Section 9. References *@
@@ -715,8 +736,37 @@
     void CoamGraph(List<string> variables) {
       var graphId = "coam-" + Guid.NewGuid().ToString();
       var variablesToDraw = Model.RawResults.Where(r => variables.Contains(r.Name));
-      var height = 75 * variablesToDraw.Count();
-      <svg id="@graphId" width="800" height="@height"></svg>
+      var height = 10 + 20 + 30 * variablesToDraw.Count();
+      <svg id="@graphId" width="500" height="@height"></svg>
+      <script>
+        $(function() { 
+          var data = [];
+          @foreach (var result in variablesToDraw) {
+              var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalmean");
+              var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
+              if(tableStatsResultsMean != null && tableStatsResultsStdev != null) {
+                var localMean = result.Data.Stats.Mean;
+                var localStdev = result.Data.Stats.StdDev;
+                var zonalMeanScaled = tableStatsResultsMean.Data.Stats.Mean / 1;
+                var zonalStdevScaled = tableStatsResultsStdev.Data.Stats.Mean / 1;
+                var z = (localMean - zonalMeanScaled) / zonalStdevScaled;
+                var sd = localStdev / zonalStdevScaled;
+                <text>
+                data.push({
+                  "name": "@prettyTitles[result.Name]",
+                  "value": @z,
+                  "sd": @sd
+                });
+                </text>
+              }
+          }
+          drawCoamGraph('@graphId', data, { top: 10, right: 70, bottom: 20, left: 160 });
+        });
+      </script>
+    }
+
+    void CoamTable(List<string> variables) {
+      var variablesToDraw = Model.RawResults.Where(r => variables.Contains(r.Name));
       <table class="table">
         <thead>
           <tr>
@@ -767,32 +817,6 @@
           </tr>
         }
       </table>
-      <script>
-        $(function() { 
-          var data = [];
-          @foreach (var result in variablesToDraw) {
-              var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalmean");
-              var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
-              if(tableStatsResultsMean != null && tableStatsResultsStdev != null) {
-                var localMean = result.Data.Stats.Mean;
-                var localStdev = result.Data.Stats.StdDev;
-                var zonalMeanScaled = tableStatsResultsMean.Data.Stats.Mean / 1;
-                var zonalStdevScaled = tableStatsResultsStdev.Data.Stats.Mean / 1;
-                var z = (localMean - zonalMeanScaled) / zonalStdevScaled;
-                var sd = localStdev / zonalStdevScaled;
-                <text>
-                data.push({
-                  "name": "@prettyTitles[result.Name]",
-                  "value": @z,
-                  "sd": @sd
-                });
-                </text>
-              }
-          }
-          drawCoamGraph('@graphId', data);
-        });
-      </script>
-      <p>Table and chart indicating the importance of the area of interest relative to the reference region for each layer (standard scores +/- uncertainty in standard scores). If a layer has a positive standard score then the area of interest is more important than the reference region; a layer with a negative standard score is less important in the study area than in the reference region.</p>
     }
 
     void MapPage(string variableId)

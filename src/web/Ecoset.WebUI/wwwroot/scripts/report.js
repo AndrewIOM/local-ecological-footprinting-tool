@@ -207,7 +207,7 @@ var SpatialPlot = function (id, extent) {
             var allData_dataOnly = _.chain(data.DataCube)
                 .flatten()
                 .filter(function (d) {
-                    return d != self.noDataValue && !isNaN(d);                    
+                    return d != self.noDataValue && !isNaN(d) && d != null;                    
                 }).value();
             var max = _.max(allData_dataOnly);
             var min = _.min(allData_dataOnly);
@@ -435,8 +435,8 @@ var SpatialPlot = function (id, extent) {
         })
 
         self.svg.append("svg:image")
-            .attr('x', (self.svgSize - self.mapSize) / 2)
-            .attr('y', (self.svgSize - self.mapSize) / 2)
+            .attr('x', self.graticuleBuffer)
+            .attr('y', 0)
             .attr('width', self.mapSize)
             .attr('height', self.mapSize)
             .attr('preserveAspectRatio', 'none')
@@ -549,15 +549,22 @@ var drawGlobalPinpointMap = function (svgId, n, s, e, w) {
     });
 }
 
-var drawCoamGraph = function (coamSvgId, data) {
+var drawCoamGraph = function (coamSvgId, data, margins) {
 
-    var svg = d3.select("#" + coamSvgId),
-        margin = {
+    var m;
+    if (margins) {
+        m = margins;
+    } else {
+        m = {
             top: 20,
             right: 100,
             bottom: 30,
             left: 160
-        },
+        };
+    };
+    
+    var svg = d3.select("#" + coamSvgId),
+        margin = m,
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom;
 
