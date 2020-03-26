@@ -53,49 +53,49 @@
   descriptions["aquaculture_potential"] = "The potential for marine aquaculture was calculated using the INVEST algorithms developed by the Natural Capital Project (Sharp et al 2018).  The algorithm takes account of monthly climatology of sea surface temperature, distance from shore, water depth and shipping density.";
   descriptions["windpower_potential"] = "The potential for offshore wind power generation was calculated using the INVEST algorithms developed by the Natural Capital Project (Sharp et al 2018).  The algorithm takes account of satellite time-series data on wind speeds 1987-present (Zhang et al 2006); water depth, distance form shore and shipping density.";
   descriptions["wavepower_potential"] = "The potential for wave power generation was calculated using the INVEST algorithms developed by the Natural Capital Project (Sharp et al 2018).  The algorithm takes account of global significant wave height time-series data; water depth; distance from shore and shipping density.";
-  descriptions["benthic_roughness"] = "Wilson et al (2007)";
-  descriptions["sst"] = "Coming soon.";
-  descriptions["sst_fronts"] = "Coming soon.";
-  descriptions["salinity"] = "Coming soon";
-  descriptions["npp"] = "Coming soon";
-  descriptions["sea_ice"] = "Coming soon";
-  descriptions["currents"] = "Coming soon";
-  descriptions["tides"] = "Coming soon";
-  descriptions["sea_state"] = "Coming soon";
-  descriptions["sst_trend"] = "Coming soon";
-  descriptions["coral_bleaching"] = "Coming soon";
-  descriptions["acidification"] = "Coming soon";
-  descriptions["sea_level_rise"] = "Coming soon";
-  descriptions["invasive_species"] = "Coming soon";
+  descriptions["benthic_roughness"] = "Benthic roughness Wilson et al (2007) derived from General Bathymetric Chart of the Oceans (GEBCO)   (Weatherall et al 2015) https://gebco.net";
+  descriptions["sst"] = "Sea surface temperature (ESA CCI; Merchant et al 2014)";
+  descriptions["sst_fronts"] = "Sea surface temperature front frequency derived from sea surface temperature time series (ESA CCI; Merchant et al 2014)";
+  descriptions["salinity"] = "Sea surface salinity (ESA CCI; Vergely et al 2019)";
+  descriptions["npp"] = "Net primary productivity (VGPM algorithm; Behrenfeld & Falkowski 1997)";
+  descriptions["sea_ice"] = "Sea ice frequency derived from Canada Meteorological Center (2016) GHRSST";
+  descriptions["currents"] = "Ocean currents";
+  descriptions["tides"] = "Tide height";
+  descriptions["sea_state"] = "Mean significant wave height (Passaro 2019)";
+  descriptions["sst_trend"] = "Sea surface temperature (ESA CCI; Merchant et al 2014)";
+  descriptions["coral_bleaching"] = "Coral bleaching frequency derived from NOAA Coral Reef Watch data (Skirving et al 2018)";
+  descriptions["acidification"] = "pH derived from Boyer et al (2009)";
+  descriptions["sea_level_rise"] = "Sea level rise derived from sea level altimetry (Legais et al 2018)";
+  descriptions["invasive_species"] = "Invasive marine species counts derived from Global Invasive Species Database (GISD; Pagad et al 2015)";
 
   var mapLegend = new Dictionary<string,string>();
-  mapLegend["sea_depth"] = "Depth from the General Bathymetric Chart of the Oceans (GEBCO) in specified area of interest (red rectangle) in 2015.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["ecoregions"] = "Marine Ecoregions of the World (MEOW) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer in 2007.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["economic_zones"] = "Exclusive Economic Zones (sea within 200 nautical miles from a nation’s coastline) in specified area of interest (red rectangle) in 2018. High Seas is shown in white.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["vulnerability"] = "Vulnerability map showing the number of globally threatened (Cr, EN, VU) and near-threatened (NT) species of corals, fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["migratory_count"] = "Migratory species map showing the number of migratory fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["protected_areas"] = "Marine Protected Areas from the World Database of Protected Areas (WDPA) 2018 in specified area of interest (red rectangle). Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["coastal_ecosystems"] = "Map showing kelp, mangroves, saltmarsh; seagrass; tidal flats; and coral reefs in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["critical_habitat"] = "Critical habitat map showing areas which potentially meet the IFC PS6 definition of critical habitat because of the occurrence of Critically Endangered (CR) and Endangered (EN) marine species in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["shipping_density"] = "Shipping density map showing global quantiles of shipping density from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["fish_catches"] = "Fish catches map showing total fish catches (all species) tons per year in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["aquaculture_potential"] = "Aquaculture potential map showing global quantiles of aquaculture potential from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["windpower_potential"] = "Wind power potential map showing global quantiles of offshore wind power potential from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["wavepower_potential"] = "Wave power potential map showing global quantiles of wave power potential from 1 (lowest) – 100 (highest) in 2018 in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["benthic_roughness"] = "Land is shown in grey. Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["sst"] = "Sea surface temperature map showing surface temperature in degrees Celsius. Land is shown in grey. Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["sst_fronts"] = "Sea surface temperature fronts map showing frequency of fronts. Land is shown in grey. Spatial resolution is 30 arcsec, approximately 1km.";
-  mapLegend["salinity"] = "Coming soon";
-  mapLegend["npp"] = "Coming soon";
-  mapLegend["sea_ice"] = "Coming soon";
-  mapLegend["currents"] = "Coming soon";
-  mapLegend["tides"] = "Coming soon";
-  mapLegend["sea_state"] = "Coming soon";
-  mapLegend["sst_trend"] = "Coming soon";
-  mapLegend["coral_bleaching"] = "Coming soon";
-  mapLegend["acidification"] = "Coming soon";
-  mapLegend["sea_level_rise"] = "Coming soon";
-  mapLegend["invasive_species"] = "Coming soon";
+  mapLegend["sea_depth"] = "from the General Bathymetric Chart of the Oceans (GEBCO) in specified area of interest (red rectangle) in 2015.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["ecoregions"] = "of the World (MEOW) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer in 2007.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["economic_zones"] = "(sea within 200 nautical miles from a nation’s coastline) in specified area of interest (red rectangle) in 2018. High Seas is shown in white.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["vulnerability"] = "map showing the number of globally threatened (Cr, EN, VU) and near-threatened (NT) species of corals, fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["migratory_count"] = "map showing the number of migratory fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["protected_areas"] = "from the World Database of Protected Areas (WDPA) 2018 in specified area of interest (red rectangle). Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["coastal_ecosystems"] = "map showing kelp, mangroves, saltmarsh; seagrass; tidal flats; and coral reefs in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["critical_habitat"] = "map showing areas which potentially meet the IFC PS6 definition of critical habitat because of the occurrence of Critically Endangered (CR) and Endangered (EN) marine species in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["shipping_density"] = "map showing global quantiles of shipping density from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["fish_catches"] = "map showing total fish catches (all species) tons per year in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["aquaculture_potential"] = "map showing global quantiles of aquaculture potential from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["windpower_potential"] = "map showing global quantiles of offshore wind power potential from 1 (lowest) – 100 (highest) in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["wavepower_potential"] = "map showing global quantiles of wave power potential from 1 (lowest) – 100 (highest) in 2018 in the specified area of interest (red rectangle) in 2018.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["benthic_roughness"] = "(dimensionless) in specified area of interest (red rectangle) in 2015 derived from the General Bathymetric Chart of the Oceans (GEBCO). Land is shown in grey. Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["sst"] = "map showing mean annual sea surface temperature in 2018 (degrees C) in specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["sst_fronts"] = "map showing frequency of fronts in the period 2000-2018 in specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["salinity"] = "map (effective salinity units) in 2018 in specified area of interest (red rectangle). Land is shown in grey. Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["npp"] = "(g C/m2/year) in period 2000-2018  in specified area of interest (red rectangle). Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["sea_ice"] = "frequency map showing (proportion of time when sea ice occurs 0-100%) in period 2000-2018 in specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["currents"] = "(metres/second) in period 2000-2018 in specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["tides"] = "map showing mean tide height range (metres) in the period 2000-2018 in specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["sea_state"] = "(mean significant wave height metres) in the period 2000-2018 in specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["sst_trend"] = "map (degrees C/decade) in specified area of interest (red rectangle)  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["coral_bleaching"] = "map (proportion of time 0-100% bleaching occurred) in the period 2000-2018 in the specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["acidification"] = "(ph units) in 2020 in the specified area of interest (red rectangle)  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["sea_level_rise"] = "map (metres/decade) in period 2000-2020 in specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["invasive_species"] = "map (number of different marine invasive species) in 2018 in the specified area of interest (red rectangle).  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
 
   // TODO Use units from ecoset backend
   var units = new Dictionary<string,string>();
@@ -114,17 +114,17 @@
   units["wavepower_potential"] = "Quantile";
   units["benthic_roughness"] = "Dimensionless";
   units["sst"] = "Degrees Celsius";
-  units["sst_fronts"] = "Proportion";
+  units["sst_fronts"] = "frequency (proportion of time fronts occur 0-100%)";
   units["salinity"] = "Effective salinity units";
   units["npp"] = "g C/m2/year";
   units["sea_ice"] = "proportion";
   units["currents"] = "metres per second";
   units["tides"] = "metres";
   units["sea_state"] = "metres";
-  units["sst_trend"] = "degrees Celsius per year";
+  units["sst_trend"] = "degrees Celsius per decade";
   units["coral_bleaching"] = "proportion";
   units["acidification"] = "pH units";
-  units["sea_level_rise"] = "metres";
+  units["sea_level_rise"] = "metres per decade";
   units["invasive_species"] = "count";
 
   var hasPalette = new Dictionary<string,bool>();
@@ -373,7 +373,7 @@
             </div> @* End col-sm-5 *@
             <div class="col-sm-7">
               <div id="biodiversity_records-map" class="section-map"></div>
-              <p><br/><strong>Biodiversity Records</strong> from the Global Biodiversity Information Facility (GBIF) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer in 2019.  Land is shown in grey. </p>
+              <p class="map-caption"><br/><strong>Biodiversity Records</strong> from the Global Biodiversity Information Facility (GBIF) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer in 2019.  Land is shown in grey. </p>
             </div>
           </div> @* End row *@
           <div class="create-script">
@@ -429,7 +429,7 @@
                     var zonalString = "Unknown";
                     double localValue = 1.0;
                     double zonalValue = 1.0;
-                    var representationString = "Unknown";
+                    var representationString = "None";
                     
                     var gbifCount = gbiflist.Data.Rows.FirstOrDefault(m => m["taxon"] == entry.Key);
                     if (gbifCount != null && oceanMetresSquared != 0) {
@@ -525,7 +525,7 @@
           <div class="row">
             <div class="col-sm-6">
               <p class="coam-heading">Context</p>
-              @{ CoamGraph(coamBiodiversity); }
+              @{ CoamGraph(coamContext); }
               <p class="coam-heading">Biodiversity</p>
               @{ CoamGraph(coamBiodiversity); }
               <p class="coam-heading">Competing Uses</p>
@@ -546,11 +546,12 @@
         </div>
 
         <div class="report-section">
+          <div class="row">
             <div class="col-sm-12">
               <h3>Dataset Statistics (COAM)</h3>
               <hr/>
               <p class="coam-heading">Context</p>
-              @{ CoamTable(coamBiodiversity); }
+              @{ CoamTable(coamContext); }
               <p class="coam-heading">Biodiversity</p>
               @{ CoamTable(coamBiodiversity); }
               <p class="coam-heading">Competing Uses</p>
@@ -560,6 +561,7 @@
               <p class="coam-heading">Threats</p>
               @{ CoamTable(coamThreats); }
             </div>
+          </div>
         </div>
 
         @* Section 9. References *@
@@ -569,6 +571,9 @@
               
               <h2>References</h2>
               <ul class="reference-list">
+                <li>
+                  Behrenfeld MJ, Falkowski PG (1997) Photosynthetic rates derived from satellite-based chlorophyll concentration.  Limmnology and Oceanography 42: 1-20
+                </li>
                 <li>
                   Brasnett B (2008) The impact of satellite retrievals in a global sea-surface-temperature analysis. Quarterly Journal of the Royal Meteorological Society 134: 1745-1760.                </li>
                 <li>
@@ -598,12 +603,28 @@
                   <a href="https://www.iucnredlist.org/">https://www.iucnredlist.org/</a>.
                 </li>
                 <li>
+                  Legeais JF, Ablain M, Zawadzki L, Zuo H, Johannessen JA, Scharffenberg MG, Fenoglio ML, Fernandes MJ, Andersen OB, Rudenko S, Cipollini P, Quartly GD, Passaro M, Cazenave A, Benveniste J (2018) An improved and homogeneous altimeter sea level record from the ESA Climate Change Initiative, Earth Systems Science Data 10: 281-301
+                  <a href="https://doi.org/10.5194/essd-10-281-2018">https://doi.org/10.5194/essd-10-281-2018</a>
+                </li>
+                <li>
+                  Merchant CJ, Embury O, Roberts-Jones J, Fiedler E, Bulgin CE, Corlett GK, Good S, McLaren A, Rayner N, Morak-Bozzo S, Donlon C (2014), Sea surface temperature datasets for climate applications from Phase 1 of the European Space Agency Climate Change Initiative (SST CCI). Geoscience Data Journal, 1:179–191. 
+                  <a href="https://doi.org/10.1002/gdj3.20">https://doi.org/10.1002/gdj3.20</a>
+                </li>
+                <li>
                   McOwen C, Weatherdon LV, Bochove J, Sullivan E, Blyth S, Zockler C, Stanwell-Smith D, Kingston N, Martin CS, Spalding M, Fletcher S (2017). A global map of saltmarshes. Biodiversity Data Journal 5: e11764.
                   <a href="http://data.unepwcmc.org/datasets/43">http://data.unepwcmc.org/datasets/43</a>.
                 </li>
                 <li>
                   Murray N. J., Phinn S. R., DeWitt M., Ferrari R., Johnston R., Lyons M. B., Clinton N.,Thau D. & Fuller R. A. (2019) The global distribution and trajectory of tidal flats. Nature. 565:222-225. http://dx.doi.org/10.1038/s41586-018-0805-8
                   <a href="http://data.unepwcmc.org/datasets/47">http://data.unepwcmc.org/datasets/47</a>.
+                </li>
+                <li>
+                  Pagad S, Genovesi P, Carnevali L, Scalera R, Clout M (2015) IUCN SSC Invasive Species Specialist Group: invasive alien species information management supporting practititioners, policy makers and decision takers.  Management of Biological Invasions 6: 127-135
+                  <a href="http://iucngisd.org/gisd/">http://iucngisd.org/gisd/</a>
+                </li>
+                <li>
+                  Passaro M (2019) ESA CCI sea state algorithm theoretical basis document (ATBD)
+                  <a href="http://http://cci.esa.int/sites/default/files/Sea_State_cci_ATBD_v1.1-signed_0.pdf">http://http://cci.esa.int/sites/default/files/Sea_State_cci_ATBD_v1.1-signed_0.pdf</a>
                 </li>
                 <li>
                   Ramm F, Topf J, Chilton S (2011) Open Street Map: using and enhancing the free map of the world.  UIT Cambridge.
@@ -618,6 +639,10 @@
                   <a href="http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/  ">http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/  </a>.
                 </li>
                 <li>
+                  Skirving W, Enríquez S, Hedley J, Dove S, Eakin CM, Mason RAB, De La Cour JL, Liu G, Hoegh-Guldberg O, Strong AE, Mumby PJ, Iglesias-Prieto R (2018) Remote Sensing of Coral Bleaching Using Temperature and Light: Progress towards an Operational Algorithm (2018) Remote Sensing  10: 18 
+                  <a href="http://doi.org/10.3390/rs10010018">http://doi.org/10.3390/rs10010018</a>
+                </li>
+                <li>
                   Spalding MD, Fox HE, Allen GR, Davidson N, Ferdana ZA, Finlayson M, Halpern BS, Jorge MA, Lombana A, Martin KD, McManus E, Molnar J, Recchia CA, Robertson J (2007) Marine Ecoregions of the World.  Bioscience 57: 573-583
                   <a href="https://www.worldwildlife.org/publications/marine-ecoregions-of-the-world-a-bioregionalization-of-coastal-and-shelf-areas">https://www.worldwildlife.org/publications/marine-ecoregions-of-the-world-a-bioregionalization-of-coastal-and-shelf-areas</a>.
                 </li>
@@ -628,6 +653,10 @@
                 <li>
                  UNEP-WCMC, Worldfish Centre, WRI, TNC (2018) Global distribution of warm water coral reefs, complied from multiple sources including the Millennium Coral Reef Mapping project. Version 4.  Cambridge (UK): UN Environment World Conservation Monitoring Centre.
                  <a href="http://data.unep-wcmc.org/datasets/1">http://data.unep-wcmc.org/datasets/1</a>.
+                </li>
+                <li>
+                  Vergely et al (2019) Climate Change Initiative + (CCI+) phase 1 sea surface salinity algorithm theoretical basis document.
+                  <a href="http://cci.esa.int/sites/default/files/filedepot/SSS_cci-D2.3-ATBD-v1.3-signed.pdf">http://cci.esa.int/sites/default/files/filedepot/SSS_cci-D2.3-ATBD-v1.3-signed.pdf</a>
                 </li>
                 <li>
                   Weatherall P., Marks KM, Jakobsson M, Schmitt T, Tani S, Arndt JE, Rovere M, Chayes D, Ferrini V, Wigley R(2015), A new digital bathymetric model of the world’s oceans, Earth and Space Science, 2: 331–345, doi: 10.1002/2015EA000107
@@ -846,7 +875,7 @@
         </div>
         <div class="col-sm-7">
         <div id="@variableId-map" class="section-map"></div>
-        <p class="map-caption">@mapLegend[variableId]</p>
+        <p class="map-caption"><strong>@prettyTitles[variableId]</strong> @mapLegend[variableId]</p>
         </div>
       </div>
       <div class="create-script">

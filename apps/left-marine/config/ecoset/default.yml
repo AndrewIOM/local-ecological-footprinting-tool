@@ -12,9 +12,9 @@ cache:
 locations:
     cache: /Users/andrewmartin/Desktop/ecoset/cache
 
-gbif_db_host: &gbif_db_host test
-gbif_db_user: &gbif_db_user test
-gbif_db_password: &gbif_db_password test
+    gbif_db_host: &gbif_db_host test
+    gbif_db_user: &gbif_db_user test
+    gbif_db_password: &gbif_db_password test
     
 variables:
     - biodiversity_records:
@@ -447,7 +447,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/aquaculture
+                    tiledir: /data/aquaculturepotential
                     nodata: 255
 
     - aquaculture_potential_zonalmean:
@@ -462,7 +462,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/aquaculture/zonal
+                    tiledir: /data/aquaculturepotential/zonal
                     nodata: 255
 
     - aquaculture_potential_zonalstdev:
@@ -477,7 +477,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/aquaculture/zonalsd
+                    tiledir: /data/aquaculturepotential/zonalsd
                     nodata: 255
 
     - windpower_potential:
@@ -492,7 +492,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/windpower
+                    tiledir: /data/windpowerpotential
                     nodata: 255
 
 
@@ -508,7 +508,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/windpower/zonal
+                    tiledir: /data/windpowerpotential/zonal
                     nodata: 255
 
 
@@ -524,7 +524,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/windpower/zonalsd
+                    tiledir: /data/windpowerpotential/zonalsd
                     nodata: 255
 
     - wavepower_potential:
@@ -539,7 +539,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/wavepower
+                    tiledir: /data/wavepowerpotential
                     nodata: 255
 
     - wavepower_potential_zonalmean:
@@ -554,7 +554,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/wavepower/zonal
+                    tiledir: /data/wavepowerpotential/zonal
                     nodata: 255
 
     - wavepower_potential_zonalstdev:
@@ -569,7 +569,7 @@ variables:
                 licenseUrl: ""
                 implementation: IntersectTiffs
                 options:
-                    tiledir: /data/wavepower/zonalsd
+                    tiledir: /data/wavepowerpotential/zonalsd
                     nodata: 255
 
     - sea_ice:
@@ -729,7 +729,8 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/sst
-                    nodata: 255
+                    nodata: -9999
+                    scalefactor: 0.001
 
     - sst_zonalmean:
         name: "Zonal Mean: Sea Surface Temperature"
@@ -744,7 +745,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/sst/zonal
-                    nodata: 255
+                    nodata: -9999
 
     - sst_zonalstdev:
         name: "Zonal Stdev: Sea Surface Temperature"
@@ -759,7 +760,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/sst/zonalsd
-                    nodata: 255
+                    nodata: -9999
 
     - sst_trend:
         name: "Sea Surface Temperature Trend"
@@ -775,6 +776,7 @@ variables:
                 options:
                     tiledir: /data/ssttrend
                     nodata: -9999
+                    scalefactor: 0.001
 
     - sst_trend_zonalmean:
         name: "Zonal Mean: Sea Surface Temperature Trend"
@@ -992,7 +994,6 @@ variables:
                     tiledir: /data/benthicroughness/zonalsd
                     nodata: -9999
 
-
     - coral_bleaching:
         name: "Coral Bleaching"
         description: ""
@@ -1100,6 +1101,7 @@ variables:
                 options:
                     tiledir: /data/sealevelrise
                     nodata: -9999 
+                    scalefactor: 0.01
 
     - sea_level_rise_zonalmean:
         name: "Zonal Mean: Sea Level Rise"

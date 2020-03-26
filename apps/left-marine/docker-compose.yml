@@ -8,12 +8,10 @@ services:
         ports:
         - "5001:5001"
         - "5002:5002"
+        environment:
+          - ES_CACHE_DIR=/output
         depends_on:
         - ecoset.cache
-        deploy:
-          resources:
-            limits:
-              cpus: '0.50'
 
     # Web application for UI and API
     web.ui:
