@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using Ecoset.GeoTemporal.Remote;
 using Ecoset.WebUI.Data;
 using Ecoset.WebUI.Models;
@@ -107,7 +109,12 @@ namespace Ecoset.WebUI {
 
             services.AddSwaggerGen(c => 
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "LEFT Data Package API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "LEFT Data Package API", 
+                    Version = "v1"
+                });
+                c.DescribeAllEnumsAsStrings();
+                c.DescribeStringEnumsInCamelCase();
                 c.AddSecurityDefinition("jwt_auth", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -127,6 +134,11 @@ namespace Ecoset.WebUI {
                         }, new string[] {}
 
                     }});
+                    
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 

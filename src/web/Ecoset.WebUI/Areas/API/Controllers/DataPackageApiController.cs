@@ -13,6 +13,8 @@ using Ecoset.WebUI.Options;
 using System.Security.Claims;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Ecoset.WebUI.Areas.API.Controllers {
 
@@ -53,10 +55,37 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         /// <summary>
         /// Create a data package for a given place and time.
         /// </summary>
-        /// <param name="model"></param>        
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     {
+        ///         "latitudeSouth": 54,
+        ///         "latitudeNorth": 55.4,
+        ///         "longitudeEast": -12,
+        ///         "longitudeWest": -10,
+        ///         "dateMode": "latest",
+        ///         "variables": [
+        ///           {
+        ///             "name": "sea_depth",
+        ///             "method": "default"
+        ///           },
+        ///           {
+        ///             "name": "acidification",
+        ///             "method": "default"
+        ///           }
+        ///         ]
+        ///     }
+        /// </remarks>
+        /// <param name="request">A geo-temporal query containing variables of interest</param>
+        /// <returns>A newly created TodoItem</returns>
+        /// <response code="201">Returns the id of the data package queued for processing</response>
+        /// <response code="400">If the request did not contain valid spatial-temporal attributes; or had no variables</response>            
         [HttpPost]
         [Route("submit")]
-        public async Task<IActionResult> Submit([FromBody] DataRequest request) {
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(DataPackageId), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(IDictionary<string, string[]>), 400)]
+        public async Task<IActionResult> Submit([FromBody,BindRequired] DataRequest request) {
             var variablesToRun = new List<AvailableVariable>();
             foreach (var variable in request.Variables) {
                 var available = await _dataRegistry.IsAvailable(variable.Name, variable.Method);
@@ -106,15 +135,27 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
             if (!packageId.HasValue) {
                 return StatusCode(500);
             }
-            return CreatedAtAction(nameof(DataPackage), new { id =  packageId });
+            return CreatedAtAction(nameof(DataPackage), new DataPackageId() { Id =  packageId.Value });
         }
 
         /// <summary>
         /// Gets the details of a data package, including the status of any
         /// data generation processes.
         /// </summary>
+        /// <remarks>
+        /// A data package is first placed in a queue; when processing capacity
+        /// becomes available, the package will begin processing. Only when the
+        /// package is marked 'Complete' will fetching of the data be available.
+        /// </remarks>
+        /// <param name="id">A data package id</param>
+        /// <returns>A status code for the specified data package</returns>
+        /// <response code="200">Returns the status of the data package</response>
+        /// <response code="404">If the data package did not exist</response>     
         [HttpGet]
         [Route("status")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(JobStatus), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Status(Guid id) {
             var dp = await _jobService.GetDataPackage(id);
             if (dp == null) return NotFound("The data package does not exist");
@@ -124,10 +165,26 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         }
 
         /// <summary>
-        /// Stream the contents of the data package.
+        /// Stream the contents of a completed data package.
         /// </summary>
+        /// <remarks>
+        /// Fetches the contents of a data package. Will return 400 for a data package that has
+        /// not yet completed. The data contains the spatial-temporal properties of the original
+        /// request and a list of data results. Each data result contains its specific spatial and
+        /// temporal properties (as these may differ from the requested dimensions, for example when
+        /// asking for times before a certain date). Results may be in a number of data formats.
+        /// </remarks>
+        /// <param name="id">A data package id</param>
+        /// <returns>A package of data results, which may be in table or raster form.</returns>
+        /// <response code="200">Returns the status of the data package</response>
+        /// <response code="400">If the data package is not ready for fetching</response>
+        /// <response code="404">If the data package did not exist</response>     
         [HttpGet]
         [Route("fetch")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ReportData), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Fetch(Guid id) 
         {
             var dp = await _jobService.GetDataPackage(id);

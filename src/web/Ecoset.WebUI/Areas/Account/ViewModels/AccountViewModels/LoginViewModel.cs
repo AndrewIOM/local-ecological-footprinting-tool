@@ -18,6 +18,9 @@ namespace Ecoset.WebUI.Models.AccountViewModels
 
     public class AuthRequest 
     {
+        /// <summary>
+        /// The email address that you used to register an account
+        /// </summary>
         [Required]
         [EmailAddress]
         public string Email { get; set; }

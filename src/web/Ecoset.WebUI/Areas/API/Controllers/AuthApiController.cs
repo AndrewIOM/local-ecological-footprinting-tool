@@ -11,6 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Ecoset.WebUI.Models.AccountViewModels;
 using Ecoset.WebUI.Models;
+using Microsoft.AspNetCore.Http;
+using Ecoset.WebUI.Models.JobViewModels;
 
 namespace Ecoset.WebUI.Areas.API.Controllers {
 
@@ -36,8 +38,19 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
             _config = config;
         }
 
+        /// <summary>
+        /// Generate a bearer token to use the secured data packages API. You
+        /// must add the resultant token into the jwt_auth header of requests
+        /// </summary>
+        /// <param name="model">Your login details</param>
+        /// <returns>A bearer token to be included in request headers</returns>
+        /// <response code="200">Returns the bearer token</response>
+        /// <response code="400">If the token could not be generated</response>     
         [AllowAnonymous]
         [HttpPost]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(AuthToken), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Authenticate([FromBody] AuthRequest model) {
             if (ModelState.IsValid) {
                 var user = await _userManager.FindByEmailAsync(model.Email);
@@ -57,7 +70,7 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
                             claims,
                             expires: DateTime.Now.AddMinutes(30),
                             signingCredentials: creds);
-                        return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+                        return Ok(new AuthToken() { Token = new JwtSecurityTokenHandler().WriteToken(token) });
                     }
                 }
             }

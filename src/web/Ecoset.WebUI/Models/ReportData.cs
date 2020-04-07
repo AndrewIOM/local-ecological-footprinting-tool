@@ -4,6 +4,10 @@ using Ecoset.GeoTemporal.Remote;
 
 namespace Ecoset.WebUI.Models
 {
+    /// <summary>
+    /// A data package's spatial and temporal properties
+    /// and resultant datasets.
+    /// </summary>
     public class ReportData
     {
         public string Title { get; set; }
