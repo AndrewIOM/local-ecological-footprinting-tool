@@ -107,11 +107,14 @@ namespace Ecoset.WebUI.Services.Concrete
 
         private Models.SimpleDate dateDto(Date eDate) {
             if (eDate == null) return null;
-            return new Models.SimpleDate() {
-                Day = eDate.Day,
-                Month = eDate.Month,
-                Year = eDate.Year
-            };
+            if (eDate.Year.HasValue) {
+                return new Models.SimpleDate() {
+                    Day = eDate.Day,
+                    Month = eDate.Month,
+                    Year = eDate.Year.Value
+                };
+            }
+            return null;
         }
 
     }

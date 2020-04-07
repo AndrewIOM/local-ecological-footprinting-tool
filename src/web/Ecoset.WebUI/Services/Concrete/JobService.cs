@@ -28,6 +28,7 @@ namespace Ecoset.WebUI.Services.Concrete
         private readonly EcosetAppOptions _appOptions;
         private readonly UserManager<ApplicationUser> _userManager;
         private ILogger<JobService> _logger;
+        private IDataRegistry _registry;
         public JobService(ApplicationDbContext context, 
             IJobProcessor processor, 
             INotificationService notifyService, 
@@ -36,6 +37,7 @@ namespace Ecoset.WebUI.Services.Concrete
             IOutputPersistence outputPersistence,
             UserManager<ApplicationUser> userManager,
             IOptions<EcosetAppOptions> appOptions,
+            IDataRegistry registry,
             ILogger<JobService> logger) {
             _context = context;
             _processor = processor;
@@ -45,6 +47,7 @@ namespace Ecoset.WebUI.Services.Concrete
             _reportGenerator = reportGenerator;
             _userManager = userManager;
             _appOptions = appOptions.Value;
+            _registry = registry;
             _logger = logger;
         }
 
@@ -251,17 +254,16 @@ namespace Ecoset.WebUI.Services.Concrete
                 _context.Update(job);
                 _context.SaveChanges();
                 try {
-                    var data = _processor.GetReportData(job.JobProcessorReference).Result;
+                    var data = await _processor.GetReportData(job.JobProcessorReference);
                     _outputPersistence.PersistData(job.Id, data);
                     job.ProActivation.ProcessingStatus = JobStatus.Completed;
                     _context.Update(job);
                     _context.SaveChanges();
                 } catch (Exception e) {
                     _logger.LogError("Could not persist data download. " + e.Message);
-                    throw e;
-                    //job.ProActivation.ProcessingStatus = JobStatus.Failed;
-                    //_context.Update(job);
-                   // _context.SaveChanges();
+                    job.ProActivation.ProcessingStatus = JobStatus.Failed;
+                    _context.Update(job);
+                    _context.SaveChanges();
                 }
             } else {
                 if (job.ProActivation.ProcessingStatus != newStatus) {

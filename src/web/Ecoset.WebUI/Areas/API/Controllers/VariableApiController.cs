@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -44,9 +43,13 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         /// <summary>
         /// Details of available methods and geo-temporal contexts.
         /// </summary>
-        [HttpGet("/detail/{variableName}")]
-        public IActionResult Detail(string variableName) {
-            return Json("Some detail about this variable");
+        [HttpGet("detail/{variableName}")]
+        public async Task<IActionResult> Detail(string variableName) {
+            var variable = await _registry.IsAvailable(variableName, "default");
+            if (variable == null) {
+                return NotFound("The requested variable " + variableName + " is not available");
+            }
+            return Json(variable);
         }
 
         private async Task<ApplicationUser> GetCurrentUserAsync() => await _userManager.GetUserAsync(HttpContext.User);   

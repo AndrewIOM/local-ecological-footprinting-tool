@@ -71,6 +71,24 @@ namespace Ecoset.GeoTemporal.Remote
         public float StdDev { get; set; }
     }
 
+    public class Dimensions
+    {
+        [JsonPropertyName("north")]
+        public float North { get; set; }
+        [JsonPropertyName("south")]
+        public float South { get; set; }
+        [JsonPropertyName("east")]
+        public float East { get; set; }
+        [JsonPropertyName("west")]
+        public float West { get; set; }
+        [JsonPropertyName("year")]
+        public int Year { get; set; }
+        [JsonPropertyName("month")]
+        public int? Month { get; set; }
+        [JsonPropertyName("day")]
+        public int? Day { get; set; }
+    }
+
     public class ExecutableResult
     {
         public string Name { get; set; }

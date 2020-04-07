@@ -48,7 +48,7 @@ namespace Ecoset.GeoTemporal.Remote
         [JsonPropertyName("Month")]
         public Nullable<int> Month { get; set; }
         [JsonPropertyName("Year")]
-        public int Year { get; set; }
+        public Nullable<int> Year { get; set; }
     }
 
 }

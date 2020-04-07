@@ -90,6 +90,8 @@ namespace Ecoset.GeoTemporal.Remote
         {
             [JsonPropertyName("summary")]
             public Statistics Stats { get; set; }
+            [JsonPropertyName("dimensions")]
+            public Dimensions Dims { get; set; }
             [JsonPropertyName("data")]
             public RawDataset Data { get; set; }
         }
