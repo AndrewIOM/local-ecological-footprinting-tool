@@ -10,6 +10,9 @@ using Ecoset.WebUI.Services.Abstract;
 using Ecoset.WebUI.Models.JobViewModels;
 using Ecoset.WebUI.Options;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Builder;
 
 namespace Ecoset.WebUI.Areas.Analysis.Controllers
 {
@@ -24,6 +27,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
         private IReportGenerator _reportGenerator;
         private EcosetAppOptions _options;
         private ISubscriptionService _subService;
+        private ILogger _logger;
 
         public HomeController(
             IJobService jobService, 
@@ -32,7 +36,8 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
             IOutputPersistence persistence,
             IOptions<EcosetAppOptions> options,
             INotificationService notifyService,
-            ISubscriptionService subService) {
+            ISubscriptionService subService,
+            ILogger<HomeController> logger) {
             _jobService = jobService;
             _userManager = userManager;
             _notifyService = notifyService;
@@ -40,6 +45,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
             _reportGenerator = reportGenerator;
             _options = options.Value;
             _subService = subService;
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -132,9 +138,23 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
                 return View(result);
             }
 
+            if (!String.IsNullOrEmpty(_options.ValidAreaGeoJsonFile)) {
+                var fileInfo = Utils.Files.GetFileProvider(HttpContext.RequestServices).GetFileInfo(_options.ValidAreaGeoJsonFile);
+                if (fileInfo.Exists && fileInfo.Name.EndsWith(".json")) {
+                    var intersectsMask = Utils.GeoJson.BoxIntersects(fileInfo.PhysicalPath,
+                        result.LatitudeNorth.Value, result.LatitudeSouth.Value, result.LongitudeEast.Value, result.LongitudeWest.Value);
+                    if (!intersectsMask) {
+                        ModelState.AddModelError("boundingbox", "Analyses are not available in the selected area");
+                        return View(result);
+                    }
+                } else {
+                    _logger.LogError("Specified geojson mask to validate analyses did not exist");
+                }
+            }
+
             var user = await GetCurrentUserAsync();
             if (!_subService.HasProcessingCapacity(user.Id)) {
-                ModelState.AddModelError("subscription", "You have reached the llimits of your current subscription");
+                ModelState.AddModelError("subscription", "You have reached the limits of your current subscription");
                 return View(result);
             }
 

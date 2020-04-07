@@ -16,6 +16,7 @@ namespace Ecoset.WebUI.Options
         public int Port { get; set; }
         public int GlobalRateLimit { get; set; }
         public int GlobalAnalysisCap { get; set; }
+        public string ValidAreaGeoJsonFile { get; set; }
 
         public EcosetAppOptions() {
             InstanceName = "Ecoset";
@@ -32,6 +33,7 @@ namespace Ecoset.WebUI.Options
             Port = 80;
             GlobalAnalysisCap = 10;
             GlobalRateLimit = 5;
+            ValidAreaGeoJsonFile = null;
         }
     }
 }

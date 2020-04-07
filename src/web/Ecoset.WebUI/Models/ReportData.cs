@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Ecoset.GeoTemporal.Remote;
 
 namespace Ecoset.WebUI.Models
@@ -18,7 +19,6 @@ namespace Ecoset.WebUI.Models
         public float West { get; set; }
         public List<RawData> RawResults { get; set; }
         public List<TableList> TableListResults { get; set; }
-
         public List<TableStats> TableStatsResults { get; set; }
     }
 

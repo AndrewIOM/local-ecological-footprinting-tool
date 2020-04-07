@@ -28,6 +28,7 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
         private ISubscriptionService _subService;
         private ILogger<DataPackageApiController> _logger;
         private IDataRegistry _dataRegistry;
+        private EcosetAppOptions _options;
 
         public DataPackageApiController (
             IJobService jobService, 
@@ -37,7 +38,8 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
             INotificationService notifyService,
             ILogger<DataPackageApiController> logger,
             IDataRegistry dataRegistry,
-            ISubscriptionService subService) {
+            ISubscriptionService subService,
+            IOptions<EcosetAppOptions> options) {
             _jobService = jobService;
             _userManager = userManager;
             _persistence = persistence;
@@ -45,6 +47,7 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
             _subService = subService;
             _logger = logger;
             _dataRegistry = dataRegistry;
+            _options = options.Value;
         }
 
         /// <summary>
@@ -65,6 +68,20 @@ namespace Ecoset.WebUI.Areas.API.Controllers {
             }
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
+            }
+
+            if (!String.IsNullOrEmpty(_options.ValidAreaGeoJsonFile)) {
+                var fileInfo = Utils.Files.GetFileProvider(HttpContext.RequestServices).GetFileInfo(_options.ValidAreaGeoJsonFile);
+                if (fileInfo.Exists && fileInfo.Name.EndsWith(".json")) {
+                    var intersectsMask = Utils.GeoJson.BoxIntersects(fileInfo.PhysicalPath,
+                        request.LatitudeNorth.Value, request.LatitudeSouth.Value, request.LongitudeEast.Value, request.LongitudeWest.Value);
+                    if (!intersectsMask) {
+                        ModelState.AddModelError("boundingbox", "Analyses are not available in the selected area");
+                        return BadRequest(ModelState);
+                    }
+                } else {
+                    _logger.LogError("Specified geojson mask to validate analyses did not exist");
+                }
             }
 
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
