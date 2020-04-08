@@ -305,7 +305,7 @@
                 </thead>
                 <tbody>
                   @foreach (KeyValuePair<string, string> entry in speciesCategories) {
-                    var densityResultsZonal = Model.TableStatsResults.FirstOrDefault(m => m.Name == "species_density_" + entry.Key);
+                    var densityResultsZonal = Model.TableStatsResults.FirstOrDefault(m => m.Name == "species_density_" + entry.Key.ToLower());
                     var localString = "Unknown";
                     var zonalString = "Unknown";
                     var localValue = 1.0;

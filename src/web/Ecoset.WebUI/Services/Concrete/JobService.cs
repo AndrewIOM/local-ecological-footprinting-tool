@@ -215,6 +215,7 @@ namespace Ecoset.WebUI.Services.Concrete
                 job.Status = JobStatus.Completed;
                 _context.Update(job);
                 _context.SaveChanges();
+                _notifyService.AddJobNotification(NotificationLevel.Information, job.Id, "Analysis {0} has {1}", new[] { job.Name, job.Status.ToString() });
             } else {
                 if (job.Status != newStatus) {
                     job.Status = newStatus;

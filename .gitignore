@@ -343,3 +343,7 @@ appsettings.Staging.json
 .env
 appendonly.aof
 **/test-data/*
+docker-compose.production.yml
+nginx.prod.conf
+src/gbif/update-tool/download/**
+.fake

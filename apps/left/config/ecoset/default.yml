@@ -9,6 +9,10 @@ cache:
     host: "ecoset.cache"
     port: 6379
 
+gbif_db_host: &gbif_db_host test
+gbif_db_user: &gbif_db_user test
+gbif_db_password: &gbif_db_password test
+
 locations:
     cache: /Users/andrewmartin/Desktop/ecoset/cache
 
@@ -424,8 +428,6 @@ variables:
                 options:
                     tiledir: /data/resilience/zonalstdev
                     nodata: -9999
-
-    # - sev
 
     - land_area:
         name: "Land area"

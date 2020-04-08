@@ -1,4 +1,4 @@
-@model System.Collections.Generic.List<DataPackage>
+@model Ecoset.WebUI.Models.DashboardViewModels.ApiUseViewModel
 @{
     Layout = "_DashboardLayout";
     ViewData["Title"] = "Data Packages API";
@@ -16,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach (var package in Model) {
+            @foreach (var package in Model.DataPackages) {
                 <tr>
                     <td>@package.Status</td>
                     <td>@package.TimeRequested</td>
@@ -32,7 +32,24 @@
                 <h3 class="panel-title"><span class="glyphicon glyphicon-cloud-download"></span> Your Rate Limit</h3>
             </div>
             <div class="panel-body" style="text-align:center;">
-                <span id="credit-count" style="font-size:3em;">1</span><br /><span>simultaneous data packages</span>
+                @if (Model.Subscription.IsDefault) {
+                    <span style="border-radius: 0;background-color: #3eb13e;" class="label label-subscription">Free</span>
+                    <p style="margin-top: 0.25em;font-size: 0.8em;">You may request @Model.Subscription.RateLimit.Value analyses at once, and @Model.Subscription.AnalysisCap.Value every day.</p>
+                } else {
+                    var rateLimit = Model.Subscription.RateLimit.HasValue ? Model.Subscription.RateLimit.Value.ToString() : "unlimited";
+                    var globalCap = Model.Subscription.AnalysisCap.HasValue ? Model.Subscription.RateLimit.Value.ToString() : "unlimited";
+                    if (String.IsNullOrEmpty(Model.Subscription.GroupName)) {
+                        <span style="border-radius: 0;background-color: #b37d37;" class="label label-subscription">Personal Subscription</span>
+                        <p style="margin-top: 0.25em;font-size: 0.8em;">
+                            You may request @rateLimit analyses at once, and @globalCap every day. </p>
+                    } else {
+                        <span style="border-radius: 0;background-color: #ea388c;" class="label label-subscription">@Model.Subscription.GroupName</span>
+                        <p style="margin-top: 0.25em;font-size: 0.8em;">Your organisation shares @rateLimit concurrent analyses, and @globalCap every day.</p>
+                    }
+                    @if (Model.Subscription.Expires.HasValue) {
+                        <p>Renewal is due on @Model.Subscription.Expires.Value.ToShortDateString()</p>
+                    }
+                }
             </div>
         </div>
     </div>

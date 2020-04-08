@@ -1057,7 +1057,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/coralbleaching
-                    nodata: 255
+                    nodata: -9999
 
     - coral_bleaching_zonalmean:
         name: "Zonal Mean: Coral Bleaching"
@@ -1072,7 +1072,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/coralbleaching/zonal
-                    nodata: 255
+                    nodata: -9999
 
     - coral_bleaching_zonalstdev:
         name: "Zonal Stdev: Coral Bleaching"
@@ -1087,7 +1087,7 @@ variables:
                 implementation: IntersectTiffs
                 options:
                     tiledir: /data/coralbleaching/zonalsd
-                    nodata: 255
+                    nodata: -9999
 
     - acidification:
         name: "Ocean Acidification"

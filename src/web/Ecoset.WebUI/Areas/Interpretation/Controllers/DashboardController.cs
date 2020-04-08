@@ -6,6 +6,7 @@ using Ecoset.WebUI.Models.DashboardViewModels;
 using Ecoset.WebUI.Services.Abstract;
 using System.Linq;
 using System;
+using System.Threading.Tasks;
 
 namespace Ecoset.WebUI.Areas.Interpretation.Controllers
 {
@@ -23,10 +24,10 @@ namespace Ecoset.WebUI.Areas.Interpretation.Controllers
             _subService = subService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var model = new IndexViewModel();
-            var user = GetCurrentUserAsync();
+            var user = await GetCurrentUserAsync();
             if (user == null) return BadRequest();
             model.UserName = user.FirstName + " " + user.Surname;
             model.Subscription = _subService.GetActiveForUser(user.Id);
@@ -34,13 +35,15 @@ namespace Ecoset.WebUI.Areas.Interpretation.Controllers
             return View(model);
         }
         
-        public IActionResult DataPackages() {
-            var user = GetCurrentUserAsync();
+        public async Task<IActionResult> DataPackages() {
+            var user = await GetCurrentUserAsync();
             if (user == null) return BadRequest();
-            var dps = _jobService.GetAllDataPackagesForUser(user.Id).ToList();
-            return View(dps);
+            var model = new ApiUseViewModel();
+            model.DataPackages = _jobService.GetAllDataPackagesForUser(user.Id).ToList();
+            model.Subscription = _subService.GetActiveForUser(user.Id);
+            return View(model);
         }
 
-        private ApplicationUser GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User).Result; //TODO Assess blocking
+        private async Task<ApplicationUser> GetCurrentUserAsync() => await _userManager.GetUserAsync(HttpContext.User);
     }
 }
