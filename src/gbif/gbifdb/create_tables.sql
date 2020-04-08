@@ -23,7 +23,7 @@ CHARACTER SET utf8mb4;
 
 CREATE TABLE IF NOT EXISTS gbif2020_coordinate
 (gbif_gbifid UNSIGNED INT,
-coordinate POINT NOT NULL SRID 0,
+coordinate POINT NOT NULL SRID 4326,
 SPATIAL INDEX idx_coord (coordinate)
 )
 CHARACTER SET utf8mb4;

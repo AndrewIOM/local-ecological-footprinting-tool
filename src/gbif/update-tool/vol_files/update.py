@@ -9,6 +9,7 @@ from progress.spinner import Spinner
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
 from peewee import *
+from playhouse.pool import PooledMySQLDatabase
 from subprocess import Popen, PIPE, call
 
 prompt = False
@@ -360,7 +361,7 @@ if ask_stage("Chunk CSV?"):
 
 # ==============================================================================
 # connect to mysql
-db = MySQLDatabase(database_name, user=database_user, host=database_host,
+db = PooledMySQLDatabase(database_name, user=database_user, host=database_host,
         port=database_port, passwd=database_password, local_infile=1)
 
 if ask_stage("Process the downloaded data?"):
@@ -444,6 +445,10 @@ stage("Finished processing data")
 
 # ==============================================================================
 # update the lookup table of orgkeys
+
+#db.execute_sql('SET GLOBAL connect_timeout=28800')
+#db.execute_sql('SET SESSION wait_timeout=28800')
+#db.execute_sql('SET SESSION interactive_timeout=28800')
 
 if ask_stage("Update the organisation key lookup table?"):
         stage("Updating orgkey lookup table")

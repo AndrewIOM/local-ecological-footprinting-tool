@@ -54,8 +54,8 @@ const openCovriates = (dir:string) : Covariate[] => {
 
 const loadEcoregions = () : Ecoregion[] => {
     const ecoregions = gdal.open(ecoregionShapefile, "r");
-    return ecoregions.layers.get("erased").features.map(f => {
-        const name = f.fields.get("Id");
+    return ecoregions.layers.get("meow_shape").features.map(f => {
+        const name = f.fields.get("ecoregion");
         const wkt : string = f.getGeometry().toWKT() as unknown as string;
         return { Name: name, WKT: wkt };
     })
@@ -69,7 +69,7 @@ const countEcoregion = async (ecoregion:Ecoregion, conn:Database) => {
         left join ${config.get("mysql.gbif_coord_table")} c \
         on m.gbif_gbifid=c.gbif_gbifid \
         where gbif_species<>'' and \
-        ST_Contains(ST_GeomFromText('${ecoregion.WKT}'), c.coordinate) \
+        ST_Contains(ST_SwapXY(ST_GeomFromText('${ecoregion.WKT}')), c.coordinate) \
         group by taxonomicgroup;`;
     
     console.log(query);

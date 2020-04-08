@@ -347,3 +347,6 @@ docker-compose.production.yml
 nginx.prod.conf
 src/gbif/update-tool/download/**
 .fake
+
+land30sec_global.tif
+land30sec_global.tif.aux.xml
