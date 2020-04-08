@@ -225,7 +225,6 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
             return BadRequest();
         }
 
-        [HttpPost]
         public IActionResult HideAnalysis(int id)
         {
             var job = _jobService.GetById(id);
