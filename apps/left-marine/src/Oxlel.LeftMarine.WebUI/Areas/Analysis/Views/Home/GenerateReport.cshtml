@@ -15,6 +15,7 @@
   prettyTitles["ecoregions"] = "Marine Ecoregions";
   prettyTitles["economic_zones"] = "Exclusive Economic Zones";
   prettyTitles["vulnerability"] = "Vulnerable Species";
+  prettyTitles["benthic_biomass"] = "Benthic Biomass";
   prettyTitles["migratory_count"] = "Migratory Species";
   prettyTitles["protected_areas"] = "Marine Protected Areas";
   prettyTitles["coastal_ecosystems"] = "Coastal Ecosystems";
@@ -44,6 +45,7 @@
   descriptions["ecoregions"] = "The WWF Marine Ecoregions of the World (MEOW; Spalding et al 2007) identifies areas with similar ecological characteristics.";
   descriptions["economic_zones"] = "Flanders Marine Institute (2018). Maritime Boundaries Geodatabase: Maritime Boundaries and Exclusive Economic Zones (200NM), version 10. Available online at http://www.marineregions.org/ https://doi.org/10.14284/312.";
   descriptions["vulnerability"] = "The IUCN Red List of Threatened Species (IUCN 2020) was used to find the names and threat categories of species in the specified area of interest.  All corals, fish, sea birds, marine mammals and turtles determined by the IUCN to be Critically Endangered (CR), Endangered (EN), Vulnerable (VU) or Near Threatened (NT) were extracted. A list of the globally threatened species which potentially occur in the area of interest can be found in Appendix 2.";
+  descriptions["benthic_biomass"] = "Estimated benthic biomass from Wei et al (2010).";
   descriptions["migratory_count"] = "Migratory species drawn from the global register of migratory species (GROMS; Riede 2004) and distribution data (GBIF 2019).\nA list of the migratory fish, seabirds, marine mammals, and turtle species that primarily occur in the area of interest can be found in Appendix 3.";
   descriptions["protected_areas"] = "A list of the marine protected areas in the area of interest is provided in Appendix 1.";
   descriptions["coastal_ecosystems"] = "Coastal ecosystems including kelp (Byrnes et al 2016); mangroves (Bunting et al 2018); saltmarsh (McOwen et al 2017); seagrass (UNEP-WCMC et al 2018); tidal flats (Murray et al 2019); and coral reefs (UNEP WCMC et al 2018).";
@@ -73,6 +75,7 @@
   mapLegend["ecoregions"] = "of the World (MEOW) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer in 2007.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["economic_zones"] = "(sea within 200 nautical miles from a nation’s coastline) in specified area of interest (red rectangle) in 2018. High Seas is shown in white.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["vulnerability"] = "map showing the number of globally threatened (Cr, EN, VU) and near-threatened (NT) species of corals, fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
+  mapLegend["benthic_biomass"] = "map showing estimated benthic biomass in the specified area of interest (red rectangle) in 2010. Land is shown in grey. Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["migratory_count"] = "map showing the number of migratory fish, seabirds, marine mammals and turtles estimated to occur in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["protected_areas"] = "from the World Database of Protected Areas (WDPA) 2018 in specified area of interest (red rectangle). Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
   mapLegend["coastal_ecosystems"] = "map showing kelp, mangroves, saltmarsh; seagrass; tidal flats; and coral reefs in the specified area of interest (red rectangle) in 2019.  Land is shown in grey.  Spatial resolution is 30 arcsec, approximately 1km.";
@@ -103,6 +106,7 @@
   units["ecoregions"] = "Marine ecoregion";
   units["economic_zones"] = "Exclusive economic zones";
   units["vulnerability"] = "Vulnerability";
+  units["benthic_biomass"] = "g/m2";
   units["migratory_count"] = "Migratory species";
   units["protected_areas"] = "World Database of Protected Areas (WDPA) 2019";
   units["coastal_ecosystems"] = "Ecosystem";
@@ -132,6 +136,7 @@
   hasPalette["ecoregions"] = true;
   hasPalette["economic_zones"] = true;
   hasPalette["vulnerability"] = false;
+  hasPalette["benthic_biomass"] = false;
   hasPalette["migratory_count"] = false;
   hasPalette["protected_areas"] = true;
   hasPalette["coastal_ecosystems"] = true;
@@ -161,6 +166,7 @@
   isCategorical["ecoregions"] = "true";
   isCategorical["economic_zones"] = "true";
   isCategorical["vulnerability"] = "false";
+  isCategorical["benthic_biomass"] = "false";
   isCategorical["migratory_count"] = "false";
   isCategorical["protected_areas"] = "true";
   isCategorical["coastal_ecosystems"] = "true";
@@ -190,6 +196,7 @@
   maskValues["ecoregions"] = "false";
   maskValues["economic_zones"] = "false";
   maskValues["vulnerability"] = "false";
+  maskValues["benthic_biomass"] = "false";
   maskValues["migratory_count"] = "false";
   maskValues["protected_areas"] = "false";
   maskValues["coastal_ecosystems"] = "false";
@@ -334,7 +341,7 @@
           </div>
           <div class="row">
             <div class="col-sm-5">
-              <p>Georeferenced species occurrence records were retrieved from the Global Biodiversity Information Facility (GBIF; www.gbif.org).  The map shows the distribution of biodiversity records in the area of interest plus a 3-degree buffer.  Any duplicate records (of the same species more than once at the same location) have been removed. The sources of the records are acknowledged in Appendix 4.</p>
+              <p>Georeferenced species occurrence records were retrieved from the Global Biodiversity Information Facility (GBIF; www.gbif.org) between 1st Jan 1980 and 1st Apr 2020. The map shows the distribution of biodiversity records in the area of interest plus a 3-degree buffer.  Any duplicate records (of the same species more than once at the same location) have been removed. The sources of the records are acknowledged in Appendix 4.</p>
               @{ var gbiflist = Model.TableListResults.FirstOrDefault(m => m.Name == "biodiversity_records_count"); }
               <table class="table">
                 <thead>
@@ -373,7 +380,7 @@
             </div> @* End col-sm-5 *@
             <div class="col-sm-7">
               <div id="biodiversity_records-map" class="section-map"></div>
-              <p class="map-caption"><br/><strong>Biodiversity Records</strong> from the Global Biodiversity Information Facility (GBIF) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer in 2019.  Land is shown in grey. </p>
+              <p class="map-caption"><br/><strong>Biodiversity Records</strong> from the Global Biodiversity Information Facility (GBIF) in specified area of interest (red rectangle) and in a surrounding 3 degree buffer. Occurrence data is from 1st Jan 1980 to 1st April 2020. Land is shown in grey. </p>
             </div>
           </div> @* End row *@
           <div class="create-script">
@@ -459,6 +466,7 @@
         <div class="report-section" id="vulnerability-section">@{ MapPage("vulnerability"); }</div>
         <div class="report-section" id="migratory_count-section">@{ MapPage("migratory_count"); }</div>
         <div class="report-section" id="critical_habitat-section">@{ MapPage("critical_habitat"); }</div>
+        <div class="report-section" id="benthic_biomass-section">@{ MapPage("benthic_biomass"); }</div>
 
 
         @* Section 5. Competing Uses *@
@@ -515,7 +523,7 @@
               <p>To appreciate the importance of the ecological values obtained for the specified area of interest relative to other regions, a 'compared to other areas metric' (COAM) was calculated. This metric used the polygons of the WWF Terrestrial Ecoregion Classification (Olson et al, 2001) to identify zones ecologically similar to the area of interest. Zonal statistics were then used to assess the importance of each LEFT layer relative to the same measure over the entire ecoregion. For each layer, the difference in standard scores between the area of interest and the broader ecoregions is presented in the following chart. This shows whether a study area is relatively more or less ecologically valuable than other regions with similar biogeographic characterisitics.</p>
               @{
                 var coamContext = new List<string>() { "sea_depth", "benthic_roughness", "protected_areas" };
-                var coamBiodiversity = new List<string>() { "vulnerability", "migratory_count" };
+                var coamBiodiversity = new List<string>() { "vulnerability", "migratory_count", "benthic_biomass" };
                 var coamCompetingUses = new List<string>() { "shipping_density", "fish_catches", "windpower_potential", "wavepower_potential", "aquaculture_potential" };
                 var coamProcesses = new List<string>() { "sst", "sst_fronts", "salinity", "npp", "sea_ice", "currents", "tides", "sea_state" };
                 var coamThreats = new List<string>() { "sst_trend", "coral_bleaching", "acidification", "sea_level_rise", "invasive_species" };
@@ -661,6 +669,10 @@
                 <li>
                   Weatherall P., Marks KM, Jakobsson M, Schmitt T, Tani S, Arndt JE, Rovere M, Chayes D, Ferrini V, Wigley R(2015), A new digital bathymetric model of the world’s oceans, Earth and Space Science, 2: 331–345, doi: 10.1002/2015EA000107
                   <a href="https://gebco.net">https://gebco.net</a>.
+                </li>
+                <li>
+                  Wei C, Rowe GT, Escobar-Briones E, Boetius A, Soltwedel T, Caley MJ, Soliman Y, Huettmann F, Qu F, Yu Z, Pitcher CR, Haedrich RL, Wicksten MK, Rex MA, Baguley JG, Sharma J, Danovaro R, MacDonald IR, Nunnally CC, Deming JW, Montagna P, Levesque M, Weslaski JM, Wlodarska-Kowalczuk M, Injole BS, Bett BJ, Billett DSM, Yool A, Bluhm BA, Iken K, Narayanaswamy BE (2010) Global patterns and predictions of seafloor biomass using random forests.  PLoS One 5: e15323
+                  <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3012679/bin/pone.0015323.s002.csv">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3012679/bin/pone.0015323.s002</a>
                 </li>
                 <li>
                   Wilson MFJ, O’Connell B, Brown C, Guinan JC, Grehan AJ (2007) Multiscale terrain analysis of multibeam bathymetry data for habitat mapping on the continental slope.  Marine Geodesy 30: 3-35
