@@ -16,11 +16,11 @@ var decimalPlaces = function (n) {
       return Math.abs(Math.round(n) - n) > 1e-10;
     }
     var decimalCount = 0;
-    while (hasFraction(n * (Math.pow(10,decimalCount))) && isFinite(Math.Pow(10,decimalCount))) {
+    while (hasFraction(n * (Math.pow(10,decimalCount))) && isFinite(Math.pow(10,decimalCount))) {
         decimalCount++;
     }
     return decimalCount;
-  }  
+  }
 
 // Class representing a spatial map that can hold raster or vector data layers
 var SpatialPlot = function (id, extent) {
