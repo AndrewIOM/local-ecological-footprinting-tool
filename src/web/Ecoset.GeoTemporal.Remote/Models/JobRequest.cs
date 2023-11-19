@@ -35,6 +35,7 @@ namespace Ecoset.GeoTemporal.Remote
         [JsonPropertyName("kind")]
         public string Kind { get; set; }
         [JsonPropertyName("date")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Date Date { get; set; }
     }
 
