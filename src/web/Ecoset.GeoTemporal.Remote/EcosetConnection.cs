@@ -82,7 +82,7 @@ namespace Ecoset.GeoTemporal.Remote
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var json = JsonSerializer.Serialize(request);
+                var json = JsonSerializer.Serialize(request, _options);
                 var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var req = new HttpRequestMessage(HttpMethod.Post, endpoint);
@@ -95,7 +95,7 @@ namespace Ecoset.GeoTemporal.Remote
                 {
                     using (Stream responseStream = await response.Content.ReadAsStreamAsync())
                     {
-                        T responseContent = await JsonSerializer.DeserializeAsync<T>(responseStream);
+                        T responseContent = await JsonSerializer.DeserializeAsync<T>(responseStream, _options);
                         return responseContent;
                     }
                 }
