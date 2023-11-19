@@ -118,7 +118,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
             var success = await _jobService.ActivateProFeatures(id, user.Id);
             if (!success)
             {
-                return BadRequest("The activiation was not successful. Do you have at least one credit?");
+                return BadRequest("The activiation was not successful.");
             }
 
             return RedirectToAction("View", "Home", new { area = "Analysis", id = id });

@@ -32,7 +32,7 @@ type Startup private () =
 
         let sp = services.BuildServiceProvider()
         let staticFileOptions = sp.GetService<IOptions<StaticFileOptions>>()
-        services.AddWebOptimizer(fun pipeline ->
+        services.AddWebOptimizer(fun (pipeline:WebOptimizer.IAssetPipeline) ->
             pipeline.AddScssBundle("/styles/main.css", "/styles/main.scss")
                 .UseFileProvider(staticFileOptions.Value.FileProvider) |> ignore
             pipeline.AddScssBundle("/styles/report.css", "/styles/report.scss")

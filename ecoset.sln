@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A59F6528-3F67-4A89-A750-42B4D7CBC22E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{F331462F-C2BF-41E5-8F5B-A7F15EF95595}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecoset.GeoTemporal.Remote", "src\web\Ecoset.GeoTemporal.Remote\Ecoset.GeoTemporal.Remote.csproj", "{DFFC4167-3536-4094-9359-879081C02AB4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecoset.WebUI", "src\web\Ecoset.WebUI\Ecoset.WebUI.csproj", "{3532E63C-C21C-49AE-A95A-7B2B1F500D03}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebOptimizer.Sass", "src\web\WebOptimizer.Sass\WebOptimizer.Sass.csproj", "{A03A1B56-7AEB-49B4-B952-BEB88B0B267E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DFFC4167-3536-4094-9359-879081C02AB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFFC4167-3536-4094-9359-879081C02AB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFFC4167-3536-4094-9359-879081C02AB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFFC4167-3536-4094-9359-879081C02AB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3532E63C-C21C-49AE-A95A-7B2B1F500D03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3532E63C-C21C-49AE-A95A-7B2B1F500D03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3532E63C-C21C-49AE-A95A-7B2B1F500D03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3532E63C-C21C-49AE-A95A-7B2B1F500D03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A03A1B56-7AEB-49B4-B952-BEB88B0B267E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A03A1B56-7AEB-49B4-B952-BEB88B0B267E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A03A1B56-7AEB-49B4-B952-BEB88B0B267E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A03A1B56-7AEB-49B4-B952-BEB88B0B267E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F331462F-C2BF-41E5-8F5B-A7F15EF95595} = {A59F6528-3F67-4A89-A750-42B4D7CBC22E}
+		{DFFC4167-3536-4094-9359-879081C02AB4} = {F331462F-C2BF-41E5-8F5B-A7F15EF95595}
+		{3532E63C-C21C-49AE-A95A-7B2B1F500D03} = {F331462F-C2BF-41E5-8F5B-A7F15EF95595}
+		{A03A1B56-7AEB-49B4-B952-BEB88B0B267E} = {F331462F-C2BF-41E5-8F5B-A7F15EF95595}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AD4377E0-E859-4C45-91EE-D77735B74804}
+	EndGlobalSection
+EndGlobal

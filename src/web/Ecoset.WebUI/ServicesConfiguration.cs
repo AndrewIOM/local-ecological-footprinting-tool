@@ -113,8 +113,6 @@ namespace Ecoset.WebUI {
                     Title = "LEFT Data Package API", 
                     Version = "v1"
                 });
-                c.DescribeAllEnumsAsStrings();
-                c.DescribeStringEnumsInCamelCase();
                 c.AddSecurityDefinition("jwt_auth", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
