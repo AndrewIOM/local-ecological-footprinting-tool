@@ -25,8 +25,10 @@ type Startup private () =
         services.AddControllersWithViews()
             .AddNewtonsoftJson()
             .AddRazorRuntimeCompilation()
-            .AddJsonOptions(fun opt ->
-                opt.JsonSerializerOptions.Converters.Add(JsonStringEnumConverter()) ) |> ignore
+            .AddJsonOptions(fun opt -> 
+                opt.JsonSerializerOptions.DefaultIgnoreCondition <- JsonIgnoreCondition.WhenWritingNull
+                opt.JsonSerializerOptions.Converters.Add(JsonStringEnumConverter()
+                ) ) |> ignore
         services.AddRazorPages().AddNewtonsoftJson() |> ignore
         services.AddEcosetUI this.Configuration |> ignore
         services.AddEcosetDataPackageAPI this.Configuration |> ignore
