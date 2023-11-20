@@ -27,8 +27,8 @@ namespace Ecoset.WebUI.Services.Concrete
         public async Task<ReportData> GetReportData(string processorJobId)
         {
             Guid guidId;
-            Guid.TryParse(processorJobId, out guidId);
-            if (guidId == null) throw new Exception("ID was not valid");
+            var success = Guid.TryParse(processorJobId, out guidId);
+            if (!success) throw new Exception("ID was not valid");
             var jobId = new JobId(guidId);
             var fetchData = await _connection.FetchResultAsync(jobId);
 
@@ -71,8 +71,8 @@ namespace Ecoset.WebUI.Services.Concrete
         public async Task<Models.JobStatus> GetStatus(string processorJobId, Models.JobStatus localStatus)
         {
             Guid guidId;
-            Guid.TryParse(processorJobId, out guidId);
-            if (guidId == null) {
+            var success = Guid.TryParse(processorJobId, out guidId);
+            if (!success) {
                 _logger.LogCritical("Cannot retrieve job status for job: " + processorJobId);
                 return localStatus;
             }

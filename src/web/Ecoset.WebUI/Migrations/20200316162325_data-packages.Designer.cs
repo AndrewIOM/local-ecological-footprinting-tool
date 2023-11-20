@@ -11,7 +11,7 @@ namespace Ecoset.WebUI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20200316162325_data-packages")]
-    partial class datapackages
+    partial class Datapackages
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

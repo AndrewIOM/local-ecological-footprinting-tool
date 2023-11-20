@@ -11,7 +11,7 @@ namespace Ecoset.WebUI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20190925194746_initial")]
-    partial class initial
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
