@@ -115,21 +115,24 @@ namespace Ecoset.WebUI.Services.Concrete
 
             foreach (var item in data.TableListResults) {
                 var entry = zipFile.CreateEntry(item.Name + ".csv", CompressionLevel.Optimal);
-                using (var writer = new BinaryWriter(entry.Open())) {
-                    var uniqueRowNames = item.Data.Rows.Select(r => r.Keys).SelectMany(x => x).Distinct().ToList();
-                    Console.WriteLine("Writing comma-delineated file with fields: " + String.Join(',', uniqueRowNames));
-                    Console.WriteLine("Writing comma-delineated file with " + item.Data.Rows.Count + " records");
-                    writer.Write(String.Join(',', uniqueRowNames.Select(s => StringToCSVCell(s))));
+                using var writer = new BinaryWriter(entry.Open());
+                var uniqueRowNames = item.Data.Rows.Select(r => r.Keys).SelectMany(x => x).Distinct().ToList();
+                _logger.LogInformation("Writing comma-delineated file with fields: " + String.Join(',', uniqueRowNames));
+                _logger.LogInformation("Writing comma-delineated file with " + item.Data.Rows.Count + " records");
+                writer.Write(String.Join(',', uniqueRowNames.Select(s => StringToCSVCell(s))));
+                writer.Write('\n');
+                foreach (var record in item.Data.Rows)
+                {
+                    var processed = uniqueRowNames.Select(n =>
+                    {
+                        if (record.ContainsKey(n))
+                        {
+                            return StringToCSVCell(record[n]);
+                        }
+                        else return "";
+                    }).ToList();
+                    writer.Write(String.Join(',', processed));
                     writer.Write('\n');
-                    foreach (var record in item.Data.Rows) {
-                        var processed = uniqueRowNames.Select(n => {
-                            if (record.ContainsKey(n)) {
-                                return StringToCSVCell(record[n]);
-                            } else return "";
-                        }).ToList();
-                        writer.Write(String.Join(',', processed));
-                        writer.Write('\n');
-                    }
                 }
             }
 

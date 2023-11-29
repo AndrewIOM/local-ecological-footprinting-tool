@@ -198,7 +198,7 @@ namespace Ecoset.WebUI.Areas.Analysis.Controllers
         [AllowAnonymous]
         public IActionResult GenerateReport(int id)
         {
-            Console.WriteLine("Creating PDF Report for " + id);
+            _logger.LogInformation("Executing razor view for PDF Report (#" + id + ")");
             var data = _jobService.GetReportData(id);
             return View(data);
         }

@@ -49,7 +49,7 @@ namespace Ecoset.WebUI.Services.Concrete
         }
 
         private void LogError(object sender, DinkToPdf.EventDefinitions.ErrorArgs e) {
-            _logger.LogError(1, "PDF Generation: " + e.Message);
+            _logger.LogError(1, "PDF Generation errored: " + e.Message);
         }
 
         public string GenerateReport(Job job)
@@ -86,8 +86,18 @@ namespace Ecoset.WebUI.Services.Concrete
                         },
                     }
                 };
+                var errored = false;
+                _converter.Error += (sender, e) => {
+                    errored = true;
+                };
+
                 _converter.Convert(doc);
-                fileName = _persistence.PersistReport(job.Id, scratchFile);
+
+                if (errored) {
+                    _logger.LogError("Not saving a PDF as an error was detected during generation: " + job.Id);
+                } else {
+                    fileName = _persistence.PersistReport(job.Id, scratchFile);
+                }
             }
             return fileName;
         }

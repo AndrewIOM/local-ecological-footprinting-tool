@@ -65,7 +65,7 @@ namespace Ecoset.WebUI.Services.Concrete
 
         public IEnumerable<Job> GetAllForUser(string userId)
         {
-            var user = _context.Users.Include(m => m.Jobs).ThenInclude(n => n.CreatedBy).FirstOrDefault(m => m.Id == userId);
+            var user = _context.Users.Include(m => m.Jobs).FirstOrDefault(m => m.Id == userId);
             var result = new List<Job>();
             if (user == null) return result;
             foreach (var job in user.Jobs) {
@@ -147,7 +147,7 @@ namespace Ecoset.WebUI.Services.Concrete
         }
 
         public async Task UpdateJobStatusAsync(int jobId) {
-            Console.WriteLine("Updating job status for " + jobId);
+            _logger.LogInformation("Updating job status for " + jobId);
             var result = _context.Jobs
                 .Include(m => m.CreatedBy)
                 .Include(m => m.Notifications)
@@ -159,7 +159,7 @@ namespace Ecoset.WebUI.Services.Concrete
         }
 
         public async Task UpdateProStatusAsync(int jobId) {
-            Console.WriteLine("Updating pro status for " + jobId);
+            _logger.LogInformation("Updating pro status for " + jobId);
             var result = _context.Jobs
                 .Include(m => m.CreatedBy)
                 .Include(m => m.Notifications)
@@ -199,7 +199,7 @@ namespace Ecoset.WebUI.Services.Concrete
         private async Task UpdateJobStatusAsync(Job job) {
             
             if (job.Status == JobStatus.GeneratingOutput) {
-                Console.WriteLine("Output still generating for: " + job.Id);
+                _logger.LogInformation("Output still generating for: " + job.Id);
                 return;
             }
             
@@ -210,23 +210,31 @@ namespace Ecoset.WebUI.Services.Concrete
                 job.Status = JobStatus.GeneratingOutput;
                 _context.Update(job);
                 _context.SaveChanges();
-                _reportGenerator.GenerateReport(job);
+                var file = _reportGenerator.GenerateReport(job);
+                if (string.IsNullOrEmpty(file)) {
+                    _logger.LogError("Report generation failed for job " + job.JobProcessorReference);
+                    _logger.LogInformation("Going to retry generation for " + job.JobProcessorReference);
+                    job.Status = JobStatus.Processing;
+                    _context.Update(job);
+                    _context.SaveChanges();
+                    return;
+                }
                 job.DateCompleted = DateTime.Now;
                 job.Status = JobStatus.Completed;
                 _context.Update(job);
                 _context.SaveChanges();
-                _notifyService.AddJobNotification(NotificationLevel.Information, job.Id, "Analysis {0} has {1}", new[] { job.Name, job.Status.ToString() });
+                _notifyService.AddJobNotification(NotificationLevel.Information, job.Id, "Analysis {0} has {1}", [ job.Name, job.Status.ToString() ]);
             } else {
                 if (job.Status != newStatus) {
                     job.Status = newStatus;
                     _context.Update(job);
                     _context.SaveChanges();
-                    _notifyService.AddJobNotification(NotificationLevel.Information, job.Id, "Analysis {0} is now {1}", new[] { job.Name, job.Status.ToString() });
+                    _notifyService.AddJobNotification(NotificationLevel.Information, job.Id, "Analysis {0} is now {1}", [ job.Name, job.Status.ToString() ]);
                 }
             }
 
             if (job.Status == JobStatus.Failed || job.Status == JobStatus.Completed) {
-                Hangfire.RecurringJob.RemoveIfExists("jobstatus_" + job.Id);
+                RecurringJob.RemoveIfExists("jobstatus_" + job.Id);
             }
 
             if (newStatus == JobStatus.Completed) 
@@ -244,7 +252,7 @@ namespace Ecoset.WebUI.Services.Concrete
         private async Task UpdateProStatusAsync(Job job) {
 
             if (job.ProActivation.ProcessingStatus == JobStatus.GeneratingOutput) {
-                Console.WriteLine("Data download archive still generating for: " + job.Id);
+                _logger.LogInformation("Data download archive still generating for: " + job.Id);
                 return;
             }
 
@@ -288,13 +296,12 @@ namespace Ecoset.WebUI.Services.Concrete
             var job = _context.Jobs
                 .Include(m => m.CreatedBy)
                 .Include(m => m.ProActivation)
-                .FirstOrDefault(m => m.Id == jobId);
-            if (job == null) throw new ArgumentException("An invalid job id was passed to the service");
+                .FirstOrDefault(m => m.Id == jobId) 
+                ?? throw new ArgumentException("An invalid job id was passed to the service");
 
             // NB the user activating is not necessarily the job creator, but could be an admin.
-            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (user == null) throw new ArgumentException("An invalid user id was passed to the app service");
-
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId) 
+                ?? throw new ArgumentException("An invalid user id was passed to the app service");
             var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
             if (!isAdmin && user.Credits == 0 && _appOptions.PaymentsEnabled) {
                 return false;
@@ -320,7 +327,7 @@ namespace Ecoset.WebUI.Services.Concrete
             }
 
             if (!isAdmin && _appOptions.PaymentsEnabled) {
-                user.Credits = user.Credits - 1;
+                user.Credits--;
             }
 
             var activation = new ProActivation()
@@ -344,22 +351,21 @@ namespace Ecoset.WebUI.Services.Concrete
 
                 if (user.Credits <= 3 && user.Credits > 0) {
                     _notifyService.AddUserNotification(NotificationLevel.Information, user.Id, 
-                        "Your credits are running low. You only have enough for {0} more premium activations.", new string[] { user.Credits.ToString() });
+                        "Your credits are running low. You only have enough for {0} more premium activations.", [ user.Credits.ToString() ]);
                 } else if (user.Credits == 0) {
                     _notifyService.AddUserNotification(NotificationLevel.Information, user.Id, 
-                        "You're out of credits, and will not be able to activate premium datasets unless you top up.", new string[] {});
+                        "You're out of credits, and will not be able to activate premium datasets unless you top up.", []);
                 }
             } else if (!_appOptions.PaymentsEnabled) {
                 _notifyService.AddJobNotification(NotificationLevel.Success, job.Id, 
-                    "Your request for a high-resolution data package for '{0}' has entered the queue.", new string[] { job.Name });
+                    "Your request for a high-resolution data package for '{0}' has entered the queue.", [ job.Name ]);
             }
             return true;
         }
 
         public ReportData GetReportData(int jobId)
         {
-            var job = _context.Jobs.FirstOrDefault(m => m.Id == jobId);
-            if (job == null) throw new Exception("Job does not exist");
+            var job = _context.Jobs.FirstOrDefault(m => m.Id == jobId) ?? throw new Exception("Job does not exist");
             var data = _processor.GetReportData(job.JobProcessorReference).Result;
             data.Title = job.Name;
             data.Description = job.Description;
@@ -420,8 +426,9 @@ namespace Ecoset.WebUI.Services.Concrete
 
         public async Task<ReportData> GetDataPackageData(Guid dataPackageId)
         {
-            var package = _context.DataPackages.Include(m => m.CreatedBy).FirstOrDefault(m => m.Id == dataPackageId);
-            if (package == null) throw new Exception("Data package does not exist");
+            var package = 
+                _context.DataPackages.Include(m => m.CreatedBy).FirstOrDefault(m => m.Id == dataPackageId) 
+                ?? throw new Exception("Data package does not exist");
             var data = await _processor.GetReportData(package.JobProcessorReference);
             return data;
         }
