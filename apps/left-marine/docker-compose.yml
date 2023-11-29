@@ -4,7 +4,7 @@ services:
 
     # Ecoset engine for processing datasets
     ecoset.api:
-        image: docker.pkg.github.com/andrewiom/ecoset-vnext/image:2.1.10
+        image: ghcr.io/andrewiom/ecoset-vnext/image:2.2.1
         ports:
         - "5001:5001"
         - "5002:5002"
@@ -22,7 +22,7 @@ services:
         - Port=80
         - EcosetEndpoint=http://ecoset.api:5002
         - QT_QPA_PLATFORM=offscreen
-        - ConnectionStrings__DefaultConnection=Server=web.db;Database=${MSSQLDBNAME};User=sa;Password=${MSSQLPASSWORD};
+        - ConnectionStrings__DefaultConnection=Server=web.db;Database=${MSSQLDBNAME};User=sa;Password=${MSSQLPASSWORD};TrustServerCertificate=True
         - Tokens__Issuer=${TOKENISSUER}
         - Tokens__Key=${TOKENKEY}
         depends_on:
@@ -39,7 +39,7 @@ services:
 
     # SQL Server for UI database (accounts, analyses etc.)
     web.db:
-        image: "microsoft/mssql-server-linux:2017-CU12"
+        image: "mcr.microsoft.com/mssql/server:2017-latest"
         ports:
         - "1433:1433"
         environment:
