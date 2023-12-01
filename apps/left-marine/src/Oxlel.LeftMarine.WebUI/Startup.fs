@@ -1,19 +1,13 @@
 namespace Oxlel.LeftMarine.WebUI
 
-open System
-open System.Collections.Generic
-open System.Linq
-open System.Threading.Tasks
+open Ecoset.WebUI
+open Hangfire
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.HttpsPolicy;
-open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Options
-open Ecoset.WebUI
-open Hangfire
 open System.Text.Json.Serialization
 
 type Startup private () =
@@ -35,7 +29,7 @@ type Startup private () =
 
         let sp = services.BuildServiceProvider()
         let staticFileOptions = sp.GetService<IOptions<StaticFileOptions>>()
-        services.AddWebOptimizer(fun pipeline ->
+        services.AddWebOptimizer(fun (pipeline:WebOptimizer.IAssetPipeline) ->
             pipeline.AddScssBundle("/styles/main.css", "/styles/main.scss")
                 .UseFileProvider(staticFileOptions.Value.FileProvider) |> ignore
             pipeline.AddScssBundle("/styles/report.css", "/styles/report.scss")
@@ -60,7 +54,9 @@ type Startup private () =
         app.UseAuthorization() |> ignore
         app.UseEndpoints(fun endpoints ->
             endpoints.MapAreaControllerRoute(
-                "Interpretation", "Interpretation", "{controller=Home}/{action=Index}/{id?}") |> ignore
+                name = "Interpretation",
+                areaName = "Interpretation",
+                pattern = "{controller=Home}/{action=Index}/{id?}") |> ignore
             endpoints.MapControllerRoute(
                 name = "areas",
                 pattern = "{area:exists}/{controller=Home}/{action=Index}/{id?}") |> ignore

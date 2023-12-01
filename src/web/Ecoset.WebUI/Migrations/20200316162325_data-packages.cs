@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Ecoset.WebUI.Migrations
 {
-    public partial class datapackages : Migration
+    public partial class Datapackages : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

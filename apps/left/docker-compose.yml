@@ -22,7 +22,7 @@ services:
       - Port=80
       - EcosetEndpoint=http://ecoset.api:5002
       - QT_QPA_PLATFORM=offscreen
-      - ConnectionStrings__DefaultConnection=Server=web.db;Database=${MSSQLDBNAME};User=sa;Password=${MSSQLPASSWORD};
+      - ConnectionStrings__DefaultConnection=Server=web.db;Database=${MSSQLDBNAME};User=sa;Password=${MSSQLPASSWORD};TrustServerCertificate=True
       - Tokens__Issuer=${TOKENISSUER}
       - Tokens__Key=${TOKENKEY}
       depends_on:
@@ -39,7 +39,7 @@ services:
 
     # SQL Server for UI database (accounts, analyses etc.)
     web.db:
-      image: "microsoft/mssql-server-linux:2017-CU12"
+      image: "mcr.microsoft.com/mssql/server:2017-latest"
       ports:
       - "1433:1433"
       environment:

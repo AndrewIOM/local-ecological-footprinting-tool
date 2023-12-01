@@ -6,17 +6,17 @@
     <title>@ViewData["Title"] - @siteConfig.Value.InstanceName</title>
 
     <environment names="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.css" />
         <link rel="stylesheet" href="~/styles/main.css" />
-        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="/lib/jquery/jquery.js"></script>
     </environment>
     <environment names="Staging,Production">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.4.1.min.js"
-                asp-fallback-src="~/lib/jquery/jquery.min.js"
+                asp-fallback-src="/lib/jquery/jquery.min.js"
                 asp-fallback-test="window.jQuery">
         </script>
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
+              asp-fallback-href="/lib/bootstrap/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/styles/main.css" asp-append-version="true" />
     </environment>
@@ -58,7 +58,7 @@
     @await Html.PartialAsync("_Footer")
     @await Html.PartialAsync("_Analytics")
 
-    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
     <script>

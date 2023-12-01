@@ -2,13 +2,8 @@ using System;
 
 namespace Ecoset.GeoTemporal.Remote
 {
-    public class JobId
+    public class JobId(Guid id)
     {
-        public JobId(Guid id)
-        {
-            Id = id;
-        }
-
-        public Guid Id { get; private set; }
+        public Guid Id { get; private set; } = id;
     }
 }

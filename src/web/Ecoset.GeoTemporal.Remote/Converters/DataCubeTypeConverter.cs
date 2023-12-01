@@ -10,9 +10,9 @@ namespace Ecoset.GeoTemporal.Remote
         public override double?[,] Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var arr = JsonSerializer.Deserialize<double?[][]>(ref reader, options);
-            var rows = arr.Count();
-            var cols = arr.First().Count();
-            return To2D(arr, cols, rows);            
+            var rows = arr.Length;
+            var cols = arr.First().Length;
+            return To2D(arr, cols, rows);
         }
 
         public override void Write(Utf8JsonWriter writer, double?[,] value, JsonSerializerOptions options)

@@ -16,7 +16,7 @@ namespace WebOptimizer.Sass
         /// <summary>
         /// Gets the custom key that should be used when calculating the memory cache key.
         /// </summary>
-        public string CacheKey(HttpContext context) => string.Empty;
+        public string CacheKey(HttpContext context, IAssetContext config) => string.Empty;
 
         /// <summary>
         /// Executes the processor on the specified configuration.
@@ -50,11 +50,6 @@ namespace WebOptimizer.Sass
                         return true;
                     };
 
-                System.Console.WriteLine("FP " + fileProvider.GetType().Name);
-                System.Console.WriteLine("Route is " + route);
-                System.Console.WriteLine("File is " + file.PhysicalPath);
-                System.Console.WriteLine("Settings: " + settings.IncludePaths);
-
                 ScssResult result = Scss.ConvertToCss(context.Content[route].AsString(), settings);
 
                 content[route] = result.Css.AsByteArray();
@@ -66,13 +61,7 @@ namespace WebOptimizer.Sass
             {
                 IFileInfo input = fileProvider.GetFileInfo(key);
                 IFileInfo output = fileProvider.GetFileInfo(context.Asset.Route);
-
-                System.Console.WriteLine("Input is " + input.Name + " + " + input.PhysicalPath);
-                System.Console.WriteLine("Output is " + output.Name + " + " + output.PhysicalPath);
-                string absoluteOutputPath = new System.IO.FileInfo(output.PhysicalPath).FullName;
-                System.Console.WriteLine("Output actual path is " + absoluteOutputPath);
             }
-
 
             return Task.CompletedTask;
         }

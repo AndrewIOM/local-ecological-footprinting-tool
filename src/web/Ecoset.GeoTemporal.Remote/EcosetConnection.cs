@@ -11,7 +11,7 @@ namespace Ecoset.GeoTemporal.Remote
 {
     public class EcosetConnection : IGeoSpatialConnection
     {
-        private string _endpoint;
+        private readonly string _endpoint;
         private readonly JsonSerializerOptions _options;
 
         public EcosetConnection(string endpoint)
@@ -52,56 +52,55 @@ namespace Ecoset.GeoTemporal.Remote
 
         private async Task<T> Get<T>(string endpoint) 
         {
-            using (var client = new HttpClient())
+            using var client = new HttpClient();
+            client.BaseAddress = new Uri(_endpoint);
+            var response = await client.GetAsync(endpoint);
+            if (response.IsSuccessStatusCode)
             {
-                client.BaseAddress = new Uri(_endpoint);
-                var response = await client.GetAsync(endpoint);
-                if (response.IsSuccessStatusCode)
-                 {
-                    using (Stream contentStream = await response.Content.ReadAsStreamAsync())
+                using (Stream contentStream = await response.Content.ReadAsStreamAsync())
+                {
+                    try
                     {
-                        try {
-                            var result = await JsonSerializer.DeserializeAsync<T>(contentStream, _options);
-                            return result;
-                        } catch (Exception e) {
-                            throw new Exception("Ecoset returned an unexpected response: " + e.Message);
-                        }
+                        var result = await JsonSerializer.DeserializeAsync<T>(contentStream, _options);
+                        return result;
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("Ecoset returned an unexpected response: " + e.Message);
                     }
                 }
-                else {
-                    throw new HttpRequestException("The request was not successful: " + response.StatusCode);
-                }
+            }
+            else
+            {
+                throw new HttpRequestException("The request was not successful: " + response.StatusCode);
             }
         }
 
         private async Task<T> Post<T>(string endpoint, object request)
         {
-            using (var client = new HttpClient())
+            using var client = new HttpClient();
+            client.BaseAddress = new Uri(_endpoint);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var json = JsonSerializer.Serialize(request);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var req = new HttpRequestMessage(HttpMethod.Post, endpoint);
+            req.Content = httpContent;
+
+            var response = await client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
+            Console.WriteLine(response);
+
+            if (response.IsSuccessStatusCode)
             {
-                client.BaseAddress = new Uri(_endpoint);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var json = JsonSerializer.Serialize(request, _options);
-                var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-
-                var req = new HttpRequestMessage(HttpMethod.Post, endpoint);
-                req.Content = httpContent;
-
-                var response = await client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
-                Console.WriteLine(response);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    using (Stream responseStream = await response.Content.ReadAsStreamAsync())
-                    {
-                        T responseContent = await JsonSerializer.DeserializeAsync<T>(responseStream, _options);
-                        return responseContent;
-                    }
-                }
-                else {
-                    throw new HttpRequestException("The request was not successful: " + response.StatusCode);
-                }
+                using Stream responseStream = await response.Content.ReadAsStreamAsync();
+                T responseContent = await JsonSerializer.DeserializeAsync<T>(responseStream);
+                return responseContent;
+            }
+            else
+            {
+                throw new HttpRequestException("The request was not successful: " + response.StatusCode);
             }
         }
     }
