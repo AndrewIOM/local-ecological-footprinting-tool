@@ -49,5 +49,5 @@ services:
 
     # Cache reqiured for ecoset
     ecoset.cache:
-      image: redis:latest
+      image: redis:6.2.0
       command: redis-server --appendonly yes

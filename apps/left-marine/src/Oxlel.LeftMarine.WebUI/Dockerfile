@@ -15,16 +15,16 @@ RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/w
 RUN gdebi --n wkhtmltox_0.12.6.1-2.jammy_amd64.deb
 RUN ln -s /usr/local/lib/libwkhtmltox.so /usr/lib/libwkhtmltox.so
 
-# LibMan installs front-end dependencies e.g. jquery, bootstrap.
-RUN dotnet tool install -g Microsoft.Web.LibraryManager.CLI
-ENV PATH="$PATH:/root/.dotnet/tools"
-
 # Prepare ecoset webui library
 WORKDIR /build/src/web
 COPY src/web /build/src/web
 
 WORKDIR /build/src/web/Ecoset.WebUI/
-RUN libman restore
+
+# LibMan installs front-end dependencies e.g. jquery, bootstrap.
+RUN dotnet new tool-manifest
+RUN dotnet tool install Microsoft.Web.LibraryManager.Cli
+RUN dotnet tool run libman restore
 
 # Copy LEFT source
 WORKDIR /build/apps/left-marine/src/Oxlel.LeftMarine.WebUI
