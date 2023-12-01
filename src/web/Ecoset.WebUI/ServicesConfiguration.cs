@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Mime;
 using System.Reflection;
 using Ecoset.GeoTemporal.Remote;
 using Ecoset.WebUI.Data;
@@ -13,6 +15,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -63,13 +66,11 @@ namespace Ecoset.WebUI {
                 configuration.GetSection("CustomText").Bind(settings);
             });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("AdminOnly", policy =>
+            services.AddAuthorizationBuilder()
+                .AddPolicy("AdminOnly", policy =>
                 {
                     policy.RequireRole("Admin");
                 });
-            });
 
             // 3. Add application services.
             var ecoset = new EcosetConnection(configuration["EcosetEndpoint"]);
@@ -141,32 +142,26 @@ namespace Ecoset.WebUI {
         }
 
         public static void UseEcosetMigrations(this IApplicationBuilder app, IConfiguration configuration) {
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope()) {
-                using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
-                {
-                    context.Database.Migrate();
-                }
-            }
+            using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+            context.Database.Migrate();
         }
 
         public static void UseEcosetRoles(this IApplicationBuilder app, IConfiguration configuration)
         {
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope()) {
-                using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
-                {
-                    {
-                        RoleManager<IdentityRole> roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+            using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+            {
+                RoleManager<IdentityRole> roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
 
-                        string[] roleNames = { "Admin" };
-                        foreach (string roleName in roleNames)
-                        {
-                            bool roleExists = roleManager.RoleExistsAsync(roleName).Result;
-                            if (!roleExists)
-                            {
-                                IdentityRole identityRole = new IdentityRole(roleName);
-                                IdentityResult identityResult = roleManager.CreateAsync(identityRole).Result;
-                            }
-                        }
+                string[] roleNames = { "Admin" };
+                foreach (string roleName in roleNames)
+                {
+                    bool roleExists = roleManager.RoleExistsAsync(roleName).Result;
+                    if (!roleExists)
+                    {
+                        IdentityRole identityRole = new IdentityRole(roleName);
+                        IdentityResult identityResult = roleManager.CreateAsync(identityRole).Result;
                     }
                 }
             }
@@ -174,28 +169,25 @@ namespace Ecoset.WebUI {
 
         public static void UseEcosetAdminUser(this IApplicationBuilder app, IConfiguration configuration)
         {
-            using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope()) {
-                using (var context = scope.ServiceProvider.GetService<ApplicationDbContext>())
+            using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
+            var userManager = (UserManager<ApplicationUser>)scope.ServiceProvider.GetService(typeof(UserManager<ApplicationUser>));
+            var user = userManager.FindByNameAsync(configuration["Account:Admin:DefaultAdminUserName"]).Result;
+            if (user == null)
+            {
+                user = new ApplicationUser()
                 {
-                    var userManager = (UserManager<ApplicationUser>)scope.ServiceProvider.GetService(typeof(UserManager<ApplicationUser>));
-                    var user = userManager.FindByNameAsync(configuration["Account:Admin:DefaultAdminUserName"]).Result;
-                    if (user == null)
-                    {
-                        user = new ApplicationUser()
-                        {
-                            UserName = configuration["Account:Admin:DefaultAdminUserName"],
-                            FirstName = "Primary",
-                            Surname = "Administrator",
-                            OrganisationName = "Ecoset",
-                            OrganisationType = OrganisationType.NonCommercial,
-                            Credits = 9999,
-                            EmailConfirmed = true,
-                            Email = configuration["Account:Admin:DefaultAdminUserName"]
-                        };
-                        userManager.CreateAsync(user, configuration["Account:Admin:DefaultAdminPassword"]).Wait();
-                        userManager.AddToRoleAsync(user, "Admin").Wait();
-                    }
-                }
+                    UserName = configuration["Account:Admin:DefaultAdminUserName"],
+                    FirstName = "Primary",
+                    Surname = "Administrator",
+                    OrganisationName = "Ecoset",
+                    OrganisationType = OrganisationType.NonCommercial,
+                    Credits = 9999,
+                    EmailConfirmed = true,
+                    Email = configuration["Account:Admin:DefaultAdminUserName"]
+                };
+                userManager.CreateAsync(user, configuration["Account:Admin:DefaultAdminPassword"]).Wait();
+                userManager.AddToRoleAsync(user, "Admin").Wait();
             }
         }
 
@@ -206,21 +198,16 @@ namespace Ecoset.WebUI {
     /// Razor Class Library from a dependent application. 
     /// See: https://stackoverflow.com/questions/51610513/can-razor-class-library-pack-static-files-js-css-etc-too 
     /// </summary>
-    public class UIConfigureOptions : IConfigureOptions<StaticFileOptions>
+    public class UIConfigureOptions(IWebHostEnvironment environment) : IConfigureOptions<StaticFileOptions>
     {
-        public UIConfigureOptions(IWebHostEnvironment environment)
-        {
-            Environment = environment;
-        }
-
-        public IWebHostEnvironment Environment { get; }
+        public IWebHostEnvironment Environment { get; } = environment;
 
         public void Configure(StaticFileOptions options)
         {
             options = options ?? throw new ArgumentNullException(nameof(options));
 
             // Basic initialization in case the options weren't initialized by any other component
-            options.ContentTypeProvider = options.ContentTypeProvider ?? new FileExtensionContentTypeProvider();
+            options.ContentTypeProvider ??= new FileExtensionContentTypeProvider();
             if (options.FileProvider == null && Environment.WebRootFileProvider == null)
             {
                 throw new InvalidOperationException("Missing FileProvider.");
@@ -230,7 +217,7 @@ namespace Ecoset.WebUI {
             provider.Mappings[".scss"] = "text/plain";
             options.ContentTypeProvider = provider;
 
-            options.FileProvider = options.FileProvider ?? Environment.WebRootFileProvider;
+            options.FileProvider ??= Environment.WebRootFileProvider;
 
             var basePath = "wwwroot";
 
