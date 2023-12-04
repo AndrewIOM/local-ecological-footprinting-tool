@@ -4,7 +4,7 @@ services:
 
     # Ecoset engine for processing datasets
     ecoset.api:
-      image: ghcr.io/andrewiom/ecoset-vnext/image:2.2.1
+      image: ghcr.io/andrewiom/ecoset-vnext/image:2.2.3
       ports:
       - "5001:5001"
       - "5002:5002"
