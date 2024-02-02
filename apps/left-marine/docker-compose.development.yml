@@ -3,16 +3,20 @@ services:
 
     ecoset.api:
         volumes:
-        - C:\data\vnext:/data
+        - ./test-data/data:/data
         - ./test-data/ecoset-cache:/output
         - ./config/ecoset:/usr/src/app/config
         - ./test-data/ecoset-logs:/logs
         environment:
         - ES_CACHE_DIR=/output
+        ports:
+        - 5002:5002
 
     ecoset.cache:
         volumes:
         - "./test-data/redis-data/:/data/"
+        ports:
+        - 6379:6379
 
     web.ui:
         volumes:
@@ -26,6 +30,8 @@ services:
         - EcosetApp__ScratchDirectory=/cache
         - EcosetApp__MapboxStaticKey=${MAPBOXSTATICKEY}
         - EcosetApp__MapboxAccessToken=${MAPBOXTOKEN}
+        ports:
+        - 5000:80
 
     reverse-proxy:
         volumes:
@@ -36,3 +42,5 @@ services:
         - ./test-data/mssql/data:/var/opt/mssql/data
         - ./test-data/mssql/log:/var/opt/mssql/log
         - ./test-data/mssql/secrets:/var/opt/mssql/secrets
+        ports:
+        - 1433:1433
