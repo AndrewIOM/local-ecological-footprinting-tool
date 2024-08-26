@@ -198,11 +198,16 @@ namespace Ecoset.WebUI.Services.Concrete
 
         private async Task UpdateJobStatusAsync(Job job) {
             
+            System.Console.WriteLine(job.JobProcessorReference);
+            System.Console.WriteLine(job.Id);
+            System.Console.WriteLine(job.Name);
+            
             if (job.Status == JobStatus.GeneratingOutput) {
                 _logger.LogInformation("Output still generating for: " + job.Id);
                 return;
             }
             
+            var originalStatus = job.Status;
             var newStatus = await _processor.GetStatus(job.JobProcessorReference, job.Status);
 
             // Outcome 1: Start generating report
@@ -237,7 +242,7 @@ namespace Ecoset.WebUI.Services.Concrete
                 RecurringJob.RemoveIfExists("jobstatus_" + job.Id);
             }
 
-            if (newStatus == JobStatus.Completed) 
+            if (newStatus == JobStatus.Completed && originalStatus != JobStatus.Completed) // to minimise probability of repeat emailing
             {
                 var user = _context.Users.FirstOrDefault(u => u.Id == job.CreatedBy.Id);
                 if (user != null) {
