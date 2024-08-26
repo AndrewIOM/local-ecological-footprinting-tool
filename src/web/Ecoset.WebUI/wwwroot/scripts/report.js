@@ -424,7 +424,6 @@ var SpatialPlot = function (id, extent) {
     }
 
     self.addPointLayer = function (occurrenceData, colourDictionary) {
-        console.log(colourDictionary);
         function colourLookup(name) {
             var found = colourDictionary[name];
             if (found == null) return 'black';
