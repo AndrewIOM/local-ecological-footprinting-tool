@@ -88,9 +88,12 @@ namespace Ecoset.WebUI {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // 4. Hangfire for queues
-            services.AddHangfire(config => 
-                config.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection")));
-
+            services.AddHangfire(config => {
+                config
+                    .UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"))
+                    .WithJobExpirationTimeout(TimeSpan.FromDays(30));
+                }
+            );
         }
 
         public static void AddEcosetDataPackageAPI(this IServiceCollection services, IConfiguration configuration) {
