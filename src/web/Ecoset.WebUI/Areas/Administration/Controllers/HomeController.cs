@@ -171,7 +171,8 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
         }
 
         /// <summary>
-        /// Requests that the status for all free analyses is updated using the job service, or a specific job if specified
+        /// Requests that the status for all free analyses is updated using the job service, or a specific job if specified.
+        /// Skips any jobs that have a null processor reference (i.e. imported from previous left versions).
         /// </summary>
         public IActionResult StatusRefresh(int? jobId) {
             if (jobId.HasValue) {
@@ -181,7 +182,8 @@ namespace Ecoset.WebUI.Areas.Administration.Controllers
 
             var jobs = _jobService.GetAll();
             foreach (var job in jobs) {
-                _jobService.RefreshJobStatus(job.Id);
+                if (job.JobProcessorReference != null)
+                    _jobService.RefreshJobStatus(job.Id);
             }
             return Ok();
         }
