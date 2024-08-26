@@ -11,6 +11,7 @@ using Ecoset.WebUI.Options;
 using Ecoset.WebUI.Services.Abstract;
 using Ecoset.WebUI.Services.Concrete;
 using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -90,7 +91,11 @@ namespace Ecoset.WebUI {
             // 4. Hangfire for queues
             services.AddHangfire(config => {
                 config
-                    .UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"))
+                
+                    .UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+                    {
+                        InactiveStateExpirationTimeout = TimeSpan.FromDays(30)
+                    })
                     .WithJobExpirationTimeout(TimeSpan.FromDays(30));
                 }
             );
