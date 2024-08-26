@@ -320,8 +320,10 @@
                       }
                     }
                     if(densityResultsZonal != null) {
-                      zonalValue = densityResultsZonal.Data.Stats.Mean;
-                      zonalString = Math.Round(zonalValue, 2).ToString();
+                      if(densityResultsZonal.Data.Stats.Mean.HasValue) {
+                        zonalValue = densityResultsZonal.Data.Stats.Mean.Value;
+                        zonalString = Math.Round(zonalValue, 2).ToString();
+                      }
                     }
                     if(localString != "Unknown" && zonalString != "Unknown") {
                       representationString = Math.Round(localValue / zonalValue, 2).ToString();
@@ -375,12 +377,16 @@
                         var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
                       }
                       @if (tableStatsResultsMean != null) {
-                        refmean = (Math.Round(tableStatsResultsMean.Data.Stats.Mean, 3)).ToString();
-                        foundmean = true;
+                        if (tableStatsResultsMean.Data.Stats.Mean.HasValue) {
+                          refmean = (Math.Round(tableStatsResultsMean.Data.Stats.Mean.Value, 3)).ToString();
+                          foundmean = true;
+                        }
                       }
                       @if (tableStatsResultsStdev != null) {
-                        refstdev = (Math.Round(tableStatsResultsStdev.Data.Stats.Mean, 3)).ToString();
-                        foundstdev = true;
+                        if (tableStatsResultsStdev.Data.Stats.Mean.HasValue) {
+                          refstdev = (Math.Round(tableStatsResultsStdev.Data.Stats.Mean.Value, 3)).ToString();
+                          foundstdev = true;
+                          }
                       }
                       @if (foundmean) {
                         <td>@refmean</td>
@@ -409,10 +415,10 @@
                       var tableStatsResultsMean = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalmean");
                       var tableStatsResultsStdev = Model.TableStatsResults.FirstOrDefault(m => m.Name == result.Name + "_zonalstdev");
                       if(tableStatsResultsMean != null && tableStatsResultsStdev != null) {
-                        var localMean = result.Data.Stats.Mean;
-                        var localStdev = result.Data.Stats.StdDev;
-                        var zonalMeanScaled = tableStatsResultsMean.Data.Stats.Mean;
-                        var zonalStdevScaled = tableStatsResultsStdev.Data.Stats.Mean;
+                        var localMean = result.Data.Stats.Mean.HasValue ? result.Data.Stats.Mean.Value : System.Single.NaN;
+                        var localStdev = result.Data.Stats.StdDev.HasValue ? result.Data.Stats.StdDev.Value : System.Single.NaN;
+                        var zonalMeanScaled = tableStatsResultsMean.Data.Stats.Mean.HasValue ? tableStatsResultsMean.Data.Stats.Mean.Value : System.Single.NaN;
+                        var zonalStdevScaled = tableStatsResultsStdev.Data.Stats.Mean.HasValue ? tableStatsResultsStdev.Data.Stats.Mean.Value : System.Single.NaN;
                         var z = (localMean - zonalMeanScaled) / zonalStdevScaled;
                         var sd = localStdev / zonalStdevScaled;
                         <text>

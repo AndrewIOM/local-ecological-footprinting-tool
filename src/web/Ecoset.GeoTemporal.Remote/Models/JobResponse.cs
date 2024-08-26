@@ -62,17 +62,13 @@ namespace Ecoset.GeoTemporal.Remote
     public class Statistics
     {
         [JsonPropertyName("Minimum")]
-        [JsonConverter(typeof(NullToNaNConverter))]
-        public float Min { get; set; }
+        public float? Min { get; set; }
         [JsonPropertyName("Maximum")]
-        [JsonConverter(typeof(NullToNaNConverter))]
-        public float Max { get; set; }
+        public float? Max { get; set; }
         [JsonPropertyName("Mean")]
-        [JsonConverter(typeof(NullToNaNConverter))]
-        public float Mean { get; set; }
+        public float? Mean { get; set; }
         [JsonPropertyName("StDev")]
-        [JsonConverter(typeof(NullToNaNConverter))]
-        public float StdDev { get; set; }
+        public float? StdDev { get; set; }
     }
 
     public class Dimensions
